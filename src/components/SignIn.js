@@ -6,6 +6,12 @@ import { PasswordForgetLink } from './PasswordForget';
 import { auth } from '../firebase';
 import * as routes from '../constants/routes';
 
+import Input from '@material-ui/core/Input';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Lock from '@material-ui/icons/Lock';
+
+
 const SignInPage = ({ history }) =>
     <div>
         <h1>SignIn</h1>
@@ -66,18 +72,34 @@ class SignInForm extends Component {
 
         return (
             <form onSubmit={this.onSubmit}>
-                <input
+
+
+                <Input
+                    id="input-with-icon-adornment"
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <AccountCircle />
+                        </InputAdornment>
+                    }
                     value={email}
                     onChange={event => this.setState(byPropKey('email', event.target.value))}
                     type="text"
                     placeholder="Email Address"
                 />
-                <input
+
+                <Input
+                    id="input-with-icon-adornment"
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <Lock />
+                        </InputAdornment>
+                    }
                     value={password}
                     onChange={event => this.setState(byPropKey('password', event.target.value))}
                     type="password"
                     placeholder="Password"
                 />
+
                 <button disabled={isInvalid} type="submit">
                     Sign In
                 </button>
