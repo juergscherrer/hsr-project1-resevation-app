@@ -75,7 +75,6 @@ class SignInForm extends Component {
 
 
                 <Input
-                    id="input-with-icon-adornment"
                     startAdornment={
                         <InputAdornment position="start">
                             <AccountCircle />
@@ -88,7 +87,6 @@ class SignInForm extends Component {
                 />
 
                 <Input
-                    id="input-with-icon-adornment"
                     startAdornment={
                         <InputAdornment position="start">
                             <Lock />
