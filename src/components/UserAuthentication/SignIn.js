@@ -3,8 +3,8 @@ import { withRouter } from 'react-router-dom';
 
 import { SignUpLink } from './SignUp';
 import { PasswordForgetLink } from './PasswordForget';
-import { auth } from '../firebase';
-import * as routes from '../constants/routes';
+import { auth } from '../../firebase/index';
+import * as routes from '../../constants/routes';
 
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import withAuthorization from './withAuthorization';
+import withAuthorization from './UserAuthentication/withAuthorization';
 import { db } from '../firebase';
 
 class AdminPage extends Component {

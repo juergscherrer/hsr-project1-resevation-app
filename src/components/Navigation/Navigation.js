@@ -1,39 +1,35 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
-
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import AppBar from '@material-ui/core/AppBar';
-import Button from '@material-ui/core/Button';
-import CameraIcon from '@material-ui/icons/PhotoCamera';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Grid from '@material-ui/core/Grid';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import {withStyles} from '@material-ui/core/styles';
 
-import AuthUserContext from './AuthUserContext';
-import SignOutButton from './SignOut';
-import * as routes from '../constants/routes';
-import {auth} from "../firebase";
+import AuthUserContext from '../UserAuthentication/AuthUserContext';
+
+import NavigationMainMenu from './NavigationMainMenu';
+import NavigationUserMenu from './NavigationUserMenu';
 
 const styles = theme => ({
     appBar: {
         position: 'relative',
     },
-    icon: {
-        marginRight: theme.spacing.unit * 2,
+
+    grow: {
+        flexGrow: 1,
     },
 });
+
 
 
 class Navigation extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+
+        };
 
     }
 
@@ -53,10 +49,12 @@ class Navigation extends React.Component {
             <React.Fragment>
                 <CssBaseline/>
                 <AppBar position="static" className={classes.appBar}>
-                    <Toolbar>
-                        <Typography variant="title" color="inherit" noWrap>
+                    <Toolbar disableGutters={true}>
+                        <NavigationMainMenu />
+                        <Typography variant="title" color="inherit" className={classes.grow}>
                             Reservation App
                         </Typography>
+                        <NavigationUserMenu/>
                     </Toolbar>
                 </AppBar>
             </React.Fragment>
@@ -77,21 +75,13 @@ class Navigation extends React.Component {
 
             Navigation()
 
-    )
-        ;
+        );
     }
 }
 
+Navigation.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
 
 export default withStyles(styles)(Navigation);
-
-
-{/*
-<ul>
-    <li><Link to={routes.LANDING}>Landing</Link></li>
-    <li><Link to={routes.DASHBOARD}>Dashboard</Link></li>
-    <li><Link to={routes.ACCOUNT}>Account</Link></li>
-    <li><Link to={routes.ADMIN}>Admin Dashboard</Link></li>
-    <li><SignOutButton /></li>
-</ul>*/
-}

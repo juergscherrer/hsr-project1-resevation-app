@@ -10,7 +10,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
-import withAuthorization from './withAuthorization';
+import withAuthorization from './UserAuthentication/withAuthorization';
 import { db } from '../firebase';
 
 const styles = {
