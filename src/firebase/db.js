@@ -16,3 +16,31 @@ export const onceGetUsers = () =>
 
 export const onceGetUser = (id) =>
     db.ref(`users/${id}`).once('value');
+
+
+// Rentals API
+
+export const doCreateRental = (title, description, priceForGuest, priceForOwner, deleted = false) =>
+    db.ref(`rentals`).push({
+        title,
+        description,
+        priceForGuest,
+        priceForOwner,
+        deleted,
+    });
+
+export const onceGetRentals = () =>
+    db.ref('rentals').once('value');
+
+
+// RentalsUsers API
+
+export const doCreateRentalUser = (isManager, isOwner, rentalId, userId, deleted = false) =>
+    db.ref(`rentalsUsers`).push({
+        isManager,
+        isOwner,
+        rentalId,
+        userId,
+        deleted,
+    });
+

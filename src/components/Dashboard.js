@@ -1,19 +1,21 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
+
 import Grid from '@material-ui/core/Grid';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import AddIcon from '@material-ui/icons/Add';
+
 
 import withAuthorization from './UserAuthentication/withAuthorization';
-import { db } from '../firebase';
+import {db} from '../firebase';
 
-const styles = {
+import Rental from './Rental/Rental';
+import NewRental from './Rental/NewRental';
+
+const styles = theme => ({
 
     layout: {
         maxWidth: 1280,
@@ -22,15 +24,16 @@ const styles = {
         marginTop: 50,
     },
 
-    content: {
-        justify: "center",
+
+    paper: {
+        maxWidth: 500,
+        marginTop: theme.spacing.unit * 8,
+        display: 'flex',
+        flexDirection: 'column',
+        padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
     },
 
-    card: {
-
-    }
-
-};
+});
 
 
 class Dashboard extends Component {
@@ -45,7 +48,7 @@ class Dashboard extends Component {
 
     componentDidMount() {
         db.onceGetUsers().then(snapshot =>
-            this.setState({ users: snapshot.val() })
+            this.setState({users: snapshot.val()})
         );
     }
 
@@ -56,10 +59,10 @@ class Dashboard extends Component {
     };
 
     render() {
-        const { users } = this.state;
+        const {users} = this.state;
 
 
-        const { classes } = this.props;
+        const {classes} = this.props;
 
         return (
             <div className={classes.layout}>
@@ -75,35 +78,34 @@ class Dashboard extends Component {
                         item
                         display="flex"
                     >
-                        <Card className={classes.card}>
-                        <CardContent>
-                            <Typography gutterBottom variant="headline" component="h2">
-                                Wohnungen
-                            </Typography>
-                        </CardContent>
-                        <CardActions>
-                            <Button size="small" color="primary">
-                                Share
-                            </Button>
-                        </CardActions>
-                    </Card>
+                        <Paper className={classes.paper}>
+                            <Grid
+                                container
+                                justify= "space-between"
+                                alignItems="center"
+                            >
+                                <Grid item><Typography variant="headline">Wohnungen</Typography></Grid>
+                                <Grid item><Button variant="fab"
+                                                   color='primary'
+                                                   className={classes.fab}
+                                >
+                                    <AddIcon />
+                                </Button></Grid>
+                            </Grid>
+                            <NewRental/>
+                        </Paper>
                     </Grid>
                     <Grid
                         item
                         display="flex"
                     >
-                        <Card className={classes.card}>
-                            <CardContent>
-                                <Typography gutterBottom variant="headline" component="h2">
-                                    Rechnungen
-                                </Typography>
-                            </CardContent>
-                            <CardActions>
-                                <Button size="small" color="primary">
-                                    Share
-                                </Button>
-                            </CardActions>
-                        </Card>
+                        <Paper className={classes.paper}>
+
+                            <Typography gutterBottom variant="headline" component="h2">
+                                Rechnungen
+                            </Typography>
+
+                        </Paper>
                     </Grid>
                 </Grid>
             </div>
@@ -112,8 +114,7 @@ class Dashboard extends Component {
 }
 
 
-
-const UserList = ({ users }) =>
+const UserList = ({users}) =>
     <div>
         <h2>List of Usernames of Users</h2>
         <p>(Saved on Sign Up in Firebase Database)</p>
