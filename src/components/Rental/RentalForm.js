@@ -2,13 +2,11 @@ import React, {Component} from 'react';
 import {Link, withRouter,} from 'react-router-dom';
 import {withStyles} from '@material-ui/core/styles';
 import classNames from 'classnames';
-import Grid from '@material-ui/core/Grid';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
-import Typography from '@material-ui/core/Typography';
 
 
 import {auth, db} from '../../firebase/index';
@@ -60,7 +58,7 @@ const byPropKey = (propertyName, value) => () => ({
     [propertyName]: value,
 });
 
-class NewRental extends Component {
+class RentalForm extends Component {
     constructor(props) {
         super(props);
 
@@ -80,6 +78,7 @@ class NewRental extends Component {
             .then(newRental => {
                 db.doCreateRentalUser(true, true, newRental.key, auth.currentUser().uid)
                     .then(() => {
+                        this.props.handleClick();
                         this.setState({...INITIAL_STATE});
                     })
                     .catch(error => {
@@ -109,6 +108,7 @@ class NewRental extends Component {
             description === '' ||
             priceForGuest === '' ||
             priceForOwner === '';
+
 
         return (
 
@@ -188,7 +188,7 @@ class NewRental extends Component {
 }
 
 
-export default withRouter(withStyles(styles)(NewRental));
+export default withRouter(withStyles(styles)(RentalForm));
 
 
 {/*

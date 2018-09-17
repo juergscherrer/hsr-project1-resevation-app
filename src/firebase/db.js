@@ -29,8 +29,18 @@ export const doCreateRental = (title, description, priceForGuest, priceForOwner,
         deleted,
     });
 
-export const onceGetRentals = () =>
-    db.ref('rentals').once('value');
+export const getRentals = () =>
+    db.ref('rentals').orderByChild("deleted").equalTo(false);
+
+
+export const editRental = (id, title, description, priceForGuest, priceForOwner, deleted) =>
+    db.ref(`rentals/${id}`).set({
+        title,
+        description,
+        priceForGuest,
+        priceForOwner,
+        deleted,
+});
 
 
 // RentalsUsers API
@@ -43,4 +53,3 @@ export const doCreateRentalUser = (isManager, isOwner, rentalId, userId, deleted
         userId,
         deleted,
     });
-
