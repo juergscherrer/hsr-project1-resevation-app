@@ -47,6 +47,7 @@ const styles = theme => ({
 
 
 const INITIAL_STATE = {
+    id: '',
     title: '',
     description: '',
     priceForGuest: '',
@@ -64,6 +65,11 @@ class RentalForm extends Component {
 
         this.state = {...INITIAL_STATE};
 
+    }
+
+
+    componentDidMount() {
+        this.props.rental && this.setState({id: this.props.rental[0], title: this.props.rental[1].title, description: this.props.rental[1].description, priceForGuest: this.props.rental[1].priceForGuest, priceForOwner: this.props.rental[1].priceForOwner});
     }
 
     onSubmit = (event) => {
@@ -94,7 +100,7 @@ class RentalForm extends Component {
     };
 
     render() {
-        const {classes} = this.props;
+        const {classes, rental} = this.props;
         const {
             title,
             description,
@@ -109,8 +115,8 @@ class RentalForm extends Component {
             priceForGuest === '' ||
             priceForOwner === '';
 
-
         return (
+
 
             <form className={classes.form} onSubmit={this.onSubmit}>
                 <FormControl margin="normal" required fullWidth>

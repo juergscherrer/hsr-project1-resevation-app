@@ -32,13 +32,18 @@ class Rental extends React.Component {
         this.state = {
             rentals: null,
             showForm: false,
+            editRental: null,
         };
         this.handleClick = this.handleClick.bind(this);
-
+        this.editRental = this.editRental.bind(this);
     }
 
     handleClick(){
         this.state.showForm ? this.setState({showForm: false}) : this.setState({showForm: true})
+    }
+
+    editRental(rental){
+        this.setState({showForm: true, editRental: rental})
     }
 
     render() {
@@ -62,9 +67,9 @@ class Rental extends React.Component {
                             </Button>
                         </Grid>
                     </Grid>
-                { this.state.showForm ? <RentalForm handleClick={this.handleClick.bind(this)}/> : null }
+                { this.state.showForm ? <RentalForm rental={this.state.editRental} handleClick={this.handleClick.bind(this)}/> : null }
                 </div>
-                <RentalList/>
+                <RentalList editRental={this.editRental}/>
             </Paper>
 
         );

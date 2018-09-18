@@ -33,7 +33,8 @@ class RentalListItem extends React.Component {
     }
 
     handleEditClick() {
-        console.log('Edit Click');
+        const rental = [this.props.rentalId, this.props.rental];
+        this.props.handleEditClick(rental);
     }
 
     handleDeleteClick(id) {

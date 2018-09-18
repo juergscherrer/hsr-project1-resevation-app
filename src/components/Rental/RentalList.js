@@ -22,12 +22,18 @@ class RentalList extends React.Component {
             rentals: [],
 
         };
+
+        this.editRental = this.editRental.bind(this);
     }
 
     componentDidMount() {
         db.getRentals().on('value', snap => {
             this.setState({rentals: snap.val()})
         });
+    }
+
+    editRental(rental){
+        this.props.editRental(rental);
     }
 
     render() {
@@ -40,7 +46,7 @@ class RentalList extends React.Component {
                 <div className={classes.root}>
                     <List>
                         {Object.keys(rentals).map(key =>
-                            <RentalListItem rental={rentals[key]} key={key} rentalId={key}/>
+                            <RentalListItem handleEditClick={this.editRental}rental={rentals[key]} key={key} rentalId={key}/>
                         )}
                     </List>
                 </div>
