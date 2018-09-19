@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
 
-import {SignUpLink} from './SignUp';
-import {PasswordForgetLink} from './PasswordForget';
-import {auth} from '../firebase';
-import * as routes from '../constants/routes';
+
+import { SignUpLink } from './SignUp';
+import { PasswordForgetLink } from './PasswordForget';
+import { auth } from '../../firebase/index';
+import * as routes from '../../constants/routes';
+
 
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -20,7 +22,7 @@ import FormControl from '@material-ui/core/FormControl';
 import LockIcon from '@material-ui/icons/LockOutlined';
 import InputLabel from '@material-ui/core/InputLabel';
 import RemoveRedEye from '@material-ui/icons/RemoveRedEye';
-import Background from '../img/loginscreen-jaunpassstrasse.jpg';
+import Background from '../../img/loginscreen-jaunpassstrasse.jpg';
 
 
 const byPropKey = (propertyName, value) => () => ({
@@ -41,7 +43,7 @@ const styles = theme => ({
         marginLeft: theme.spacing.unit * 3,
         marginRight: theme.spacing.unit * 3,
         paddingTop: theme.spacing.unit * 10,
-        paddingBottom: theme.spacing.unit * 10,
+        height: '100vh',
         [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
             width: 400,
             marginLeft: 'auto',
@@ -95,8 +97,8 @@ class SignInForm extends Component {
 
         auth.doSignInWithEmailAndPassword(email, password)
             .then(() => {
-                this.setState({...INITIAL_STATE});
-                history.push(routes.HOME);
+                this.setState({ ...INITIAL_STATE });
+                history.push(routes.DASHBOARD);
             })
             .catch(error => {
                 this.setState(byPropKey('error', error));

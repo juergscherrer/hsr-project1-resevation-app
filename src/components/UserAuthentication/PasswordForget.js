@@ -1,18 +1,26 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import Typography from '@material-ui/core/Typography';
 
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
+import * as routes from '../../constants/routes';
+
+const PasswordForgetPage = () =>
+    <div>
+        <h1>PasswordForget</h1>
+        <PasswordForgetForm />
+    </div>
 
 const byPropKey = (propertyName, value) => () => ({
     [propertyName]: value,
 });
 
 const INITIAL_STATE = {
-    passwordOne: '',
-    passwordTwo: '',
+    email: '',
     error: null,
 };
 
-class PasswordChangeForm extends Component {
+class PasswordForgetForm extends Component {
     constructor(props) {
         super(props);
 
@@ -20,9 +28,9 @@ class PasswordChangeForm extends Component {
     }
 
     onSubmit = (event) => {
-        const { passwordOne } = this.state;
+        const { email } = this.state;
 
-        auth.doPasswordUpdate(passwordOne)
+        auth.doPasswordReset(email)
             .then(() => {
                 this.setState({ ...INITIAL_STATE });
             })
@@ -35,28 +43,19 @@ class PasswordChangeForm extends Component {
 
     render() {
         const {
-            passwordOne,
-            passwordTwo,
+            email,
             error,
         } = this.state;
 
-        const isInvalid =
-            passwordOne !== passwordTwo ||
-            passwordOne === '';
+        const isInvalid = email === '';
 
         return (
             <form onSubmit={this.onSubmit}>
                 <input
-                    value={passwordOne}
-                    onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
-                    type="password"
-                    placeholder="New Password"
-                />
-                <input
-                    value={passwordTwo}
-                    onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
-                    type="password"
-                    placeholder="Confirm New Password"
+                    value={this.state.email}
+                    onChange={event => this.setState(byPropKey('email', event.target.value))}
+                    type="text"
+                    placeholder="Email Address"
                 />
                 <button disabled={isInvalid} type="submit">
                     Reset My Password
@@ -68,4 +67,15 @@ class PasswordChangeForm extends Component {
     }
 }
 
-export default PasswordChangeForm;
+const PasswordForgetLink = () =>
+
+    <Link to={routes.PASSWORD_FORGET}>Forgot Password?</Link>
+
+
+
+export default PasswordForgetPage;
+
+export {
+    PasswordForgetForm,
+    PasswordForgetLink,
+};
