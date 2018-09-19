@@ -7,9 +7,12 @@ import * as routes from '../constants/routes';
 
 const Navigation = () =>
     <AuthUserContext.Consumer>
+
         {authUser => authUser
+
             ? <NavigationAuth />
             : <NavigationNonAuth />
+
         }
     </AuthUserContext.Consumer>
 
@@ -22,10 +25,12 @@ const NavigationAuth = () =>
         <li><SignOutButton /></li>
     </ul>
 
+
 const NavigationNonAuth = () =>
     <ul>
         <li><Link to={routes.LANDING}>Landing</Link></li>
         <li><Link to={routes.SIGN_IN}>Sign In</Link></li>
     </ul>
+
 
 export default Navigation;
