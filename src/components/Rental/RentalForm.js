@@ -82,7 +82,7 @@ class RentalForm extends Component {
 
         db.doCreateRental(title, description, priceForGuest, priceForOwner)
             .then(newRental => {
-                db.doCreateRentalUser(true, true, newRental.key, auth.currentUser().uid)
+                db.doCreateUserRental(true, true, newRental.key, auth.currentUser().uid)
                     .then(() => {
                         this.props.handleClick();
                         this.setState({...INITIAL_STATE});

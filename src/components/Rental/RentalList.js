@@ -1,6 +1,7 @@
 import React from 'react';
 import RentalListItem from './RentalListItem';
-import {db} from '../../firebase';
+import { db } from '../../firebase';
+import { auth } from '../../firebase/index';
 
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
@@ -26,10 +27,25 @@ class RentalList extends React.Component {
         this.editRental = this.editRental.bind(this);
     }
 
+    // componentDidMount() {
+    //     db.getRentals().on('value', snap => {
+    //         this.setState({rentals: snap.val()})
+    //     });
+    // }
+
     componentDidMount() {
-        db.getRentals().on('value', snap => {
-            this.setState({rentals: snap.val()})
-        });
+        db.getUserRentals(auth.currentUser().uid).on('child_added', snap => {
+            db.getRentals().child(snap.key).on('value', rental => {
+                console.log('jetzt');
+                this.setState(prevState => ({
+                    rentals: [...prevState.rentals, rental.val()]
+                }));
+            });
+        })
+    }
+
+    componentWillUnmount() {
+        this.setState({rentals: null});
     }
 
     editRental(rental){
