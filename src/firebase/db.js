@@ -14,8 +14,9 @@ export const onceGetUsers = () =>
     db.ref('users').once('value');
 
 
+
 export const onceGetUser = (id) =>
-    db.ref(`users/${id}`).once('value');
+    db.ref('users').child(id).once('value');
 
 
 // Rentals API
