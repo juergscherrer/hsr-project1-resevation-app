@@ -71,6 +71,7 @@ class NavigationMainMenu extends React.Component {
                 >
                     <MenuItem onClick={this.handleCloseLeft}><Link className={classes.menuLink} to={routes.DASHBOARD}>Dashboard</Link></MenuItem>
                     <MenuItem onClick={this.handleCloseLeft}><Link className={classes.menuLink} to={routes.ADMIN}>Admin Dashboard</Link></MenuItem>
+                    <MenuItem onClick={this.handleCloseLeft}><Link className={classes.menuLink} to={routes.INVOICES}>Invoices</Link></MenuItem>
                 </Menu>
             </React.Fragment>
 

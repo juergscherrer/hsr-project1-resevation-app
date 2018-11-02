@@ -33,6 +33,8 @@ export const doCreateRental = (title, description, priceForGuest, priceForOwner,
 export const getRentals = () =>
     db.ref('rentals');
 
+export const getReservations = () =>
+    db.ref('reservations');
 
 export const editRental = (id, title, description, priceForGuest, priceForOwner, deleted) =>
     db.ref(`rentals/${id}`).set({

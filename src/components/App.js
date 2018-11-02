@@ -11,6 +11,7 @@ import PasswordForgetPage from './UserAuthentication/PasswordForget';
 import Dashboard from './Dashboard';
 import AccountPage from './UserAuthentication/Account';
 import AdminPage from './Admin';
+import InvoicesPage from './Invoices';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 import * as routes from '../constants/routes';
@@ -28,6 +29,7 @@ const App = () =>
             <Route exact path={routes.PASSWORD_FORGET} component={PasswordForgetPage} />
             <Route exact path={routes.ACCOUNT} component={AccountPage} />
             <Route exact path={routes.ADMIN} component={AdminPage} />
+            <Route exact path={routes.INVOICES} component={InvoicesPage} />
         </div>
     </Router>
 
