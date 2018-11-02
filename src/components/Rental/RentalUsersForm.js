@@ -50,8 +50,7 @@ const INITIAL_STATE = {
     id: '',
     title: '',
     description: '',
-    priceForGuest: '',
-    priceForOwner: '',
+    rental_users: [],
     error: null,
 };
 
@@ -59,7 +58,7 @@ const byPropKey = (propertyName, value) => () => ({
     [propertyName]: value,
 });
 
-class RentalForm extends Component {
+class RentalUsersForm extends Component {
     constructor(props) {
         super(props);
 
@@ -70,14 +69,11 @@ class RentalForm extends Component {
 
     componentDidMount() {
         if (this.props.rentalId){
-            db.getRental(this.props.rentalId).once('value').then((snap) =>{
-                console.log('getRental', snap.val());
+            db.getRental(this.props.rentalId).once('value').then((rental) =>{
                 this.setState({
-                    id: snap.key,
-                    title: snap.val().title,
-                    description: snap.val().description,
-                    priceForGuest: snap.val().priceForGuest,
-                    priceForOwner: snap.val().priceForOwner,
+                    id: rental.key,
+                    title: rental.val().title,
+                    description: rental.val().description
                 });
             })
         }
@@ -156,32 +152,11 @@ class RentalForm extends Component {
 
             <form className={classes.form} onSubmit={this.onSubmit}>
                 <FormControl margin="normal" required fullWidth>
-                    <InputLabel htmlFor="title">Titel</InputLabel>
+                    <InputLabel htmlFor="title">Benutzer Suchen</InputLabel>
                     <Input id="title"
                            value={title}
                            onChange={event => this.setState(byPropKey('title', event.target.value))}
                            autoFocus/>
-                </FormControl>
-                <FormControl margin="normal" required fullWidth>
-                    <InputLabel htmlFor="description">Beschreibung</InputLabel>
-                    <Input id="description"
-                           value={description}
-                           onChange={event => this.setState(byPropKey('description', event.target.value))}
-                           />
-                </FormControl>
-                <FormControl margin="normal" required fullWidth>
-                    <InputLabel htmlFor="priceForGuest">Preis für Gast (pro Nacht)</InputLabel>
-                    <Input id="priceForGuest"
-                           type="number"
-                           value={priceForGuest}
-                           onChange={event => this.setState(byPropKey('priceForGuest', event.target.value))}/>
-                </FormControl>
-                <FormControl margin="normal" required fullWidth>
-                    <InputLabel htmlFor="priceForOwner">Preis für Besitzer (pro Nacht)</InputLabel>
-                    <Input id="priceForOwner"
-                           type="number"
-                           value={priceForOwner}
-                           onChange={event => this.setState(byPropKey('priceForOwner', event.target.value))}/>
                 </FormControl>
                 <Button
                     color="primary"
@@ -190,7 +165,7 @@ class RentalForm extends Component {
                     fullWidth
                     variant="raised">
                     <SaveIcon className={classNames(classes.leftIcon, classes.iconSmall)}/>
-                    Speichern
+                    Save
                 </Button>
             </form>
         )
@@ -199,4 +174,4 @@ class RentalForm extends Component {
 }
 
 
-export default withRouter(withStyles(styles)(RentalForm));
+export default withRouter(withStyles(styles)(RentalUsersForm));

@@ -10,6 +10,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import PeopleIcon from '@material-ui/icons/People';
 
 import {db} from '../../firebase';
 
@@ -33,31 +34,48 @@ class RentalListItem extends React.Component {
     }
 
     handleEditClick() {
-        const rental = [this.props.rentalId, this.props.rental];
-        this.props.handleEditClick(rental);
+        this.props.handleEditClick(this.props.rentalId);
     }
 
     handleDeleteClick(id) {
         db.editRental(id, this.props.rental.title, this.props.rental.description, this.props.rental.priceForGuest, this.props.rental.priceForOwner, true);
     }
 
+    handleManageUsersClick() {
+        this.props.handleManageUsersClick(this.props.rentalId);
+    }
+
 
     render() {
         const {classes, rental, rentalId} = this.props;
+        let iconContent = [];
+
+        if(rental.manager || rental.owner){
+            iconContent.push(
+                <IconButton key={"edit"} aria-label="Edit" onClick={() => this.handleEditClick(rentalId)}>
+                    <EditIcon/>
+                </IconButton>)
+        }
+
+        if(rental.owner){
+            iconContent.push(
+            <IconButton key={"delete"} aria-label="Delete" onClick={() => this.handleDeleteClick(rentalId)}>
+                <DeleteIcon/>
+            </IconButton>)
+            iconContent.push(
+                <IconButton key={"manage_users"} aria-label="Manage Users" onClick={() => this.handleManageUsersClick(rentalId)}>
+                    <PeopleIcon/>
+                </IconButton>)
+        }
 
         return (
             <ListItem button onClick={() => this.handleOpenClick(rentalId)}>
                 <Avatar>
-                    <HomeIcon color="primary"/>
+                    <HomeIcon color={rental.owner ? "primary" : "inherit"}/>
                 </Avatar>
                 <ListItemText primary={rental.title} secondary={rental.description}/>
                 <ListItemSecondaryAction>
-                    <IconButton aria-label="Edit" onClick={() => this.handleEditClick(rentalId)}>
-                        <EditIcon/>
-                    </IconButton>
-                    <IconButton aria-label="Delete" onClick={() => this.handleDeleteClick(rentalId)}>
-                        <DeleteIcon/>
-                    </IconButton>
+                    {iconContent}
                 </ListItemSecondaryAction>
             </ListItem>
         );

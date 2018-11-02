@@ -14,14 +14,24 @@ export const onceGetUsers = () =>
     db.ref('users').once('value');
 
 
+// TODO onceGetUser löschen?
+export const getUser = (id) =>
+    db.ref('users').child(id)
 
-export const onceGetUser = (id) =>
-    db.ref('users').child(id).once('value');
+export const newUserRental = (user_id, rental_id, owner, manager, title, description) =>
+    db.ref(`user_rentals/${user_id}/${rental_id}`).set({
+        title,
+        description,
+        owner,
+        manager
+    });
 
+export const getUserRentals = (user_id) =>
+    db.ref(`user_rentals/${user_id}`)
 
 // Rentals API
 
-export const doCreateRental = (title, description, priceForGuest, priceForOwner, deleted = false) =>
+export const newRental = (title, description, priceForGuest, priceForOwner, deleted = false) =>
     db.ref(`rentals`).push({
         title,
         description,
@@ -30,45 +40,18 @@ export const doCreateRental = (title, description, priceForGuest, priceForOwner,
         deleted,
     });
 
-export const getRentals = () =>
-    db.ref('rentals');
+export const getRental = (id) =>
+    db.ref('rentals').child(id);
 
 export const getReservations = () =>
     db.ref('reservations');
 
-export const editRental = (id, title, description, priceForGuest, priceForOwner, deleted) =>
+export const editRental = (id, title, description, priceForGuest, priceForOwner) =>
     db.ref(`rentals/${id}`).set({
         title,
         description,
         priceForGuest,
         priceForOwner,
-        deleted,
 });
 
 
-// RentalsUsers API
-
-// export const doCreateRentalUser = (isManager, isOwner, rentalId, userId, deleted = false) =>
-//     db.ref(`rentalsUsers`).push({
-//         isManager,
-//         isOwner,
-//         rentalId,
-//         userId,
-//         deleted,
-//     });
-//
-// export const getRentalsUsers = (userId) =>
-//     db.ref('rentalsUsers').orderByChild('userId').equalTo(userId);
-
-
-// UserRentals
-
-export const doCreateUserRental = (isManager, isOwner, rentalId, userId) =>
-    db.ref(`userRentals/${userId}/${rentalId}/`).set({
-        isManager,
-        isOwner,
-    });
-
-
-export const getUserRentals = (userId) =>
-    db.ref('userRentals').child(userId);

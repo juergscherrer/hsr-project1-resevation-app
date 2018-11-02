@@ -1,0 +1,23 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": true,
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+      "rentals": {
+      ".read": true,
+      ".write": true,
+     	".indexOn": "deleted"
+    },
+      "user_rentals": {
+      ".read": true,
+      ".write": true,
+    },
+      "rental_users": {
+      ".read": true,
+      ".write": true,
+    },
+  }
+}

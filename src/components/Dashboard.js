@@ -59,7 +59,7 @@ class Dashboard extends Component {
                         xs={12} sm={6}
                         display="flex"
                     >
-                        <Rental/>
+
                     </Grid>
                 </Grid>
             </div>
