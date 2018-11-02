@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import RentalForm from './RentalForm';
 import RentalList from './RentalList';
+import RentalUsersForm from './RentalUsersForm';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
+import CloseIcon from '@material-ui/icons/Close';
 
 
 
@@ -31,19 +33,24 @@ class Rental extends React.Component {
 
         this.state = {
             rentals: null,
-            showForm: false,
-            editRental: null,
+            showRentalForm: false,
+            showRentalUsersForm: false,
+            rentalId: null
         };
         this.handleClick = this.handleClick.bind(this);
         this.editRental = this.editRental.bind(this);
     }
 
     handleClick(){
-        this.state.showForm ? this.setState({showForm: false}) : this.setState({showForm: true})
+        this.state.showRentalForm ? this.setState({showRentalForm: false, rentalId: null}) : this.setState({showRentalForm: true})
     }
 
-    editRental(rental){
-        this.setState({showForm: true, editRental: rental})
+    editRental(rentalId){
+        this.setState({showRentalForm: true, rentalId: rentalId})
+    }
+
+    handleManageUsers(rentalId){
+        this.setState({showRentalUsersForm: true, rentalId: rentalId})
     }
 
     render() {
@@ -62,14 +69,15 @@ class Rental extends React.Component {
                             <Typography variant="headline">Wohnungen</Typography>
                         </Grid>
                         <Grid item>
-                            <Button variant="fab" color='primary' onClick={this.handleClick}>
-                                <AddIcon />
+                            <Button variant="fab" color={this.state.showRentalForm ? 'secondary' : 'primary'} onClick={this.handleClick}>
+                                {this.state.showRentalForm ? <CloseIcon /> : <AddIcon />}
                             </Button>
                         </Grid>
                     </Grid>
-                { this.state.showForm ? <RentalForm rental={this.state.editRental} handleClick={this.handleClick.bind(this)}/> : null }
+                { this.state.showRentalForm && <RentalForm rentalId={this.state.rentalId} handleClick={this.handleClick.bind(this)}/>}
+                { this.state.showRentalUsersForm && <RentalUsersForm rentalId={this.state.rentalId} handleClick={this.handleClick.bind(this)}/>}
                 </div>
-                <RentalList editRental={this.editRental}/>
+                <RentalList editRental={this.editRental} handleManageUsers={this.handleManageUsers.bind(this)}/>
             </Paper>
 
         );
