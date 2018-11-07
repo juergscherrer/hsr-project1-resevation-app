@@ -9,40 +9,9 @@ import {auth, db} from '../../firebase/index';
 import * as routes from '../../constants/routes';
 
 const styles = theme => ({
-
-    header:{
-        padding: `0px ${theme.spacing.unit * 3}px`,
-    },
-
-    form: {
-        width: '100%', // Fix IE11 issue.
-        marginTop: theme.spacing.unit,
-    },
-
-    submit: {
-        marginTop: theme.spacing.unit * 3,
-    },
-
-    container: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-
-    formControl: {
-        margin: theme.spacing.unit,
-    },
-
-    button: {
-        margin: theme.spacing.unit,
-    },
-
-    leftIcon: {
-        marginRight: theme.spacing.unit,
-    },
-
-    iconSmall: {
-        fontSize: 20,
-    },
+    header: {
+        paddingLeft: `${theme.spacing.unit * 3}px`,
+    }
 });
 
 
@@ -54,9 +23,6 @@ const INITIAL_STATE = {
     error: null,
 };
 
-const byPropKey = (propertyName, value) => () => ({
-    [propertyName]: value,
-});
 
 class RentalUsersList extends Component {
     constructor(props) {
@@ -68,8 +34,21 @@ class RentalUsersList extends Component {
 
 
     componentDidMount() {
-        if (this.props.rentalId){
-            db.getRental(this.props.rentalId).on('value', rental =>{
+        if (this.props.rentalId) {
+            db.getRental(this.props.rentalId).on('value', rental => {
+                this.setState({
+                    rentalId: rental.key,
+                    title: rental.val().title,
+                    description: rental.val().description,
+                    users: rental.val().users,
+                });
+            })
+        }
+    }
+
+    componentDidUpdate(prevProps){
+        if(prevProps.rentalId !== this.props.rentalId){
+            db.getRental(this.props.rentalId).on('value', rental => {
                 this.setState({
                     rentalId: rental.key,
                     title: rental.val().title,
@@ -91,26 +70,21 @@ class RentalUsersList extends Component {
         const {users, rentalId, title, description} = this.state;
 
         let list =
-                <div>
-                    <List>
-                        {Object.keys(users).map(key =>
-                            <RentalUsersListItem userId={key} rentalId={rentalId} key={key}/>
-                        )}
-                    </List>
-                </div>
+            <div>
+                <List>
+                    {Object.keys(users).map(key =>
+                        <RentalUsersListItem userId={key} rentalId={rentalId} key={key}/>
+                    )}
+                </List>
+            </div>
 
         return (
             <div>
-                <div className={classes.header}><h3>Benuzter von {title} {description} vewalten</h3></div>
+                <div className={classes.header}><h3>Benuzter</h3></div>
                 {list}
-                <hr />
             </div>
-
-
-        )
-            ;
+        );
     }
 }
-
 
 export default withRouter(withStyles(styles)(RentalUsersList));

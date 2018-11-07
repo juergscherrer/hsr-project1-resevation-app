@@ -24,7 +24,7 @@ class RentalList extends React.Component {
 
         };
 
-        this.editRental = this.editRental.bind(this);
+        this.openDetails = this.openDetails.bind(this);
     }
 
     componentDidMount() {
@@ -38,12 +38,8 @@ class RentalList extends React.Component {
         this.setState({rentals: null});
     }
 
-    editRental(rentalId){
-        this.props.editRental(rentalId);
-    }
-
-    handleManageUsers(rentalId){
-        this.props.handleManageUsers(rentalId);
+    openDetails(rentalId){
+        this.props.openDetails(rentalId);
     }
 
     render() {
@@ -56,7 +52,7 @@ class RentalList extends React.Component {
                 <div className={classes.root}>
                     <List>
                         {Object.keys(rentals).map(key =>
-                            <RentalListItem handleEditClick={this.editRental} handleManageUsersClick={this.handleManageUsers.bind(this)} rental={rentals[key]} key={key} rentalId={key}/>
+                            <RentalListItem openDetails={this.openDetails} rental={rentals[key]} key={key} rentalId={key}/>
                         )}
                     </List>
                 </div>

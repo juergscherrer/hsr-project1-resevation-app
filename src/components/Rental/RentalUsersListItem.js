@@ -44,6 +44,18 @@ class RentalListItem extends React.Component {
     }
 
     componentDidMount() {
+        this.getUserRental();
+        this.getUser();
+    }
+
+    componentDidUpdate(prevProps){
+        if(prevProps.rentalId !== this.props.rentalId){
+            this.getUserRental();
+            this.getUser();
+        }
+    }
+
+    getUserRental = () => {
         db.getUserRental(this.props.userId, this.props.rentalId).on('value', userRental => {
             console.log('user_rental', userRental.val());
             this.setState({
@@ -54,16 +66,17 @@ class RentalListItem extends React.Component {
                 manager: userRental.val().manager,
             });
         })
+    };
 
+    getUser = () => {
         db.getUser(this.props.userId).on('value', user => {
-            console.log(user.val());
             this.setState({
                 firstname: user.val().firstname,
                 lastname: user.val().lastname,
                 email: user.val().email,
             })
         })
-    }
+    };
 
     handleOwnerChange(event) {
         let owner = event.target.checked;
@@ -97,13 +110,9 @@ class RentalListItem extends React.Component {
 
     };
 
-
-
     render() {
-        const {userRentalId, owner, manager, firstname, lastname, email} = this.state;
+        const {owner, manager, firstname, lastname, email} = this.state;
         const {classes} = this.props;
-
-        console.log('owner', owner);
 
         return (
             <ListItem>

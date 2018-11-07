@@ -39,29 +39,7 @@ class Dashboard extends Component {
 
         return (
             <div className={classes.layout}>
-                <Grid
-                    className={classes.content}
-                    container
-                    direction="row"
-                    justify="center"
-                    alignItems="flex-start"
-                    spacing={24}
-                >
-                    <Grid
-                        item
-                        xs={12} sm={6}
-                        display="flex"
-                    >
-                        <Rental/>
-                    </Grid>
-                    <Grid
-                        item
-                        xs={12} sm={6}
-                        display="flex"
-                    >
-
-                    </Grid>
-                </Grid>
+                <Rental/>
             </div>
         );
     }

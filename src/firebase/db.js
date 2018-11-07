@@ -1,7 +1,6 @@
 import { db } from './firebase';
 
 // User API
-
 export const doCreateUser = (id, firstname, lastname, email, admin = true) =>
     db.ref(`users/${id}`).set({
         firstname,
@@ -13,11 +12,11 @@ export const doCreateUser = (id, firstname, lastname, email, admin = true) =>
 export const onceGetUsers = () =>
     db.ref('users').once('value');
 
-
-// TODO onceGetUser löschen?
 export const getUser = (id) =>
     db.ref('users').child(id)
 
+
+// UserRental API
 export const newUserRental = (user_id, rental_id, owner, manager, title, description) =>
     db.ref(`user_rentals/${user_id}/${rental_id}`).set({
         title,
@@ -41,7 +40,6 @@ export const editUserRental = (user_id, rental_id, title, description, owner, ma
     });
 
 // Rentals API
-
 export const newRental = (title, description, priceForGuest, priceForOwner, deleted = false) =>
     db.ref(`rentals`).push({
         title,
@@ -62,5 +60,3 @@ export const editRental = (id, title, description, priceForGuest, priceForOwner)
         priceForGuest,
         priceForOwner,
 });
-
-
