@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import RentalForm from './RentalForm';
 import RentalList from './RentalList';
-import RentalUsersForm from './RentalUsersForm';
+import RentalUsersList from './RentalUsersList';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -34,7 +34,7 @@ class Rental extends React.Component {
         this.state = {
             rentals: null,
             showRentalForm: false,
-            showRentalUsersForm: false,
+            showRentalUsersList: false,
             rentalId: null
         };
         this.handleClick = this.handleClick.bind(this);
@@ -50,7 +50,7 @@ class Rental extends React.Component {
     }
 
     handleManageUsers(rentalId){
-        this.setState({showRentalUsersForm: true, rentalId: rentalId})
+        this.setState({showRentalUsersList: true, rentalId: rentalId})
     }
 
     render() {
@@ -75,8 +75,8 @@ class Rental extends React.Component {
                         </Grid>
                     </Grid>
                 { this.state.showRentalForm && <RentalForm rentalId={this.state.rentalId} handleClick={this.handleClick.bind(this)}/>}
-                { this.state.showRentalUsersForm && <RentalUsersForm rentalId={this.state.rentalId} handleClick={this.handleClick.bind(this)}/>}
                 </div>
+                { this.state.showRentalUsersList && <RentalUsersList rentalId={this.state.rentalId} handleClick={this.handleClick.bind(this)}/>}
                 <RentalList editRental={this.editRental} handleManageUsers={this.handleManageUsers.bind(this)}/>
             </Paper>
 

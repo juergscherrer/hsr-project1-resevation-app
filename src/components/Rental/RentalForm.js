@@ -152,8 +152,8 @@ class RentalForm extends Component {
             priceForOwner === '';
 
         return (
-
-
+            <div>
+            <div className={classes.header}><h3>{this.state.id ? this.state.title+' bearbeiten' : 'Neues Mietobjekt erstellen'}</h3></div>
             <form className={classes.form} onSubmit={this.onSubmit}>
                 <FormControl margin="normal" required fullWidth>
                     <InputLabel htmlFor="title">Titel</InputLabel>
@@ -193,6 +193,7 @@ class RentalForm extends Component {
                     Speichern
                 </Button>
             </form>
+        </div>
         )
             ;
     }
