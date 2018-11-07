@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
 import RentalForm from './RentalForm';
 import RentalList from './RentalList';
-import RentalUsersForm from './RentalUsersForm';
+import RentalDetails from './RentalDetails';
 
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -34,52 +34,84 @@ class Rental extends React.Component {
         this.state = {
             rentals: null,
             showRentalForm: false,
-            showRentalUsersForm: false,
+            showRentalDetails: false,
             rentalId: null
         };
-        this.handleClick = this.handleClick.bind(this);
-        this.editRental = this.editRental.bind(this);
+        this.openForm = this.openForm.bind(this);
+        this.openDetails = this.openDetails.bind(this);
     }
 
-    handleClick(){
+    openForm(){
         this.state.showRentalForm ? this.setState({showRentalForm: false, rentalId: null}) : this.setState({showRentalForm: true})
     }
 
-    editRental(rentalId){
-        this.setState({showRentalForm: true, rentalId: rentalId})
-    }
-
-    handleManageUsers(rentalId){
-        this.setState({showRentalUsersForm: true, rentalId: rentalId})
+    openDetails(rentalId){
+        this.setState({showRentalDetails: true, rentalId: rentalId})
     }
 
     render() {
         const {classes} = this.props;
+        const {showRentalDetails, rentalId} = this.state;
 
 
         return (
-            <Paper className={classes.paper}>
-                <div className={classes.header}>
-                    <Grid
-                        container
-                        justify= "space-between"
-                        alignItems="center"
-                    >
-                        <Grid item>
-                            <Typography variant="headline">Wohnungen</Typography>
-                        </Grid>
-                        <Grid item>
-                            <Button variant="fab" color={this.state.showRentalForm ? 'secondary' : 'primary'} onClick={this.handleClick}>
-                                {this.state.showRentalForm ? <CloseIcon /> : <AddIcon />}
-                            </Button>
-                        </Grid>
-                    </Grid>
-                { this.state.showRentalForm && <RentalForm rentalId={this.state.rentalId} handleClick={this.handleClick.bind(this)}/>}
-                { this.state.showRentalUsersForm && <RentalUsersForm rentalId={this.state.rentalId} handleClick={this.handleClick.bind(this)}/>}
-                </div>
-                <RentalList editRental={this.editRental} handleManageUsers={this.handleManageUsers.bind(this)}/>
-            </Paper>
+            <Grid
+                className={classes.content}
+                container
+                direction="row"
+                justify="center"
+                alignItems="flex-start"
+                spacing={24}
+            >
+                <Grid
+                    item
+                    xs={12} sm={6}
+                    display="flex"
+                >
+                    <Paper className={classes.paper}>
+                        <div className={classes.header}>
+                            <Grid
+                                container
+                                justify= "space-between"
+                                alignItems="center"
+                            >
+                                <Grid item>
+                                    <Typography variant="headline">Mietobjekte</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Button variant="fab" color={this.state.showRentalForm ? 'secondary' : 'primary'} onClick={this.openForm}>
+                                        {this.state.showRentalForm ? <CloseIcon /> : <AddIcon />}
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                            { this.state.showRentalForm && <RentalForm handleClick={this.openForm}/>}
+                        </div>
+                        <RentalList openDetails={this.openDetails}/>
+                    </Paper>
+                </Grid>
+                <Grid
+                    item
+                    xs={12} sm={6}
+                    display="flex"
+                >
 
+                    <Paper className={classes.paper}>
+                        <div className={classes.header}>
+                            <Grid
+                                container
+                                justify= "space-between"
+                                alignItems="center"
+                            >
+                                <Grid item>
+                                    <Typography variant="headline">Details</Typography>
+                                </Grid>
+                            </Grid>
+                        </div>
+                        {showRentalDetails ? <RentalDetails rentalId={rentalId}/> : <span className='emptyMessage'>Bitte Mietobjekt aus Liste wählen...</span>}
+                    </Paper>
+
+                </Grid>
+            </Grid>
         );
     }
 }

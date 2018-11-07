@@ -23,44 +23,12 @@ class Dashboard extends Component {
         const {classes} = this.props;
 
         return (
-            <React.Fragment>
-                <Grid
-                    className={classes.content}
-                    container
-                    direction="row"
-                    justify="center"
-                    alignItems="flex-start"
-                    spacing={24}
-                >
-                    <Grid
-                        item
-                        xs={12} sm={6}
-                        display="flex"
-                    >
-                        <Rental/>
-                    </Grid>
-                    <Grid
-                        item
-                        xs={12} sm={6}
-                        display="flex"
-                    >
-
-                    </Grid>
-                </Grid>
-            </React.Fragment>
+            <div className={classes.layout}>
+                <Rental/>
+            </div>
         );
     }
 }
-
-// const UserList = ({users}) =>
-//     <div>
-//         <h2>List of Usernames of Users</h2>
-//         <p>(Saved on Sign Up in Firebase Database)</p>
-//
-//         {Object.keys(users).map(key =>
-//             <div key={key}>{users[key].firstname} {users[key].lastname}</div>
-//         )}
-//     </div>
 
 const authCondition = (authUser) => !!authUser;
 
