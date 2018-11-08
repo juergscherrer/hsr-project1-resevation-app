@@ -1,7 +1,6 @@
 import React from 'react';
 import RentalListItem from './RentalListItem';
-import { db } from '../../firebase';
-import { auth } from '../../firebase/index';
+import { db, auth } from '../../firebase';
 
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
@@ -27,11 +26,16 @@ class RentalList extends React.Component {
         this.openDetails = this.openDetails.bind(this);
     }
 
+
     componentDidMount() {
-        db.getUserRentals(auth.currentUser().uid).on('value', userRental => {
-            console.log('user_rentals', userRental.val());
-            this.setState({ rentals: userRental.val()});
-        })
+        this.getRentals();
+    }
+
+    getRentals() {
+        db.collection("user_rentals")
+            .onSnapshot(userRentals => {
+                this.setState({ rentals: userRentals.docs});
+            });
     }
 
     componentWillUnmount() {
@@ -46,20 +50,23 @@ class RentalList extends React.Component {
         const {classes} = this.props;
         const {rentals} = this.state;
 
-        let list = '';
+        let content = '';
         if(rentals){
-            list =
+
+            let list = ''
+
+            content =
                 <div className={classes.root}>
                     <List>
-                        {Object.keys(rentals).map(key =>
-                            <RentalListItem openDetails={this.openDetails} rental={rentals[key]} key={key} rentalId={key}/>
-                        )}
+                        {rentals.map((rental, index) => {
+                            return <RentalListItem openDetails={this.openDetails} rental={rental.data()} key={index} rentalId={rental.id}/>;
+                        })}
                     </List>
                 </div>
         }
 
         return (
-            <div>{list}</div>
+            <div>{content}</div>
 
         );
     }

@@ -10,7 +10,7 @@ export const doCreateUser = (id, firstname, lastname, email, admin = true) =>
     });
 
 export const onceGetUsers = () =>
-    db.ref('users').once('value');
+    db.collection('user_rentals').get()
 
 export const getUser = (id) =>
     db.ref('users').child(id)
@@ -25,8 +25,8 @@ export const newUserRental = (user_id, rental_id, owner, manager, title, descrip
         manager
     });
 
-export const getUserRentals = (user_id) =>
-    db.ref(`user_rentals/${user_id}`)
+export const getUserRentals = () =>
+    db.collection("user_rentals")
 
 export const getUserRental = (user_id, rental_id) =>
     db.ref(`user_rentals/${user_id}/${rental_id}`)
