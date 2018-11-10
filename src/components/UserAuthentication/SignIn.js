@@ -1,13 +1,9 @@
 import React, {Component} from 'react';
 import {withRouter} from 'react-router-dom';
-
-
-import { SignUpLink } from './SignUp';
-import { PasswordForgetLink } from './PasswordForget';
-import { auth } from '../../firebase/index';
+import {SignUpLink} from './SignUp';
+import {PasswordForgetLink} from './PasswordForget';
+import {auth} from '../../firebase/index';
 import * as routes from '../../constants/routes';
-
-
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -23,7 +19,6 @@ import LockIcon from '@material-ui/icons/LockOutlined';
 import InputLabel from '@material-ui/core/InputLabel';
 import RemoveRedEye from '@material-ui/icons/RemoveRedEye';
 import Background from '../../img/loginscreen-jaunpassstrasse.jpg';
-
 
 const byPropKey = (propertyName, value) => () => ({
     [propertyName]: value,
@@ -55,7 +50,6 @@ const styles = theme => ({
         backgroundSize: 'cover',
     },
     paper: {
-        //marginTop: theme.spacing.unit * 8,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -97,7 +91,7 @@ class SignInForm extends Component {
 
         auth.doSignInWithEmailAndPassword(email, password)
             .then(() => {
-                this.setState({ ...INITIAL_STATE });
+                this.setState({...INITIAL_STATE});
                 history.push(routes.DASHBOARD);
             })
             .catch(error => {
@@ -128,13 +122,8 @@ class SignInForm extends Component {
             email === '';
 
         return (
-
-
             <main className={classes.background}>
-
                 <section className={classes.layout}>
-
-
                     <Paper className={classes.paper}>
                         <Avatar className={classes.avatar}>
                             <LockIcon/>
@@ -159,8 +148,6 @@ class SignInForm extends Component {
                                         </InputAdornment>
                                     }
                                 />
-
-
                             </FormControl>
                             <FormControl margin="normal" required fullWidth>
                                 <InputLabel htmlFor="password">Password</InputLabel>
@@ -172,7 +159,6 @@ class SignInForm extends Component {
                                     value={password}
                                     onChange={event => this.setState(byPropKey('password', event.target.value))}
                                     placeholder="Password"
-
                                     startAdornment={
                                         <InputAdornment position="start">
                                             <Lock/>
@@ -199,7 +185,7 @@ class SignInForm extends Component {
                                 Sign in
                             </Button>
 
-                            <PasswordForgetLink />
+                            <PasswordForgetLink/>
                             <SignUpLink/>
 
                             {error && <p>{error.message}</p>}
@@ -212,11 +198,8 @@ class SignInForm extends Component {
     }
 }
 
-
 SignInForm.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-
 export default withRouter(withStyles(styles)(SignInForm));
-
