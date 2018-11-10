@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Dashboard from "./Dashboard";
-import PasswordForgetPage from "./UserAuthentication/PasswordForget";
+import PasswordForgetPage from "./UserAuthentication/PasswordForgetPage";
 import SignInPage from "./UserAuthentication/SignIn";
 import SignUpPage from "./UserAuthentication/SignUp";
 import InvoicesPage from "./Invoices";

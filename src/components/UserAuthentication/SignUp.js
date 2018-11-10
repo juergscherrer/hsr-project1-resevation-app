@@ -12,9 +12,9 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
-
 import AssignmentInd from '@material-ui/icons/AssignmentInd';
-
+import Snackbar from '@material-ui/core/Snackbar';
+import Grid from '@material-ui/core/Grid';
 
 const SignUpPage = ({history}) =>
     <div>
@@ -28,7 +28,11 @@ const INITIAL_STATE = {
     passwordOne: '',
     passwordTwo: '',
     error: null,
-    redirect: false
+    redirect: false,
+    open: false,
+    Transition: null,
+    message: '',
+    toLogin: false,
 };
 
 const styles = theme => ({
@@ -63,6 +67,10 @@ const styles = theme => ({
         marginTop: theme.spacing.unit * 3,
         marginBottom: theme.spacing.unit * 1,
     },
+    cancel: {
+        marginTop: theme.spacing.unit * 3,
+        margin: theme.spacing.unit,
+    },
     avatar: {
         margin: theme.spacing.unit,
         backgroundColor: theme.palette.primary.main,
@@ -76,8 +84,13 @@ const byPropKey = (propertyName, value) => () => ({
 class SignUpFormWithoutStyles extends Component {
     constructor(props) {
         super(props);
-
         this.state = {...INITIAL_STATE};
+    }
+
+    handleCancelSubmit(){
+        this.setState({
+            toLogin: true
+        })
     }
 
     onSubmit = (event) => {
@@ -118,6 +131,8 @@ class SignUpFormWithoutStyles extends Component {
             })
             .catch(error => {
                 this.setState(byPropKey('error', error));
+                this.setState(byPropKey('message', error.message));
+                this.setState(byPropKey('open', true));
             });
 
         event.preventDefault();
@@ -128,6 +143,10 @@ class SignUpFormWithoutStyles extends Component {
             return <Redirect to='/'/>
         }
     }
+
+    handleClose = () => {
+        this.setState({open: false});
+    };
 
     render() {
         const {classes} = this.props;
@@ -146,6 +165,11 @@ class SignUpFormWithoutStyles extends Component {
             email === '' ||
             firstname === '' ||
             lastname === '';
+        const {vertical, horizontal} = {vertical: 'bottom', horizontal: 'left'};
+
+        if (this.state.toLogin === true) {
+            return <Redirect to='/' />
+        }
 
         return (
             <main className={classes.background}>
@@ -217,19 +241,32 @@ class SignUpFormWithoutStyles extends Component {
                                     placeholder="Passwort bestätigen"
                                 />
                             </FormControl>
-                            <Button
-                                fullWidth
-                                variant="raised"
-                                color="primary"
-                                className={classes.submit}
-                                disabled={isInvalid}
-                                type="submit">
-                                Jetzt registrieren
-                            </Button>
 
-                            {error && <p>{error.message}</p>}
+                                <Grid container
+                                      direction="row"
+                                      justify="flex-end"
+                                      alignItems="flex-end">
+                                    <Button className={classes.cancel} onClick={() => { console.log('onClick'); this.handleCancelSubmit() }}>Abbrechen</Button>
+                                    <Button
+                                        variant="raised"
+                                        color="primary"
+                                        className={classes.submit}
+                                        disabled={isInvalid}
+                                        type="submit">
+                                        Registrieren
+                                    </Button>
+                                </Grid>
 
                         </form>
+                        <Snackbar
+                            anchorOrigin={{vertical, horizontal}}
+                            open={this.state.open}
+                            onClose={this.handleClose}
+                            ContentProps={{
+                                'aria-describedby': 'message-id',
+                            }}
+                            message={<span id="message-id">{this.state.message || ''}</span>}
+                        />
                         {this.renderRedirect()}
                     </Paper>
                 </section>
@@ -239,20 +276,12 @@ class SignUpFormWithoutStyles extends Component {
 }
 
 const SignUpLink = () =>
-    <p>
-        Don't have an account?
-        {' '}
-        <Link to={routes.SIGN_UP}>Sign Up</Link>
-    </p>
+    <Link to={routes.SIGN_UP}>Noch nicht registriert?</Link>
 
 SignUpPage.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-
 export default withRouter(withStyles(styles)(SignUpPage));
-
 const SignUpForm = withStyles(styles)(SignUpFormWithoutStyles);
-
-
 export {SignUpForm, SignUpLink};

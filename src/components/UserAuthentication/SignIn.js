@@ -19,6 +19,8 @@ import LockIcon from '@material-ui/icons/LockOutlined';
 import InputLabel from '@material-ui/core/InputLabel';
 import RemoveRedEye from '@material-ui/icons/RemoveRedEye';
 import Background from '../../img/loginscreen-jaunpassstrasse.jpg';
+import { Link } from 'react-router-dom';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const byPropKey = (propertyName, value) => () => ({
     [propertyName]: value,
@@ -29,6 +31,9 @@ const INITIAL_STATE = {
     password: '',
     error: null,
     passwordIsMasked: true,
+    open: false,
+    Transition: null,
+    message: ''
 };
 
 const styles = theme => ({
@@ -70,6 +75,9 @@ const styles = theme => ({
     eye: {
         cursor: 'pointer',
     },
+    passwordForgetLink:{
+        marginRight: theme.spacing.unit * 3,
+    }
 });
 
 class SignInForm extends Component {
@@ -96,6 +104,8 @@ class SignInForm extends Component {
             })
             .catch(error => {
                 this.setState(byPropKey('error', error));
+                this.setState(byPropKey('message', error.message));
+                this.setState(byPropKey('open', true))
             });
 
         event.preventDefault();
@@ -105,6 +115,10 @@ class SignInForm extends Component {
         this.setState(prevState => ({
             passwordIsMasked: !prevState.passwordIsMasked,
         }));
+    };
+
+    handleClose = () => {
+        this.setState({ open: false });
     };
 
     render() {
@@ -120,6 +134,7 @@ class SignInForm extends Component {
         const isInvalid =
             password === '' ||
             email === '';
+        const { vertical, horizontal } = { vertical: 'bottom', horizontal: 'left'};
 
         return (
             <main className={classes.background}>
@@ -128,10 +143,10 @@ class SignInForm extends Component {
                         <Avatar className={classes.avatar}>
                             <LockIcon/>
                         </Avatar>
-                        <Typography variant="headline">Sign in</Typography>
+                        <Typography variant="headline">Login</Typography>
                         <form className={classes.form} onSubmit={this.onSubmit}>
                             <FormControl margin="normal" required fullWidth>
-                                <InputLabel htmlFor="email">Email Address</InputLabel>
+                                <InputLabel htmlFor="email">E-Mail</InputLabel>
                                 <Input
                                     id="email"
                                     name="email"
@@ -140,7 +155,7 @@ class SignInForm extends Component {
                                     value={email}
                                     onChange={event => this.setState(byPropKey('email', event.target.value))}
                                     type="text"
-                                    placeholder="Email Address"
+                                    placeholder="E-Mail"
 
                                     startAdornment={
                                         <InputAdornment position="start">
@@ -150,7 +165,7 @@ class SignInForm extends Component {
                                 />
                             </FormControl>
                             <FormControl margin="normal" required fullWidth>
-                                <InputLabel htmlFor="password">Password</InputLabel>
+                                <InputLabel htmlFor="password">Passwort</InputLabel>
                                 <Input
                                     name="password"
                                     type={passwordIsMasked ? 'password' : 'text'}
@@ -158,7 +173,7 @@ class SignInForm extends Component {
                                     autoComplete="current-password"
                                     value={password}
                                     onChange={event => this.setState(byPropKey('password', event.target.value))}
-                                    placeholder="Password"
+                                    placeholder="Passwort"
                                     startAdornment={
                                         <InputAdornment position="start">
                                             <Lock/>
@@ -182,15 +197,22 @@ class SignInForm extends Component {
                                 disabled={isInvalid}
                                 type="submit"
                             >
-                                Sign in
+                               Login
                             </Button>
 
-                            <PasswordForgetLink/>
+                            <Link className={classes.passwordForgetLink} to={routes.PASSWORD_FORGET}>Passwort vergessen?</Link>
                             <SignUpLink/>
 
-                            {error && <p>{error.message}</p>}
-
                         </form>
+                        <Snackbar
+                            anchorOrigin={{vertical, horizontal}}
+                            open={this.state.open}
+                            onClose={this.handleClose}
+                            ContentProps={{
+                                'aria-describedby': 'message-id',
+                            }}
+                            message={<span id="message-id">{this.state.message || ''}</span>}
+                        />
                     </Paper>
                 </section>
             </main>
