@@ -87,7 +87,7 @@ class SignUpFormWithoutStyles extends Component {
         this.state = {...INITIAL_STATE};
     }
 
-    handleCancelSubmit(){
+    handleCancelSubmit() {
         this.setState({
             toLogin: true
         })
@@ -108,16 +108,14 @@ class SignUpFormWithoutStyles extends Component {
         auth.doCreateUserWithEmailAndPassword(email, passwordOne)
             .then(authUser => {
 
-                // Add a new document with a generated id.
-                db.collection("users").add({
+                var doc = db.collection("users").doc(auth.currentUser().uid);
+                doc.set({
                     admin: true,
                     email,
                     firstname,
                     lastname
                 })
                     .then(user => {
-                        console.log("Document written with ID: ", user.id);
-
                         this.setState({
                             redirect: true
                         })
@@ -127,8 +125,8 @@ class SignUpFormWithoutStyles extends Component {
                         console.error("Error adding document: ", error);
                     });
 
-
             })
+
             .catch(error => {
                 this.setState(byPropKey('error', error));
                 this.setState(byPropKey('message', error.message));
@@ -168,7 +166,7 @@ class SignUpFormWithoutStyles extends Component {
         const {vertical, horizontal} = {vertical: 'bottom', horizontal: 'left'};
 
         if (this.state.toLogin === true) {
-            return <Redirect to='/' />
+            return <Redirect to='/'/>
         }
 
         return (
@@ -242,20 +240,23 @@ class SignUpFormWithoutStyles extends Component {
                                 />
                             </FormControl>
 
-                                <Grid container
-                                      direction="row"
-                                      justify="flex-end"
-                                      alignItems="flex-end">
-                                    <Button className={classes.cancel} onClick={() => { console.log('onClick'); this.handleCancelSubmit() }}>Abbrechen</Button>
-                                    <Button
-                                        variant="raised"
-                                        color="primary"
-                                        className={classes.submit}
-                                        disabled={isInvalid}
-                                        type="submit">
-                                        Registrieren
-                                    </Button>
-                                </Grid>
+                            <Grid container
+                                  direction="row"
+                                  justify="flex-end"
+                                  alignItems="flex-end">
+                                <Button className={classes.cancel} onClick={() => {
+                                    console.log('onClick');
+                                    this.handleCancelSubmit()
+                                }}>Abbrechen</Button>
+                                <Button
+                                    variant="raised"
+                                    color="primary"
+                                    className={classes.submit}
+                                    disabled={isInvalid}
+                                    type="submit">
+                                    Registrieren
+                                </Button>
+                            </Grid>
 
                         </form>
                         <Snackbar

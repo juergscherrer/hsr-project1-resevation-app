@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import {withStyles} from "@material-ui/core/styles/index";
 import {withRouter} from "react-router-dom";
 import PropTypes from 'prop-types';
-import {auth} from "../../firebase";
+import { db, auth } from '../../firebase';
 import * as firebase from "firebase";
 
 const styles = theme => ({
@@ -17,7 +17,9 @@ const INITIAL_STATE = {
     user: {},
 };
 
+
 class PersonalInformationForm extends Component {
+
 
     constructor(props) {
         super(props);
@@ -28,22 +30,27 @@ class PersonalInformationForm extends Component {
     componentDidMount() {
         // Updating the `users` local state attribute when the Firebase Realtime Database data
         // under the '/users' path changes.
-        this.firebaseRef = firebase.database().ref('/users').child(auth.currentUser().uid);
 
-        this.firebaseCallback = this.firebaseRef.on('value', (snap) => {
-            this.setState({user: snap.val()});
-        });
+        db.collection("users").doc(auth.currentUser().uid)
+            .onSnapshot(doc => {
+                this.setState({ user: doc.data()});
+            });
     }
 
     componentWillUnmount() {
-        // Un-register the listener on '/users'.
-        this.firebaseRef.off('value', this.firebaseCallback);
+
     }
 
     handleChange(event) {
         var user = {...this.state.user};
         user[event.target.name] = event.target.value;
-        this.firebaseRef.update(user);
+
+
+        //this.firebaseRef.update(user);
+        db.collection("users").doc(auth.currentUser().uid).set(user);
+
+
+
     };
 
     render() {
