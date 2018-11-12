@@ -44,8 +44,8 @@ class RentalDetails extends React.Component {
 
     }
 
-    componentDidUpdate(prevProps){
-        if(prevProps.rentalId !== this.props.rentalId){
+    componentDidUpdate(prevProps) {
+        if (this.props.rentalId !== prevProps.rentalId) {
             this.setState({
                 rentalId: this.props.rentalId
             });

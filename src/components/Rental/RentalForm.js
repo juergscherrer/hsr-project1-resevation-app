@@ -107,19 +107,26 @@ class RentalForm extends Component {
     };
 
     newRental = (title, description, priceForGuest, priceForOwner) => {
-        db.newRental(title, description, priceForGuest, priceForOwner)
-            .then(newRental => {
-                db.newUserRental(auth.currentUser().uid, newRental.key, true, true, title, description)
-                    .then(() => {
+        db.collection("rentals").add({
+            title,
+            description,
+            priceForGuest,
+            priceForOwner
+        })
+            .then(rental => {
+                db.collection("userRentals").add({
+                    userId: auth.currentUser().uid,
+                    rentalId: rental.id,
+                    owner: true,
+                    manager: true
+                })
+                    .then(userRental => {
                         this.setState({...INITIAL_STATE});
                         this.props.handleClick();
                     })
-                    .catch(error => {
-                        this.setState(byPropKey('error', error));
-                    });
             })
-            .catch(error => {
-                this.setState(byPropKey('error', error));
+            .catch(function(error) {
+                console.error("Error adding document: ", error);
             });
 
     };
@@ -152,7 +159,7 @@ class RentalForm extends Component {
             priceForOwner === '';
 
         return (
-            <div>
+            <React.Fragment>
             <div className={classes.header}><h3>{this.state.id ? this.state.title+' bearbeiten' : 'Neues Mietobjekt erstellen'}</h3></div>
             <form className={classes.form} onSubmit={this.onSubmit}>
                 <FormControl margin="normal" required fullWidth>
@@ -193,9 +200,8 @@ class RentalForm extends Component {
                     Speichern
                 </Button>
             </form>
-        </div>
-        )
-            ;
+        </React.Fragment>
+        );
     }
 }
 

@@ -28,11 +28,12 @@ class RentalList extends React.Component {
 
 
     componentDidMount() {
-        this.getRentals();
+        this.getUserRentals();
     }
 
-    getRentals() {
-        db.collection("user_rentals")
+    getUserRentals() {
+        db.collection("userRentals")
+            .where("userId", "==", auth.currentUser().uid)
             .onSnapshot(userRentals => {
                 this.setState({ rentals: userRentals.docs});
             });
@@ -59,7 +60,7 @@ class RentalList extends React.Component {
                 <div className={classes.root}>
                     <List>
                         {rentals.map((rental, index) => {
-                            return <RentalListItem openDetails={this.openDetails} rental={rental.data()} key={index} rentalId={rental.id}/>;
+                            return <RentalListItem openDetails={this.openDetails} rental={rental.data()} key={index}/>;
                         })}
                     </List>
                 </div>

@@ -14,9 +14,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {auth, db} from '../../firebase';
 
 
-const styles = theme => ({
-
-});
+const styles = theme => ({});
 
 const byPropKey = (propertyName, value) => () => ({
     [propertyName]: value,
@@ -28,14 +26,7 @@ class RentalListItem extends React.Component {
         super(props);
 
         this.state = {
-            userRentalId: null,
-            title: null,
-            description: null,
-            owner: null,
-            manager: null,
-            firstname: null,
-            lastname: null,
-            email: null,
+            user: null,
 
         };
 
@@ -44,39 +35,21 @@ class RentalListItem extends React.Component {
     }
 
     componentDidMount() {
-        this.getUserRental();
         this.getUser();
     }
 
-    componentDidUpdate(prevProps){
-        if(prevProps.rentalId !== this.props.rentalId){
-            this.getUserRental();
+    componentDidUpdate(prevProps) {
+        if (this.props.userRental.data().userId !== prevProps.userRental.data().userId) {
             this.getUser();
         }
     }
 
-    getUserRental = () => {
-        db.getUserRental(this.props.userId, this.props.rentalId).on('value', userRental => {
-            console.log('user_rental', userRental.val());
-            this.setState({
-                userRentalId: userRental.key,
-                title: userRental.val().title,
-                description: userRental.val().description,
-                owner: userRental.val().owner,
-                manager: userRental.val().manager,
+    getUser() {
+        db.collection("users").doc(this.props.userRental.data().userId)
+            .onSnapshot(user => {
+                this.setState({user: user.data()});
             });
-        })
-    };
-
-    getUser = () => {
-        db.getUser(this.props.userId).on('value', user => {
-            this.setState({
-                firstname: user.val().firstname,
-                lastname: user.val().lastname,
-                email: user.val().email,
-            })
-        })
-    };
+    }
 
     handleOwnerChange(event) {
         let owner = event.target.checked;
@@ -88,38 +61,61 @@ class RentalListItem extends React.Component {
         this.editManagerUserRental(manager);
     }
 
+    // editOwnerUserRental = (owner) => {
+    //     db.editUserRental(this.props.userId, this.state.userRentalId, this.state.title, this.state.description, owner, this.state.manager)
+    //         .then(() => {
+    //             // this.setState({owner: owner});
+    //         })
+    //         .catch(error => {
+    //             this.setState(byPropKey('error', error));
+    //         });
+    //
+    // };
+
     editOwnerUserRental = (owner) => {
-        db.editUserRental(this.props.userId, this.state.userRentalId, this.state.title, this.state.description, owner, this.state.manager)
-            .then(() => {
-                // this.setState({owner: owner});
+
+        const userRental = db.collection("userRentals").doc(this.props.userRental.id);
+
+        return userRental.update({
+            owner
+        })
+            .then(function () {
+                console.log("Document successfully updated!");
             })
-            .catch(error => {
-                this.setState(byPropKey('error', error));
+            .catch(function (error) {
+                console.error("Error updating document: ", error);
             });
 
     };
 
     editManagerUserRental = (manager) => {
-        db.editUserRental(this.props.userId, this.state.userRentalId, this.state.title, this.state.description, this.state.owner, manager)
-            .then(() => {
-                // this.setState({owner: owner});
+
+        const userRental = db.collection("userRentals").doc(this.props.userRental.id);
+
+        return userRental.update({
+            manager
+        })
+            .then(function () {
+                console.log("Document successfully updated!");
             })
-            .catch(error => {
-                this.setState(byPropKey('error', error));
+            .catch(function (error) {
+                console.error("Error updating document: ", error);
             });
 
     };
 
     render() {
-        const {owner, manager, firstname, lastname, email} = this.state;
-        const {classes} = this.props;
+
+        const {classes, userRental} = this.props;
+        const {owner, manager} = userRental.data();
 
         return (
             <ListItem>
                 <Avatar>
                     <PersonIcon/>
                 </Avatar>
-                <ListItemText primary={firstname && firstname+' '+lastname} secondary={email && email}/>
+                <ListItemText primary={this.state.user && this.state.user.firstname + ' ' + this.state.user.lastname}
+                              secondary={this.state.user && this.state.user.email}/>
                 <ListItemSecondaryAction>
                     <FormGroup row>
                         <FormControlLabel

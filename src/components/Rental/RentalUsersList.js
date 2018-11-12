@@ -17,9 +17,7 @@ const styles = theme => ({
 
 const INITIAL_STATE = {
     rentalId: '',
-    title: '',
-    description: '',
-    users: [],
+    userRentals: null,
     error: null,
 };
 
@@ -35,30 +33,23 @@ class RentalUsersList extends Component {
 
     componentDidMount() {
         if (this.props.rentalId) {
-            db.getRental(this.props.rentalId).on('value', rental => {
-                this.setState({
-                    rentalId: rental.key,
-                    title: rental.val().title,
-                    description: rental.val().description,
-                    users: rental.val().users,
-                });
-            })
+            this.getUserRentals();
         }
     }
 
-    componentDidUpdate(prevProps){
-        if(prevProps.rentalId !== this.props.rentalId){
-            db.getRental(this.props.rentalId).on('value', rental => {
-                this.setState({
-                    rentalId: rental.key,
-                    title: rental.val().title,
-                    description: rental.val().description,
-                    users: rental.val().users,
-                });
-            })
+    componentDidUpdate(prevProps) {
+        if (this.props.rentalId !== prevProps.rentalId) {
+            this.getUserRentals();
         }
     }
 
+    getUserRentals() {
+        db.collection("userRentals")
+            .where("rentalId", "==", this.props.rentalId)
+            .onSnapshot(userRentals => {
+                this.setState({ userRentals: userRentals.docs});
+            });
+    }
 
     componentWillUnmount() {
         this.setState({...INITIAL_STATE});
@@ -67,16 +58,22 @@ class RentalUsersList extends Component {
 
     render() {
         const {classes} = this.props;
-        const {users, rentalId, title, description} = this.state;
+        const {userRentals, rentalId} = this.state;
 
-        let list =
+        let list;
+
+
+
+        if(userRentals){
+            list =
             <div>
                 <List>
-                    {Object.keys(users).map(key =>
-                        <RentalUsersListItem userId={key} rentalId={rentalId} key={key}/>
-                    )}
+                    {userRentals.map((userRental, index) => {
+                        return <RentalUsersListItem userRental={userRental} key={index}/>;
+                    })}
                 </List>
             </div>
+        }
 
         return (
             <div>

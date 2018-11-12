@@ -9,6 +9,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import CalendarIcon from '@material-ui/icons/CalendarToday';
+import { db } from "../../firebase";
 
 const styles = theme => ({
 
@@ -18,8 +19,27 @@ class RentalListItem extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {};
+        this.state = {
+            rental: null,
+        };
         this.handleOpenDetailsClick = this.handleOpenDetailsClick.bind(this);
+    }
+
+    componentDidMount() {
+        this.getRental();
+    }
+
+    componentDidUpdate(prevProps){
+        if(prevProps.rental.rentalId !== this.props.rental.rentalId){
+            this.getRental();
+        }
+    }
+
+    getRental() {
+        db.collection("rentals").doc(this.props.rental.rentalId)
+            .onSnapshot(rental => {
+                this.setState({ rental: rental.data()});
+            });
     }
 
     handleOpenDetailsClick(rentalId) {
@@ -28,14 +48,15 @@ class RentalListItem extends React.Component {
 
 
     render() {
-        const {classes, rental, rentalId} = this.props;
+        const {owner, manager, rentalId} = this.props.rental;
+        const { rental } = this.state;
 
         return (
             <ListItem button onClick={() => this.handleOpenDetailsClick(rentalId)}>
                 <Avatar>
-                    <HomeIcon color={rental.owner ? "primary" : "inherit"}/>
+                    <HomeIcon color={owner ? "primary" : "inherit"}/>
                 </Avatar>
-                <ListItemText primary={rental.title} secondary={rental.description}/>
+                <ListItemText primary={rental && rental.title} secondary={rental && rental.description}/>
                 <ListItemSecondaryAction>
                     <IconButton>
                         <CalendarIcon/>
