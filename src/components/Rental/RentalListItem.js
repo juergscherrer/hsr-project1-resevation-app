@@ -22,7 +22,6 @@ class RentalListItem extends React.Component {
         this.state = {
             rental: null,
         };
-        this.handleOpenDetailsClick = this.handleOpenDetailsClick.bind(this);
     }
 
     componentDidMount() {
@@ -42,17 +41,12 @@ class RentalListItem extends React.Component {
             });
     }
 
-    handleOpenDetailsClick(rentalId) {
-        this.props.openDetails(rentalId);
-    }
-
-
     render() {
         const {owner, manager, rentalId} = this.props.rental;
         const { rental } = this.state;
 
         return (
-            <ListItem button onClick={() => this.handleOpenDetailsClick(rentalId)}>
+            <ListItem button onClick={() => this.props.openDetails(rentalId)}>
                 <Avatar>
                     <HomeIcon color={owner ? "primary" : "inherit"}/>
                 </Avatar>

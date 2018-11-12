@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import MessageBox from '../MessageBox';
+
 import {withStyles} from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -27,11 +29,15 @@ class RentalListItem extends React.Component {
 
         this.state = {
             user: null,
+            openMessageBox: false,
+            message: null,
 
         };
 
         this.handleOwnerChange = this.handleOwnerChange.bind(this);
         this.handleManagerChange = this.handleManagerChange.bind(this);
+        this.setMessage = this.setMessage.bind(this);
+        this.handleCloseMessageBox = this.handleCloseMessageBox.bind(this);
     }
 
     componentDidMount() {
@@ -61,17 +67,6 @@ class RentalListItem extends React.Component {
         this.editManagerUserRental(manager);
     }
 
-    // editOwnerUserRental = (owner) => {
-    //     db.editUserRental(this.props.userId, this.state.userRentalId, this.state.title, this.state.description, owner, this.state.manager)
-    //         .then(() => {
-    //             // this.setState({owner: owner});
-    //         })
-    //         .catch(error => {
-    //             this.setState(byPropKey('error', error));
-    //         });
-    //
-    // };
-
     editOwnerUserRental = (owner) => {
 
         const userRental = db.collection("userRentals").doc(this.props.userRental.id);
@@ -95,14 +90,22 @@ class RentalListItem extends React.Component {
         return userRental.update({
             manager
         })
-            .then(function () {
-                console.log("Document successfully updated!");
+            .then(() => {
+                this.setMessage('Benuzter erfolgreich aktualisiert');
             })
-            .catch(function (error) {
-                console.error("Error updating document: ", error);
+            .catch((error)=> {
+                this.setMessage(error);
             });
 
     };
+
+    setMessage(message){
+        this.setState({openMessageBox: true, message: message});
+    }
+
+    handleCloseMessageBox(){
+        this.setState({openMessageBox: false, message: null});
+    }
 
     render() {
 
@@ -110,6 +113,7 @@ class RentalListItem extends React.Component {
         const {owner, manager} = userRental.data();
 
         return (
+            <React.Fragment>
             <ListItem>
                 <Avatar>
                     <PersonIcon/>
@@ -140,6 +144,8 @@ class RentalListItem extends React.Component {
                     </FormGroup>
                 </ListItemSecondaryAction>
             </ListItem>
+                <MessageBox open={this.state.openMessageBox} message={this.state.message} onClose={this.handleCloseMessageBox}/>
+            </React.Fragment>
         );
     }
 }
