@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Dashboard from "./Dashboard";
-import PasswordForgetPage from "./UserAuthentication/PasswordForget";
+import PasswordForgetPage from "./UserAuthentication/PasswordForgetPage";
 import SignInPage from "./UserAuthentication/SignIn";
 import SignUpPage from "./UserAuthentication/SignUp";
 import InvoicesPage from "./Invoices";
@@ -10,14 +10,11 @@ import AdminPage from "./Admin";
 import { Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {withStyles} from "@material-ui/core/styles/index";
-import withAuthorization from "./UserAuthentication/withAuthorization";
-
 
 const styles = theme => ({
     layout: {
-        maxWidth: 1280,
-        marginRight: "auto",
-        marginLeft: "auto",
+
+
     },
 });
 
