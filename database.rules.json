@@ -6,18 +6,18 @@
         ".write": "auth != null && auth.uid == $uid"
       }
     },
-      "rentals": {
+    "rentals": {
       ".read": true,
       ".write": true,
-     	".indexOn": "deleted"
+      ".indexOn": "deleted"
     },
-      "user_rentals": {
+    "user_rentals": {
       ".read": true,
-      ".write": true,
+      ".write": true
     },
-      "rental_users": {
+    "rental_users": {
       ".read": true,
-      ".write": true,
-    },
+      ".write": true
+    }
   }
 }
