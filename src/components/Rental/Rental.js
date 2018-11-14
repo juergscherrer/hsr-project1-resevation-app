@@ -16,6 +16,7 @@ import CloseIcon from "@material-ui/icons/Close";
 const styles = theme => ({
   paper: {
     marginTop: theme.spacing.unit * 2,
+    paddingBottom: theme.spacing.unit * 2,
     display: "flex",
     flexDirection: "column"
   },
@@ -36,6 +37,7 @@ class Rental extends React.Component {
     };
     this.openForm = this.openForm.bind(this);
     this.openDetails = this.openDetails.bind(this);
+    this.closeDetails = this.closeDetails.bind(this);
   }
 
   openForm() {
@@ -46,6 +48,10 @@ class Rental extends React.Component {
 
   openDetails(rentalId) {
     this.setState({ showRentalDetails: true, rentalId: rentalId });
+  }
+
+  closeDetails() {
+    this.setState({ showRentalDetails: false, rentalId: null });
   }
 
   render() {
@@ -98,7 +104,10 @@ class Rental extends React.Component {
                 </Grid>
               </div>
               {showRentalDetails ? (
-                <RentalDetails rentalId={rentalId} />
+                <RentalDetails
+                  rentalId={rentalId}
+                  closeDetails={this.closeDetails}
+                />
               ) : (
                 <span className="emptyMessage">
                   Bitte Mietobjekt aus Liste wählen...

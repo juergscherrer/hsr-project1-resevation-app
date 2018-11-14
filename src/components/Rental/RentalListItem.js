@@ -40,12 +40,21 @@ class RentalListItem extends React.Component {
       });
   }
 
+  openDetails = () => {
+    this.props.openDetails(this.props.rental.rentalId);
+    this.props.activeItem(this.props.index);
+  };
+
   render() {
     const { owner, manager, rentalId } = this.props.rental;
     const { rental } = this.state;
 
     return (
-      <ListItem button onClick={() => this.props.openDetails(rentalId)}>
+      <ListItem
+        button
+        onClick={() => this.openDetails()}
+        selected={this.props.selected}
+      >
         <Avatar>
           <HomeIcon color={owner ? "primary" : "inherit"} />
         </Avatar>

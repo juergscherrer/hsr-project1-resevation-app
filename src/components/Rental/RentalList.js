@@ -18,7 +18,8 @@ class RentalList extends React.Component {
     super(props);
 
     this.state = {
-      rentals: []
+      rentals: [],
+      activeItem: null
     };
   }
 
@@ -38,23 +39,32 @@ class RentalList extends React.Component {
     this.setState({ rentals: null });
   }
 
+  setActiveItem = key => {
+    this.setState({ activeItem: key });
+  };
+
   render() {
     const { classes } = this.props;
-    const { rentals } = this.state;
+    const { rentals, activeItem } = this.state;
 
     let content = "";
     if (rentals) {
-      let list = "";
-
       content = (
         <div className={classes.root}>
           <List>
             {rentals.map((rental, index) => {
+              let selected = false;
+              if (activeItem == index) {
+                selected = true;
+              }
               return (
                 <RentalListItem
                   openDetails={this.props.openDetails}
+                  activeItem={this.setActiveItem}
                   rental={rental.data()}
+                  index={index}
                   key={index}
+                  selected={selected}
                 />
               );
             })}
