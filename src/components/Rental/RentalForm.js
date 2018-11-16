@@ -1,20 +1,18 @@
-import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
-import { withStyles } from "@material-ui/core/styles";
-import classNames from "classnames";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Button from "@material-ui/core/Button";
-import SaveIcon from "@material-ui/icons/Save";
-import MessageBox from "../MessageBox";
+import React, { Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
+import { withStyles } from '@material-ui/core/styles';
+import classNames from 'classnames';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Button from '@material-ui/core/Button';
+import SaveIcon from '@material-ui/icons/Save';
 
-import { auth, db } from "../../firebase/index";
-import * as routes from "../../constants/routes";
+import { auth, db } from '../../firebase/index';
 
 const styles = theme => ({
   form: {
-    width: "100%", // Fix IE11 issue.
+    width: '100%', // Fix IE11 issue.
     marginTop: theme.spacing.unit
   },
 
@@ -23,8 +21,8 @@ const styles = theme => ({
   },
 
   container: {
-    display: "flex",
-    flexWrap: "wrap"
+    display: 'flex',
+    flexWrap: 'wrap'
   },
 
   formControl: {
@@ -45,12 +43,12 @@ const styles = theme => ({
 });
 
 const INITIAL_STATE = {
-  rentalId: "",
-  title: "",
-  description: "",
-  priceForGuest: "",
-  priceForOwner: "",
-  message: "",
+  rentalId: '',
+  title: '',
+  description: '',
+  priceForGuest: '',
+  priceForOwner: '',
+  message: '',
   openMessageBox: false,
   error: null
 };
@@ -64,9 +62,6 @@ class RentalForm extends Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
-
-    this.setMessage = this.setMessage.bind(this);
-    this.handleCloseMessageBox = this.handleCloseMessageBox.bind(this);
   }
 
   componentDidMount() {
@@ -81,8 +76,12 @@ class RentalForm extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
+  }
+
   getRental() {
-    db.collection("rentals")
+    db.collection('rentals')
       .doc(this.props.rentalId)
       .onSnapshot(rental => {
         this.setState({
@@ -93,10 +92,6 @@ class RentalForm extends Component {
           priceForOwner: rental.data().priceForOwner
         });
       });
-  }
-
-  componentWillUnmount() {
-    this.setState({ ...INITIAL_STATE });
   }
 
   onSubmit = event => {
@@ -129,7 +124,7 @@ class RentalForm extends Component {
   };
 
   newRental = (title, description, priceForGuest, priceForOwner) => {
-    db.collection("rentals")
+    db.collection('rentals')
       .add({
         title,
         description,
@@ -137,7 +132,7 @@ class RentalForm extends Component {
         priceForOwner
       })
       .then(rental => {
-        db.collection("userRentals")
+        db.collection('userRentals')
           .add({
             userId: auth.currentUser().uid,
             rentalId: rental.id,
@@ -147,15 +142,18 @@ class RentalForm extends Component {
           .then(userRental => {
             this.setState({ ...INITIAL_STATE });
             this.props.handleClick();
+            this.props.setMessage(`${title} wurde erfolgreich erstellt.`);
           });
       })
       .catch(function(error) {
-        this.setMessage(error);
+        this.props.setMessage(
+          `Mietobjekt konnte nicht erstellt werden. Fehlermeldung: ${error}`
+        );
       });
   };
 
   editRental = (rentalId, title, description, priceForGuest, priceForOwner) => {
-    const userRental = db.collection("rentals").doc(rentalId);
+    const userRental = db.collection('rentals').doc(rentalId);
 
     return userRental
       .update({
@@ -167,37 +165,32 @@ class RentalForm extends Component {
       .then(() => {
         this.setState({ ...INITIAL_STATE });
         this.props.handleClick();
+        this.props.setMessage(`${title} wurde erfolgreich aktualisiert.`);
       })
       .catch(error => {
-        this.setMessage(error);
+        this.props.setMessage(
+          `Mietobjekt konnte nicht aktualisiert werden. Fehlermeldung: ${error}`
+        );
       });
   };
-
-  setMessage(message) {
-    this.setState({ openMessageBox: true, message: message });
-  }
-
-  handleCloseMessageBox() {
-    this.setState({ openMessageBox: false, message: null });
-  }
 
   render() {
     const { classes } = this.props;
     const { title, description, priceForGuest, priceForOwner } = this.state;
 
     const isInvalid =
-      title === "" ||
-      description === "" ||
-      priceForGuest === "" ||
-      priceForOwner === "";
+      title === '' ||
+      description === '' ||
+      priceForGuest === '' ||
+      priceForOwner === '';
 
     return (
       <React.Fragment>
         <div className={classes.header}>
           <h3>
             {this.state.rentalId
-              ? this.state.title + " bearbeiten"
-              : "Neues Mietobjekt erstellen"}
+              ? this.state.title + ' bearbeiten'
+              : 'Neues Mietobjekt erstellen'}
           </h3>
         </div>
         <form className={classes.form} onSubmit={this.onSubmit}>
@@ -207,7 +200,7 @@ class RentalForm extends Component {
               id="title"
               value={title}
               onChange={event =>
-                this.setState(byPropKey("title", event.target.value))
+                this.setState(byPropKey('title', event.target.value))
               }
               autoFocus
             />
@@ -218,7 +211,7 @@ class RentalForm extends Component {
               id="description"
               value={description}
               onChange={event =>
-                this.setState(byPropKey("description", event.target.value))
+                this.setState(byPropKey('description', event.target.value))
               }
             />
           </FormControl>
@@ -231,7 +224,7 @@ class RentalForm extends Component {
               type="number"
               value={priceForGuest}
               onChange={event =>
-                this.setState(byPropKey("priceForGuest", event.target.value))
+                this.setState(byPropKey('priceForGuest', event.target.value))
               }
             />
           </FormControl>
@@ -244,7 +237,7 @@ class RentalForm extends Component {
               type="number"
               value={priceForOwner}
               onChange={event =>
-                this.setState(byPropKey("priceForOwner", event.target.value))
+                this.setState(byPropKey('priceForOwner', event.target.value))
               }
             />
           </FormControl>
@@ -261,11 +254,6 @@ class RentalForm extends Component {
             Speichern
           </Button>
         </form>
-        <MessageBox
-          open={this.state.openMessageBox}
-          message={this.state.message}
-          onClose={this.handleCloseMessageBox}
-        />
       </React.Fragment>
     );
   }

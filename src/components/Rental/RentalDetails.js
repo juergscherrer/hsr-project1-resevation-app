@@ -1,19 +1,19 @@
-import React from "react";
-import { db } from "../../firebase";
-import { auth } from "../../firebase/index";
+import React from 'react';
+import { db } from '../../firebase';
+import { auth } from '../../firebase/index';
 
-import RentalForm from "./RentalForm";
-import RentalUsersList from "./RentalUsersList";
+import RentalForm from './RentalForm';
+import RentalUsersList from './RentalUsersList';
 
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import DeleteIcon from "@material-ui/icons/Delete";
-import EditIcon from "@material-ui/icons/Edit";
-import CalendarIcon from "@material-ui/icons/CalendarToday";
-import UserIcon from "@material-ui/icons/People";
-import CloseIcon from "@material-ui/icons/Close";
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import CalendarIcon from '@material-ui/icons/CalendarToday';
+import UserIcon from '@material-ui/icons/People';
+import CloseIcon from '@material-ui/icons/Close';
 
 const styles = theme => ({
   topButtons: {
@@ -31,21 +31,30 @@ const styles = theme => ({
   }
 });
 
+const INITIAL_STATE = {
+  rentalId: null,
+  showRentalUsers: false,
+  showRentalForm: false,
+  deleteButtonDisabled: false
+};
+
 class RentalDetails extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      rentalId: props.rentalId,
-      showRentalUsers: false,
-      showRentalForm: false,
-      deleteButtonDisabled: false
-    };
+    this.state = { ...INITIAL_STATE };
 
     this.toggleRentalForm = this.toggleRentalForm.bind(this);
     this.toggleRentalUsers = this.toggleRentalUsers.bind(this);
     this.deleteRental = this.deleteRental.bind(this);
-    this.deleteUserRental = this.deleteUserRental.bind(this);
+  }
+
+  componentDidMount() {
+    if (this.props.rentalId) {
+      this.setState({
+        rentalId: this.props.rentalId
+      });
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -54,6 +63,10 @@ class RentalDetails extends React.Component {
         rentalId: this.props.rentalId
       });
     }
+  }
+
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
   }
 
   toggleRentalForm() {
@@ -77,26 +90,28 @@ class RentalDetails extends React.Component {
   }
 
   deleteRental() {
-    db.collection("rentals")
+    db.collection('rentals')
       .doc(this.props.rentalId)
       .delete()
       .then(() => {
-        console.log("Rental successfully deleted!");
         this.deleteUserRental();
       })
       .catch(function(error) {
-        console.error("Error removing document: ", error);
+        this.props.setMessage(
+          `Rental konnte nicht gelöscht werden. Fehlermeldung: ${error}`
+        );
       });
   }
 
   deleteUserRental() {
     let deletableUserRentals = db
-      .collection("userRentals")
-      .where("rentalId", "==", this.props.rentalId);
+      .collection('userRentals')
+      .where('rentalId', '==', this.props.rentalId);
     deletableUserRentals.get().then(snap => {
       snap.forEach(doc => {
         doc.ref.delete();
         this.props.closeDetails();
+        this.props.setMessage('Rental wurde erfolgreich gelöscht.');
       });
     });
   }
@@ -124,7 +139,7 @@ class RentalDetails extends React.Component {
             variant="outlined"
             size="small"
             className={classes.button}
-            color={this.state.showRentalUsers ? "secondary" : "default"}
+            color={this.state.showRentalUsers ? 'secondary' : 'default'}
           >
             {this.state.showRentalUsers ? (
               <CloseIcon
@@ -142,7 +157,7 @@ class RentalDetails extends React.Component {
             variant="outlined"
             size="small"
             className={classes.button}
-            color={this.state.showRentalForm ? "secondary" : "default"}
+            color={this.state.showRentalForm ? 'secondary' : 'default'}
           >
             {this.state.showRentalForm ? (
               <CloseIcon
@@ -168,11 +183,13 @@ class RentalDetails extends React.Component {
             Löschen
           </Button>
           {this.state.showRentalForm && (
-            <RentalForm handleClick={this.openRentalForm} rentalId={rentalId} />
+            <RentalForm
+              handleClick={this.toggleRentalForm}
+              rentalId={rentalId}
+              setMessage={this.props.setMessage}
+            />
           )}
         </div>
-        {/*<h3>Reservationen</h3>*/}
-        {/*<h3>Rechnungen</h3>*/}
         {this.state.showRentalUsers && <RentalUsersList rentalId={rentalId} />}
       </div>
     );

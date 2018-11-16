@@ -1,14 +1,14 @@
-import React from "react";
-import RentalListItem from "./RentalListItem";
-import { db, auth } from "../../firebase";
+import React from 'react';
+import RentalListItem from './RentalListItem';
+import { db, auth } from '../../firebase';
 
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
 
 const styles = theme => ({
   root: {
-    width: "100%",
+    width: '100%',
     backgroundColor: theme.palette.background.paper
   }
 });
@@ -28,8 +28,8 @@ class RentalList extends React.Component {
   }
 
   getUserRentals() {
-    db.collection("userRentals")
-      .where("userId", "==", auth.currentUser().uid)
+    db.collection('userRentals')
+      .where('userId', '==', auth.currentUser().uid)
       .onSnapshot(userRentals => {
         this.setState({ rentals: userRentals.docs });
       });
@@ -47,14 +47,14 @@ class RentalList extends React.Component {
     const { classes } = this.props;
     const { rentals, activeItem } = this.state;
 
-    let content = "";
+    let content = '';
     if (rentals) {
       content = (
         <div className={classes.root}>
           <List>
             {rentals.map((rental, index) => {
               let selected = false;
-              if (activeItem == index) {
+              if (activeItem === index) {
                 selected = true;
               }
               return (

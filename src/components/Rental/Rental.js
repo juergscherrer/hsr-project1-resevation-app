@@ -1,43 +1,55 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-import RentalForm from "./RentalForm";
-import RentalList from "./RentalList";
-import RentalDetails from "./RentalDetails";
+import RentalForm from './RentalForm';
+import RentalList from './RentalList';
+import RentalDetails from './RentalDetails';
+import MessageBox from '../MessageBox';
 
-import { withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import AddIcon from "@material-ui/icons/Add";
-import CloseIcon from "@material-ui/icons/Close";
+import { withStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import AddIcon from '@material-ui/icons/Add';
+import CloseIcon from '@material-ui/icons/Close';
 
 const styles = theme => ({
   paper: {
     marginTop: theme.spacing.unit * 2,
     paddingBottom: theme.spacing.unit * 2,
-    display: "flex",
-    flexDirection: "column"
+    display: 'flex',
+    flexDirection: 'column'
   },
   header: {
     padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`
+  },
+
+  emptyMessage: {
+    textAlign: 'center',
+    color: 'rgba(0, 0, 0, 0.54)'
   }
 });
+
+const INITIAL_STATE = {
+  rentals: null,
+  showRentalForm: false,
+  showRentalDetails: false,
+  rentalId: null,
+  message: null
+};
 
 class Rental extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      rentals: null,
-      showRentalForm: false,
-      showRentalDetails: false,
-      rentalId: null
-    };
+    this.state = { ...INITIAL_STATE };
+
     this.openForm = this.openForm.bind(this);
     this.openDetails = this.openDetails.bind(this);
     this.closeDetails = this.closeDetails.bind(this);
+    this.setMessage = this.setMessage.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
   }
 
   openForm() {
@@ -52,6 +64,14 @@ class Rental extends React.Component {
 
   closeDetails() {
     this.setState({ showRentalDetails: false, rentalId: null });
+  }
+
+  setMessage(msg) {
+    this.setState({ message: msg });
+  }
+
+  deleteMessage() {
+    this.setState({ message: null });
   }
 
   render() {
@@ -79,7 +99,7 @@ class Rental extends React.Component {
                     <Button
                       variant="fab"
                       color={
-                        this.state.showRentalForm ? "secondary" : "primary"
+                        this.state.showRentalForm ? 'secondary' : 'primary'
                       }
                       onClick={this.openForm}
                     >
@@ -88,10 +108,16 @@ class Rental extends React.Component {
                   </Grid>
                 </Grid>
                 {this.state.showRentalForm && (
-                  <RentalForm handleClick={this.openForm} />
+                  <RentalForm
+                    handleClick={this.openForm}
+                    setMessage={this.setMessage}
+                  />
                 )}
               </div>
-              <RentalList openDetails={this.openDetails} />
+              <RentalList
+                openDetails={this.openDetails}
+                setMessage={this.setMessage}
+              />
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} display="flex">
@@ -107,15 +133,24 @@ class Rental extends React.Component {
                 <RentalDetails
                   rentalId={rentalId}
                   closeDetails={this.closeDetails}
+                  setMessage={this.setMessage}
                 />
               ) : (
-                <span className="emptyMessage">
-                  Bitte Mietobjekt aus Liste wählen...
-                </span>
+                <div className={classes.emptyMessage}>
+                  <span>
+                    Bitte wähle ein Mietobjekt aus der Liste aus, oder erstell
+                    ein neues.
+                  </span>
+                </div>
               )}
             </Paper>
           </Grid>
         </Grid>
+        <MessageBox
+          open={!!this.state.message}
+          message={this.state.message}
+          onClose={this.deleteMessage}
+        />
       </React.Fragment>
     );
   }
