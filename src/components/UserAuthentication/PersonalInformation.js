@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles/index';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { db, auth } from '../../firebase';
-import * as firebase from 'firebase';
+import firebase from 'firebase/app';
 import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
