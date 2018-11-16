@@ -1,40 +1,33 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { db } from '../../firebase';
 
-import MessageBox from "../MessageBox";
+import MessageBox from '../MessageBox';
 
-import { withStyles } from "@material-ui/core/styles";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Avatar from "@material-ui/core/Avatar";
-import PersonIcon from "@material-ui/icons/Person";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import Checkbox from "@material-ui/core/Checkbox";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-
-import { auth, db } from "../../firebase";
+import { withStyles } from '@material-ui/core/styles';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import PersonIcon from '@material-ui/icons/Person';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const styles = theme => ({});
-
-const byPropKey = (propertyName, value) => () => ({
-  [propertyName]: value
-});
 
 class RentalListItem extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      user: null,
-      openMessageBox: false,
-      message: null
+      user: null
     };
 
     this.handleOwnerChange = this.handleOwnerChange.bind(this);
     this.handleManagerChange = this.handleManagerChange.bind(this);
-    this.setMessage = this.setMessage.bind(this);
-    this.handleCloseMessageBox = this.handleCloseMessageBox.bind(this);
   }
 
   componentDidMount() {
@@ -50,7 +43,7 @@ class RentalListItem extends React.Component {
   }
 
   getUser() {
-    db.collection("users")
+    db.collection('users')
       .doc(this.props.userRental.data().userId)
       .onSnapshot(user => {
         this.setState({ user: user.data() });
@@ -69,7 +62,7 @@ class RentalListItem extends React.Component {
 
   editOwnerUserRental = owner => {
     const userRental = db
-      .collection("userRentals")
+      .collection('userRentals')
       .doc(this.props.userRental.id);
 
     return userRental
@@ -77,16 +70,16 @@ class RentalListItem extends React.Component {
         owner
       })
       .then(() => {
-        this.setMessage("Benuzter erfolgreich aktualisiert");
+        this.props.setMessage('Benuzter erfolgreich aktualisiert');
       })
       .catch(error => {
-        this.setMessage(error);
+        this.props.setMessage(error);
       });
   };
 
   editManagerUserRental = manager => {
     const userRental = db
-      .collection("userRentals")
+      .collection('userRentals')
       .doc(this.props.userRental.id);
 
     return userRental
@@ -94,20 +87,12 @@ class RentalListItem extends React.Component {
         manager
       })
       .then(() => {
-        this.setMessage("Benuzter erfolgreich aktualisiert");
+        this.props.setMessage('Benuzter erfolgreich aktualisiert');
       })
       .catch(error => {
-        this.setMessage(error);
+        this.props.setMessage(error);
       });
   };
-
-  setMessage(message) {
-    this.setState({ openMessageBox: true, message: message });
-  }
-
-  handleCloseMessageBox() {
-    this.setState({ openMessageBox: false, message: null });
-  }
 
   render() {
     const { classes, userRental } = this.props;
@@ -122,7 +107,7 @@ class RentalListItem extends React.Component {
           <ListItemText
             primary={
               this.state.user &&
-              this.state.user.firstname + " " + this.state.user.lastname
+              this.state.user.firstname + ' ' + this.state.user.lastname
             }
             secondary={this.state.user && this.state.user.email}
           />
@@ -147,6 +132,10 @@ class RentalListItem extends React.Component {
                 }
                 label="Manager"
               />
+
+              <IconButton className={classes.button} aria-label="Delete">
+                <DeleteIcon />
+              </IconButton>
             </FormGroup>
           </ListItemSecondaryAction>
         </ListItem>
