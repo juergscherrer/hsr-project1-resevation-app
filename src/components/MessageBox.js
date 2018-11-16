@@ -1,5 +1,5 @@
-import React from "react";
-import Snackbar from "@material-ui/core/Snackbar";
+import React from 'react';
+import Snackbar from '@material-ui/core/Snackbar';
 
 class MessageBox extends React.Component {
   constructor(props) {
@@ -10,14 +10,14 @@ class MessageBox extends React.Component {
     return (
       <React.Fragment>
         <Snackbar
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
           open={this.props.open}
           onClose={this.props.onClose}
           ContentProps={{
-            "aria-describedby": "message-id"
+            'aria-describedby': 'message-id'
           }}
-          message={<span id="message-id">{this.props.message || ""}</span>}
-          autoHideDuration={2000}
+          message={<span id="message-id">{this.props.message || ''}</span>}
+          autoHideDuration={6000}
         />
       </React.Fragment>
     );

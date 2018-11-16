@@ -1,20 +1,20 @@
-import React, { Component } from "react";
-import { Link, withRouter, Redirect } from "react-router-dom";
-import { auth, db } from "../../firebase/index";
-import * as routes from "../../constants/routes";
-import Background from "../../img/loginscreen-jaunpassstrasse.jpg";
-import Paper from "@material-ui/core/Paper";
-import PropTypes from "prop-types";
-import withStyles from "@material-ui/core/styles/withStyles";
-import Typography from "@material-ui/core/Typography";
-import FormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import Button from "@material-ui/core/Button";
-import Avatar from "@material-ui/core/Avatar";
-import AssignmentInd from "@material-ui/icons/AssignmentInd";
-import Snackbar from "@material-ui/core/Snackbar";
-import Grid from "@material-ui/core/Grid";
+import React, { Component } from 'react';
+import { Link, withRouter, Redirect } from 'react-router-dom';
+import { auth, db } from '../../firebase/index';
+import * as routes from '../../constants/routes';
+import Background from '../../img/loginscreen-jaunpassstrasse.jpg';
+import Paper from '@material-ui/core/Paper';
+import PropTypes from 'prop-types';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Typography from '@material-ui/core/Typography';
+import FormControl from '@material-ui/core/FormControl';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import Button from '@material-ui/core/Button';
+import Avatar from '@material-ui/core/Avatar';
+import AssignmentInd from '@material-ui/icons/AssignmentInd';
+import Snackbar from '@material-ui/core/Snackbar';
+import Grid from '@material-ui/core/Grid';
 
 const SignUpPage = ({ history }) => (
   <div>
@@ -23,46 +23,46 @@ const SignUpPage = ({ history }) => (
 );
 
 const INITIAL_STATE = {
-  firstname: "",
-  lastname: "",
-  email: "",
-  passwordOne: "",
-  passwordTwo: "",
+  firstname: '',
+  lastname: '',
+  email: '',
+  passwordOne: '',
+  passwordTwo: '',
   error: null,
   redirect: false,
   open: false,
   Transition: null,
-  message: "",
+  message: '',
   toLogin: false
 };
 
 const styles = theme => ({
   layout: {
-    width: "auto",
-    display: "block", // Fix IE11 issue.
+    width: 'auto',
+    display: 'block', // Fix IE11 issue.
     marginLeft: theme.spacing.unit * 3,
     marginRight: theme.spacing.unit * 3,
     paddingTop: theme.spacing.unit * 10,
-    height: "100vh",
+    height: '100vh',
     [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
       width: 400,
-      marginLeft: "auto",
-      marginRight: "auto"
+      marginLeft: 'auto',
+      marginRight: 'auto'
     }
   },
   background: {
-    backgroundImage: "url(" + Background + ")",
-    backgroundSize: "cover"
+    backgroundImage: 'url(' + Background + ')',
+    backgroundSize: 'cover'
   },
   paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
       .spacing.unit * 3}px`
   },
   form: {
-    width: "100%", // Fix IE11 issue.
+    width: '100%', // Fix IE11 issue.
     marginTop: theme.spacing.unit
   },
   submit: {
@@ -98,12 +98,10 @@ class SignUpFormWithoutStyles extends Component {
   onSubmit = event => {
     const { firstname, lastname, email, passwordOne } = this.state;
 
-    const { history } = this.props;
-
     auth
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
-        var doc = db.collection("users").doc(auth.currentUser().uid);
+        var doc = db.collection('users').doc(auth.currentUser().uid);
         doc
           .set({
             admin: true,
@@ -117,14 +115,14 @@ class SignUpFormWithoutStyles extends Component {
             });
           })
           .catch(function(error) {
-            console.error("Error adding document: ", error);
+            console.error('Error adding document: ', error);
           });
       })
 
       .catch(error => {
-        this.setState(byPropKey("error", error));
-        this.setState(byPropKey("message", error.message));
-        this.setState(byPropKey("open", true));
+        this.setState(byPropKey('error', error));
+        this.setState(byPropKey('message', error.message));
+        this.setState(byPropKey('open', true));
       });
 
     event.preventDefault();
@@ -142,22 +140,15 @@ class SignUpFormWithoutStyles extends Component {
 
   render() {
     const { classes } = this.props;
-    const {
-      firstname,
-      lastname,
-      email,
-      passwordOne,
-      passwordTwo,
-      error
-    } = this.state;
+    const { firstname, lastname, email, passwordOne, passwordTwo } = this.state;
 
     const isInvalid =
       passwordOne !== passwordTwo ||
-      passwordOne === "" ||
-      email === "" ||
-      firstname === "" ||
-      lastname === "";
-    const { vertical, horizontal } = { vertical: "bottom", horizontal: "left" };
+      passwordOne === '' ||
+      email === '' ||
+      firstname === '' ||
+      lastname === '';
+    const { vertical, horizontal } = { vertical: 'bottom', horizontal: 'left' };
 
     if (this.state.toLogin === true) {
       return <Redirect to="/" />;
@@ -181,7 +172,7 @@ class SignUpFormWithoutStyles extends Component {
                   autoFocus
                   value={firstname}
                   onChange={event =>
-                    this.setState(byPropKey("firstname", event.target.value))
+                    this.setState(byPropKey('firstname', event.target.value))
                   }
                   type="text"
                   placeholder="Vorname"
@@ -195,7 +186,7 @@ class SignUpFormWithoutStyles extends Component {
                   autoComplete="lastname"
                   value={lastname}
                   onChange={event =>
-                    this.setState(byPropKey("lastname", event.target.value))
+                    this.setState(byPropKey('lastname', event.target.value))
                   }
                   type="text"
                   placeholder="Nachname"
@@ -209,7 +200,7 @@ class SignUpFormWithoutStyles extends Component {
                   autoComplete="email"
                   value={email}
                   onChange={event =>
-                    this.setState(byPropKey("email", event.target.value))
+                    this.setState(byPropKey('email', event.target.value))
                   }
                   type="text"
                   placeholder="E-Mail"
@@ -223,7 +214,7 @@ class SignUpFormWithoutStyles extends Component {
                   autoComplete="passwordOne"
                   value={passwordOne}
                   onChange={event =>
-                    this.setState(byPropKey("passwordOne", event.target.value))
+                    this.setState(byPropKey('passwordOne', event.target.value))
                   }
                   type="password"
                   placeholder="Passwort"
@@ -239,7 +230,7 @@ class SignUpFormWithoutStyles extends Component {
                   autoComplete="passwordTwo"
                   value={passwordTwo}
                   onChange={event =>
-                    this.setState(byPropKey("passwordTwo", event.target.value))
+                    this.setState(byPropKey('passwordTwo', event.target.value))
                   }
                   type="password"
                   placeholder="Passwort bestätigen"
@@ -255,7 +246,7 @@ class SignUpFormWithoutStyles extends Component {
                 <Button
                   className={classes.cancel}
                   onClick={() => {
-                    console.log("onClick");
+                    console.log('onClick');
                     this.handleCancelSubmit();
                   }}
                 >
@@ -277,9 +268,9 @@ class SignUpFormWithoutStyles extends Component {
               open={this.state.open}
               onClose={this.handleClose}
               ContentProps={{
-                "aria-describedby": "message-id"
+                'aria-describedby': 'message-id'
               }}
-              message={<span id="message-id">{this.state.message || ""}</span>}
+              message={<span id="message-id">{this.state.message || ''}</span>}
             />
             {this.renderRedirect()}
           </Paper>

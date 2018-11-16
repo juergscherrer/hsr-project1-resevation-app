@@ -1,25 +1,25 @@
-import React, { Component } from "react";
-import { auth } from "../../firebase/index";
-import Button from "@material-ui/core/Button";
-import PropTypes from "prop-types";
-import withStyles from "@material-ui/core/styles/withStyles";
-import { withRouter } from "react-router-dom";
-import Input from "@material-ui/core/Input";
-import FormControl from "@material-ui/core/FormControl";
+import React, { Component } from 'react';
+import { auth } from '../../firebase/index';
+import Button from '@material-ui/core/Button';
+import PropTypes from 'prop-types';
+import withStyles from '@material-ui/core/styles/withStyles';
+import { withRouter } from 'react-router-dom';
+import Input from '@material-ui/core/Input';
+import FormControl from '@material-ui/core/FormControl';
 
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value
 });
 
 const INITIAL_STATE = {
-  passwordOne: "",
-  passwordTwo: "",
+  passwordOne: '',
+  passwordTwo: '',
   error: null
 };
 
 const styles = theme => ({
   submit: {
-    marginTop: theme.spacing.unit * 3,
+    marginTop: theme.spacing.unit * 1,
     marginBottom: theme.spacing.unit * 3
   }
 });
@@ -38,9 +38,10 @@ class PasswordChangeForm extends Component {
       .doPasswordUpdate(passwordOne)
       .then(() => {
         this.setState({ ...INITIAL_STATE });
+        this.props.setMessage('Passwort erfolgreich geändert');
       })
       .catch(error => {
-        this.setState(byPropKey("error", error));
+        this.props.setMessage(error.message);
       });
 
     event.preventDefault();
@@ -49,7 +50,7 @@ class PasswordChangeForm extends Component {
   render() {
     const { passwordOne, passwordTwo, error } = this.state;
 
-    const isInvalid = passwordOne !== passwordTwo || passwordOne === "";
+    const isInvalid = passwordOne !== passwordTwo || passwordOne === '';
 
     const { classes } = this.props;
 
@@ -59,22 +60,24 @@ class PasswordChangeForm extends Component {
           <Input
             value={passwordOne}
             onChange={event =>
-              this.setState(byPropKey("passwordOne", event.target.value))
+              this.setState(byPropKey('passwordOne', event.target.value))
             }
             type="password"
-            placeholder="New Password"
+            placeholder="Neues Passwort"
             fullWidth
+            autoComplete="false"
           />
         </FormControl>
         <FormControl margin="normal" fullWidth>
           <Input
             value={passwordTwo}
             onChange={event =>
-              this.setState(byPropKey("passwordTwo", event.target.value))
+              this.setState(byPropKey('passwordTwo', event.target.value))
             }
             type="password"
-            placeholder="Confirm New Password"
+            placeholder="Passwort bestätigen"
             fullWidth
+            autoComplete="false"
           />
         </FormControl>
         <Button
@@ -85,7 +88,7 @@ class PasswordChangeForm extends Component {
           className={classes.submit}
           disabled={isInvalid}
         >
-          Reset My Password
+          Passwort zurücksetzen
         </Button>
 
         {error && <p>{error.message}</p>}

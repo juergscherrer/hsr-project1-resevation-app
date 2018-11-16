@@ -1,25 +1,21 @@
-import React, { Component } from "react";
-import Dashboard from "./Dashboard";
-import PasswordForgetPage from "./UserAuthentication/PasswordForgetPage";
-import SignInPage from "./UserAuthentication/SignIn";
-import SignUpPage from "./UserAuthentication/SignUp";
-import InvoicesPage from "./Invoices";
-import * as routes from "../constants/routes";
-import AccountPage from "./UserAuthentication/Account";
-import AdminPage from "./Admin";
-import { Route } from "react-router-dom";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles/index";
+import React, { Component } from 'react';
+import Dashboard from './Dashboard';
+import PasswordForgetPage from './UserAuthentication/PasswordForgetPage';
+import SignInPage from './UserAuthentication/SignIn';
+import SignUpPage from './UserAuthentication/SignUp';
+import InvoicesPage from './Invoices';
+import * as routes from '../constants/routes';
+import AccountPage from './UserAuthentication/Account';
+import AdminPage from './Admin';
+import { Route } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles/index';
 
 const styles = theme => ({
   layout: {}
 });
 
 class Main extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     const { classes } = this.props;
 

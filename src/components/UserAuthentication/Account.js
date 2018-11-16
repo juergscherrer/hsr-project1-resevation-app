@@ -1,35 +1,57 @@
-import React from "react";
-import AuthUserContext from "./AuthUserContext";
-import PropTypes from "prop-types";
-import PasswordChangeForm from "./PasswordChange";
-import PersonalInformtionForm from "./PersonalInformation";
-import withAuthorization from "./withAuthorization";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import { withStyles } from "@material-ui/core/styles/index";
-import Typography from "@material-ui/core/Typography";
+import React from 'react';
+import AuthUserContext from './AuthUserContext';
+import PropTypes from 'prop-types';
+import PasswordChangeForm from './PasswordChange';
+import PersonalInformtionForm from './PersonalInformation';
+import withAuthorization from './withAuthorization';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import { withStyles } from '@material-ui/core/styles/index';
+import Typography from '@material-ui/core/Typography';
+import MessageBox from '../MessageBox';
 
 const styles = theme => ({
   paper: {
     marginTop: theme.spacing.unit * 2,
     padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
-    display: "flex",
-    flexDirection: "column"
+    display: 'flex',
+    flexDirection: 'column'
   },
   header: {
     padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`
   },
   layout: {
     maxWidth: 1280,
-    marginRight: "auto",
-    marginLeft: "auto"
+    marginRight: 'auto',
+    marginLeft: 'auto'
   }
 });
 
+const INITIAL_STATE = {
+  user: {},
+  message: null,
+  emailChanged: false
+};
+
 class AccountPage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { ...INITIAL_STATE };
+    this.setMessage = this.setMessage.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
+  }
+
+  setMessage(msg) {
+    this.setState({ message: msg });
+  }
+
+  deleteMessage() {
+    this.setState({ message: null });
+  }
+
   render() {
     const { classes } = this.props;
-    let admin = "";
+    let admin = '';
 
     return (
       <div className={classes.layout}>
@@ -46,16 +68,22 @@ class AccountPage extends React.Component {
                 <AuthUserContext.Consumer>
                   {authUser => (
                     <div>
-                      <Typography variant="headline">My Account</Typography>
+                      <Typography variant="headline" gutterBottom={true}>
+                        Mein Konto
+                      </Typography>
                       <strong>{admin}</strong>
 
-                      <Typography variant="title">
-                        Personal Information
-                      </Typography>
-                      <PersonalInformtionForm />
+                      <Typography variant="title">Persönliche Daten</Typography>
+                      <PersonalInformtionForm setMessage={this.setMessage} />
 
-                      <Typography variant="title">Change Password</Typography>
-                      <PasswordChangeForm />
+                      <Typography variant="title">Passwort ändern</Typography>
+                      <PasswordChangeForm setMessage={this.setMessage} />
+
+                      <MessageBox
+                        open={!!this.state.message}
+                        message={this.state.message}
+                        onClose={this.deleteMessage}
+                      />
                     </div>
                   )}
                 </AuthUserContext.Consumer>
