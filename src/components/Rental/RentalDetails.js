@@ -190,7 +190,12 @@ class RentalDetails extends React.Component {
             />
           )}
         </div>
-        {this.state.showRentalUsers && <RentalUsersList rentalId={rentalId} />}
+        {this.state.showRentalUsers && (
+          <RentalUsersList
+            rentalId={rentalId}
+            setMessage={this.props.setMessage}
+          />
+        )}
       </div>
     );
   }

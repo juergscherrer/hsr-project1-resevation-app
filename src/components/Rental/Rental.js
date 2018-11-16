@@ -88,7 +88,7 @@ class Rental extends React.Component {
           alignItems="flex-start"
           spacing={24}
         >
-          <Grid item xs={12} sm={6} display="flex">
+          <Grid item xs={12} sm={4} display="flex">
             <Paper className={classes.paper}>
               <div className={classes.header}>
                 <Grid container justify="space-between" alignItems="center">
@@ -98,6 +98,7 @@ class Rental extends React.Component {
                   <Grid item>
                     <Button
                       variant="fab"
+                      mini
                       color={
                         this.state.showRentalForm ? 'secondary' : 'primary'
                       }
@@ -120,7 +121,7 @@ class Rental extends React.Component {
               />
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={6} display="flex">
+          <Grid item xs={12} sm={8} display="flex">
             <Paper className={classes.paper}>
               <div className={classes.header}>
                 <Grid container justify="space-between" alignItems="center">
@@ -138,7 +139,7 @@ class Rental extends React.Component {
               ) : (
                 <div className={classes.emptyMessage}>
                   <span>
-                    Bitte wähle ein Mietobjekt aus der Liste aus, oder erstell
+                    Bitte wähle ein Mietobjekt aus der Liste aus, oder erstelle
                     ein neues.
                   </span>
                 </div>

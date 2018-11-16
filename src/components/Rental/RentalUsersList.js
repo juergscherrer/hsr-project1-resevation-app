@@ -1,11 +1,12 @@
-import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
-import { withStyles } from "@material-ui/core/styles";
-import List from "@material-ui/core/List";
-import RentalUsersListItem from "./RentalUsersListItem";
+import React, { Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
+import { db } from '../../firebase/index';
 
-import { auth, db } from "../../firebase/index";
-import * as routes from "../../constants/routes";
+import RentalUsersListItem from './RentalUsersListItem';
+import RentalUsersSearch from './RentalUsersSearch';
+
+import { withStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
 
 const styles = theme => ({
   header: {
@@ -14,7 +15,7 @@ const styles = theme => ({
 });
 
 const INITIAL_STATE = {
-  rentalId: "",
+  rentalId: '',
   userRentals: null,
   error: null
 };
@@ -39,8 +40,8 @@ class RentalUsersList extends Component {
   }
 
   getUserRentals() {
-    db.collection("userRentals")
-      .where("rentalId", "==", this.props.rentalId)
+    db.collection('userRentals')
+      .where('rentalId', '==', this.props.rentalId)
       .onSnapshot(userRentals => {
         this.setState({ userRentals: userRentals.docs });
       });
@@ -52,7 +53,7 @@ class RentalUsersList extends Component {
 
   render() {
     const { classes } = this.props;
-    const { userRentals, rentalId } = this.state;
+    const { userRentals } = this.state;
 
     let list;
 
@@ -62,7 +63,11 @@ class RentalUsersList extends Component {
           <List>
             {userRentals.map((userRental, index) => {
               return (
-                <RentalUsersListItem userRental={userRental} key={index} />
+                <RentalUsersListItem
+                  userRental={userRental}
+                  key={index}
+                  setMessage={this.props.setMessage}
+                />
               );
             })}
           </List>
@@ -75,6 +80,10 @@ class RentalUsersList extends Component {
         <div className={classes.header}>
           <h3>Benuzter</h3>
         </div>
+        <RentalUsersSearch
+          rentalId={this.props.rentalId}
+          setMessage={this.props.setMessage}
+        />
         {list}
       </div>
     );
