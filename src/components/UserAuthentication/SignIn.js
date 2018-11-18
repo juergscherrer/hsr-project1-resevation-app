@@ -1,63 +1,62 @@
-import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
-import { SignUpLink } from "./SignUp";
-import { PasswordForgetLink } from "./PasswordForget";
-import { auth } from "../../firebase/index";
-import * as routes from "../../constants/routes";
-import Input from "@material-ui/core/Input";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import Lock from "@material-ui/icons/Lock";
-import withStyles from "@material-ui/core/styles/withStyles";
-import Paper from "@material-ui/core/Paper";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import PropTypes from "prop-types";
-import FormControl from "@material-ui/core/FormControl";
-import LockIcon from "@material-ui/icons/LockOutlined";
-import InputLabel from "@material-ui/core/InputLabel";
-import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
-import Background from "../../img/loginscreen-jaunpassstrasse.jpg";
-import { Link } from "react-router-dom";
-import Snackbar from "@material-ui/core/Snackbar";
+import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { SignUpLink } from './SignUp';
+import { auth } from '../../firebase/index';
+import * as routes from '../../constants/routes';
+import Input from '@material-ui/core/Input';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Lock from '@material-ui/icons/Lock';
+import withStyles from '@material-ui/core/styles/withStyles';
+import Paper from '@material-ui/core/Paper';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import Typography from '@material-ui/core/Typography';
+import PropTypes from 'prop-types';
+import FormControl from '@material-ui/core/FormControl';
+import LockIcon from '@material-ui/icons/LockOutlined';
+import InputLabel from '@material-ui/core/InputLabel';
+import RemoveRedEye from '@material-ui/icons/RemoveRedEye';
+import Background from '../../img/loginscreen-jaunpassstrasse.jpg';
+import { Link } from 'react-router-dom';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const byPropKey = (propertyName, value) => () => ({
   [propertyName]: value
 });
 
 const INITIAL_STATE = {
-  email: "",
-  password: "",
+  email: '',
+  password: '',
   error: null,
   passwordIsMasked: true,
   open: false,
   Transition: null,
-  message: ""
+  message: ''
 };
 
 const styles = theme => ({
   layout: {
-    width: "auto",
-    display: "block", // Fix IE11 issue.
+    width: 'auto',
+    display: 'block', // Fix IE11 issue.
     marginLeft: theme.spacing.unit * 3,
     marginRight: theme.spacing.unit * 3,
     paddingTop: theme.spacing.unit * 10,
-    height: "100vh",
+    height: '100vh',
     [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
       width: 400,
-      marginLeft: "auto",
-      marginRight: "auto"
+      marginLeft: 'auto',
+      marginRight: 'auto'
     }
   },
   background: {
-    backgroundImage: "url(" + Background + ")",
-    backgroundSize: "cover"
+    backgroundImage: 'url(' + Background + ')',
+    backgroundSize: 'cover'
   },
   paper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme
       .spacing.unit * 3}px`
   },
@@ -66,7 +65,7 @@ const styles = theme => ({
     backgroundColor: theme.palette.primary.main
   },
   form: {
-    width: "100%", // Fix IE11 issue.
+    width: '100%', // Fix IE11 issue.
     marginTop: theme.spacing.unit
   },
   submit: {
@@ -74,7 +73,7 @@ const styles = theme => ({
     marginBottom: theme.spacing.unit * 3
   },
   eye: {
-    cursor: "pointer"
+    cursor: 'pointer'
   },
   passwordForgetLink: {
     marginRight: theme.spacing.unit * 3
@@ -100,9 +99,9 @@ class SignInForm extends Component {
         history.push(routes.DASHBOARD);
       })
       .catch(error => {
-        this.setState(byPropKey("error", error));
-        this.setState(byPropKey("message", error.message));
-        this.setState(byPropKey("open", true));
+        this.setState(byPropKey('error', error));
+        this.setState(byPropKey('message', error.message));
+        this.setState(byPropKey('open', true));
       });
 
     event.preventDefault();
@@ -123,8 +122,8 @@ class SignInForm extends Component {
     const { passwordIsMasked } = this.state;
     const { email, password, error } = this.state;
 
-    const isInvalid = password === "" || email === "";
-    const { vertical, horizontal } = { vertical: "bottom", horizontal: "left" };
+    const isInvalid = password === '' || email === '';
+    const { vertical, horizontal } = { vertical: 'bottom', horizontal: 'left' };
 
     return (
       <main className={classes.background}>
@@ -144,7 +143,7 @@ class SignInForm extends Component {
                   autoFocus
                   value={email}
                   onChange={event =>
-                    this.setState(byPropKey("email", event.target.value))
+                    this.setState(byPropKey('email', event.target.value))
                   }
                   type="text"
                   placeholder="E-Mail"
@@ -159,12 +158,12 @@ class SignInForm extends Component {
                 <InputLabel htmlFor="password">Passwort</InputLabel>
                 <Input
                   name="password"
-                  type={passwordIsMasked ? "password" : "text"}
+                  type={passwordIsMasked ? 'password' : 'text'}
                   id="password"
                   autoComplete="current-password"
                   value={password}
                   onChange={event =>
-                    this.setState(byPropKey("password", event.target.value))
+                    this.setState(byPropKey('password', event.target.value))
                   }
                   placeholder="Passwort"
                   startAdornment={
@@ -206,9 +205,9 @@ class SignInForm extends Component {
               open={this.state.open}
               onClose={this.handleClose}
               ContentProps={{
-                "aria-describedby": "message-id"
+                'aria-describedby': 'message-id'
               }}
-              message={<span id="message-id">{this.state.message || ""}</span>}
+              message={<span id="message-id">{this.state.message || ''}</span>}
             />
           </Paper>
         </section>
