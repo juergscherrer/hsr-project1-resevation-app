@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
+import Typography from '@material-ui/core/Typography';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+
+import Background from '../../img/loginscreen-jaunpassstrasse.jpg';
 import { withRouter } from 'react-router-dom';
 import { SignUpLink } from './SignUp';
 import { auth } from '../../firebase/index';
 import * as routes from '../../constants/routes';
+import MessageBox from '../MessageBox';
+
 import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import AccountCircle from '@material-ui/icons/AccountCircle';
@@ -11,28 +18,17 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import PropTypes from 'prop-types';
 import FormControl from '@material-ui/core/FormControl';
 import LockIcon from '@material-ui/icons/LockOutlined';
 import InputLabel from '@material-ui/core/InputLabel';
 import RemoveRedEye from '@material-ui/icons/RemoveRedEye';
-import Background from '../../img/loginscreen-jaunpassstrasse.jpg';
-import { Link } from 'react-router-dom';
-import Snackbar from '@material-ui/core/Snackbar';
-
-const byPropKey = (propertyName, value) => () => ({
-  [propertyName]: value
-});
 
 const INITIAL_STATE = {
   email: '',
   password: '',
   error: null,
   passwordIsMasked: true,
-  open: false,
-  Transition: null,
-  message: ''
+  message: null
 };
 
 const styles = theme => ({
@@ -85,11 +81,12 @@ class SignInForm extends Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
+    this.setMessage = this.setMessage.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
   }
 
   onSubmit = event => {
     const { email, password } = this.state;
-
     const { history } = this.props;
 
     auth
@@ -99,9 +96,8 @@ class SignInForm extends Component {
         history.push(routes.DASHBOARD);
       })
       .catch(error => {
-        this.setState(byPropKey('error', error));
-        this.setState(byPropKey('message', error.message));
-        this.setState(byPropKey('open', true));
+        this.setState({ error: error });
+        this.setState({ message: error.message });
       });
 
     event.preventDefault();
@@ -113,17 +109,19 @@ class SignInForm extends Component {
     }));
   };
 
-  handleClose = () => {
-    this.setState({ open: false });
-  };
+  setMessage(msg) {
+    this.setState({ message: msg });
+  }
+
+  deleteMessage() {
+    this.setState({ message: null });
+  }
 
   render() {
     const { classes } = this.props;
     const { passwordIsMasked } = this.state;
     const { email, password, error } = this.state;
-
     const isInvalid = password === '' || email === '';
-    const { vertical, horizontal } = { vertical: 'bottom', horizontal: 'left' };
 
     return (
       <main className={classes.background}>
@@ -143,7 +141,7 @@ class SignInForm extends Component {
                   autoFocus
                   value={email}
                   onChange={event =>
-                    this.setState(byPropKey('email', event.target.value))
+                    this.setState({ email: event.target.value })
                   }
                   type="text"
                   placeholder="E-Mail"
@@ -163,7 +161,7 @@ class SignInForm extends Component {
                   autoComplete="current-password"
                   value={password}
                   onChange={event =>
-                    this.setState(byPropKey('password', event.target.value))
+                    this.setState({ password: event.target.value })
                   }
                   placeholder="Passwort"
                   startAdornment={
@@ -200,14 +198,10 @@ class SignInForm extends Component {
               </Link>
               <SignUpLink />
             </form>
-            <Snackbar
-              anchorOrigin={{ vertical, horizontal }}
-              open={this.state.open}
-              onClose={this.handleClose}
-              ContentProps={{
-                'aria-describedby': 'message-id'
-              }}
-              message={<span id="message-id">{this.state.message || ''}</span>}
+            <MessageBox
+              open={!!this.state.message}
+              message={this.state.message}
+              onClose={this.deleteMessage}
             />
           </Paper>
         </section>

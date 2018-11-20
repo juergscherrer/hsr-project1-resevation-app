@@ -1,31 +1,29 @@
-import React, { Component } from "react";
-import { auth } from "../../firebase";
-import Input from "@material-ui/core/Input";
-import Button from "@material-ui/core/Button";
-import withStyles from "@material-ui/core/styles/withStyles";
-import PropTypes from "prop-types";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
-import Snackbar from "@material-ui/core/Snackbar";
-import Grid from "@material-ui/core/Grid";
-import { Redirect } from "react-router-dom";
+import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-const byPropKey = (propertyName, value) => () => ({
-  [propertyName]: value
-});
+import { auth } from '../../firebase';
+import MessageBox from '../MessageBox';
+
+import withStyles from '@material-ui/core/styles/withStyles';
+import Input from '@material-ui/core/Input';
+import Button from '@material-ui/core/Button';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
 
 const INITIAL_STATE = {
-  email: "",
+  email: '',
   error: null,
   open: false,
   Transition: null,
-  message: "",
+  message: '',
   toLogin: false
 };
 
 const styles = theme => ({
   form: {
-    width: "100%", // Fix IE11 issue.
+    width: '100%', // Fix IE11 issue.
     marginTop: theme.spacing.unit
   },
   submit: {
@@ -42,6 +40,8 @@ class PasswordForgetForm extends Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
+    this.setMessage = this.setMessage.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
   }
 
   handleCancelSubmit() {
@@ -57,34 +57,31 @@ class PasswordForgetForm extends Component {
       .doPasswordReset(email)
       .then(() => {
         this.setState({ ...INITIAL_STATE });
-        this.setState(
-          byPropKey("message", "Bitte prüfen Sie Ihren Posteingang.")
-        );
-        this.setState(byPropKey("open", true));
+        this.setState({ message: 'Bitte prüfen Sie Ihren Posteingang' });
+        this.setState({ open: true });
       })
       .catch(error => {
-        this.setState(byPropKey("error", error));
-        this.setState(byPropKey("message", error.message));
-        this.setState(byPropKey("open", true));
+        this.setState({ error: error });
+        this.setState({ message: error.message });
+        this.setState({ open: true });
       });
 
     event.preventDefault();
   };
 
-  handleClose = () => {
-    this.setState({ open: false });
-  };
+  setMessage(msg) {
+    this.setState({ message: msg });
+  }
+
+  deleteMessage() {
+    this.setState({ message: null });
+  }
 
   render() {
     const { email, error } = this.state;
 
-    const isInvalid = email === "";
+    const isInvalid = email === '';
     const { classes } = this.props;
-
-    const { vertical, horizontal, open } = {
-      vertical: "bottom",
-      horizontal: "left"
-    };
 
     if (this.state.toLogin === true) {
       return <Redirect to="/" />;
@@ -103,9 +100,7 @@ class PasswordForgetForm extends Component {
               type="text"
               placeholder="E-Mail"
               value={this.state.email}
-              onChange={event =>
-                this.setState(byPropKey("email", event.target.value))
-              }
+              onChange={event => this.setState({ email: event.target.value })}
               type="text"
               placeholder="Email Address"
             />
@@ -119,7 +114,7 @@ class PasswordForgetForm extends Component {
             <Button
               className={classes.cancel}
               onClick={() => {
-                console.log("onClick");
+                console.log('onClick');
                 this.handleCancelSubmit();
               }}
             >
@@ -137,14 +132,10 @@ class PasswordForgetForm extends Component {
           </Grid>
         </form>
 
-        <Snackbar
-          anchorOrigin={{ vertical, horizontal }}
-          open={this.state.open}
-          onClose={this.handleClose}
-          ContentProps={{
-            "aria-describedby": "message-id"
-          }}
-          message={<span id="message-id">{this.state.message || ""}</span>}
+        <MessageBox
+          open={!!this.state.message}
+          message={this.state.message}
+          onClose={this.deleteMessage}
         />
       </div>
     );
