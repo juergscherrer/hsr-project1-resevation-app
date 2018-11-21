@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { Link, withRouter, Redirect } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
 import { auth, db } from '../../firebase/index';
 import * as routes from '../../constants/routes';
 import Background from '../../img/loginscreen-jaunpassstrasse.jpg';
+import MessageBox from '../MessageBox';
+
 import Paper from '@material-ui/core/Paper';
-import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
@@ -13,7 +16,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import AssignmentInd from '@material-ui/icons/AssignmentInd';
-import Snackbar from '@material-ui/core/Snackbar';
 import Grid from '@material-ui/core/Grid';
 
 const SignUpPage = ({ history }) => (
@@ -30,9 +32,7 @@ const INITIAL_STATE = {
   passwordTwo: '',
   error: null,
   redirect: false,
-  open: false,
-  Transition: null,
-  message: '',
+  message: null,
   toLogin: false
 };
 
@@ -87,6 +87,8 @@ class SignUpFormWithoutStyles extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
+    this.setMessage = this.setMessage.bind(this);
+    this.deleteMessage = this.deleteMessage.bind(this);
   }
 
   handleCancelSubmit() {
@@ -134,9 +136,13 @@ class SignUpFormWithoutStyles extends Component {
     }
   };
 
-  handleClose = () => {
-    this.setState({ open: false });
-  };
+  setMessage(msg) {
+    this.setState({ message: msg });
+  }
+
+  deleteMessage() {
+    this.setState({ message: null });
+  }
 
   render() {
     const { classes } = this.props;
@@ -148,7 +154,6 @@ class SignUpFormWithoutStyles extends Component {
       email === '' ||
       firstname === '' ||
       lastname === '';
-    const { vertical, horizontal } = { vertical: 'bottom', horizontal: 'left' };
 
     if (this.state.toLogin === true) {
       return <Redirect to="/" />;
@@ -263,14 +268,10 @@ class SignUpFormWithoutStyles extends Component {
                 </Button>
               </Grid>
             </form>
-            <Snackbar
-              anchorOrigin={{ vertical, horizontal }}
-              open={this.state.open}
-              onClose={this.handleClose}
-              ContentProps={{
-                'aria-describedby': 'message-id'
-              }}
-              message={<span id="message-id">{this.state.message || ''}</span>}
+            <MessageBox
+              open={!!this.state.message}
+              message={this.state.message}
+              onClose={this.deleteMessage}
             />
             {this.renderRedirect()}
           </Paper>

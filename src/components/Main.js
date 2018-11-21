@@ -3,7 +3,7 @@ import Dashboard from './Dashboard';
 import PasswordForgetPage from './UserAuthentication/PasswordForgetPage';
 import SignInPage from './UserAuthentication/SignIn';
 import SignUpPage from './UserAuthentication/SignUp';
-import InvoicesPage from './Invoices';
+import InvoicesPage from './Invoices/Invoices';
 import * as routes from '../constants/routes';
 import AccountPage from './UserAuthentication/Account';
 import AdminPage from './Admin';
