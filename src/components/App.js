@@ -1,15 +1,14 @@
-import React from "react";
-import { BrowserRouter as Router } from "react-router-dom";
-import Navigation from "./Navigation/Navigation";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Main from "./Main";
-import withAuthentication from "./UserAuthentication/withAuthentication";
-import { withStyles } from "@material-ui/core/styles/index";
-import PropTypes from "prop-types";
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Navigation from './Navigation/Navigation';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Main from './Main';
+import withAuthentication from './UserAuthentication/withAuthentication';
+import { withStyles } from '@material-ui/core/styles/index';
 
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import blue from "@material-ui/core/colors/blue";
-import orange from "@material-ui/core/colors/orange";
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import blue from '@material-ui/core/colors/blue';
+import orange from '@material-ui/core/colors/orange';
 
 const theme = createMuiTheme({
   palette: {
@@ -17,7 +16,7 @@ const theme = createMuiTheme({
     secondary: orange
   },
   status: {
-    danger: "orange"
+    danger: 'orange'
   }
 });
 

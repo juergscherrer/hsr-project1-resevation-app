@@ -4,6 +4,7 @@ import { auth } from '../../firebase/index';
 
 import RentalForm from './RentalForm';
 import RentalUsersList from './RentalUsersList';
+import AlertDialog from '../AlertDialog';
 
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -35,7 +36,9 @@ const INITIAL_STATE = {
   rentalId: null,
   showRentalUsers: false,
   showRentalForm: false,
-  deleteButtonDisabled: false
+  deleteButtonDisabled: false,
+  openAlertDialog: false,
+  alertDialogtext: null
 };
 
 class RentalDetails extends React.Component {
@@ -47,6 +50,7 @@ class RentalDetails extends React.Component {
     this.toggleRentalForm = this.toggleRentalForm.bind(this);
     this.toggleRentalUsers = this.toggleRentalUsers.bind(this);
     this.deleteRental = this.deleteRental.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   componentDidMount() {
@@ -88,6 +92,19 @@ class RentalDetails extends React.Component {
           deleteButtonDisabled: true
         });
   }
+
+  handleDelete() {
+    const text = 'Mietobjekt wirklich entfernen?';
+    this.setState({ openAlertDialog: true, alertDialogtext: text });
+  }
+
+  handleAnswer = answer => {
+    if (answer) {
+      this.deleteRental();
+    } else {
+      this.setState({ openAlertDialog: false, alertDialogtext: null });
+    }
+  };
 
   deleteRental() {
     db.collection('rentals')
@@ -171,7 +188,7 @@ class RentalDetails extends React.Component {
             Bearbeiten
           </Button>
           <Button
-            onClick={this.deleteRental}
+            onClick={this.handleDelete}
             variant="outlined"
             size="small"
             className={classes.button}
@@ -196,6 +213,11 @@ class RentalDetails extends React.Component {
             setMessage={this.props.setMessage}
           />
         )}
+        <AlertDialog
+          open={this.state.openAlertDialog}
+          text={this.state.alertDialogtext}
+          handleAnswer={this.handleAnswer}
+        />
       </div>
     );
   }

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { db } from '../../firebase';
 
 import MessageBox from '../MessageBox';
+import AlertDialog from '../AlertDialog';
 
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
@@ -23,11 +24,14 @@ class RentalListItem extends React.Component {
     super(props);
 
     this.state = {
-      user: null
+      user: null,
+      openAlertDialog: false,
+      alertDialogtext: null
     };
 
     this.handleOwnerChange = this.handleOwnerChange.bind(this);
     this.handleManagerChange = this.handleManagerChange.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   componentDidMount() {
@@ -59,6 +63,35 @@ class RentalListItem extends React.Component {
     let manager = event.target.checked;
     this.editManagerUserRental(manager);
   }
+
+  handleDelete() {
+    const text = `${this.state.user.firstname} ${
+      this.state.user.lastname
+    } wirklich entfernen?`;
+    this.setState({ openAlertDialog: true, alertDialogtext: text });
+  }
+
+  handleAnswer = answer => {
+    if (answer) {
+      this.deleteUserRental();
+    } else {
+      this.setState({ openAlertDialog: false, alertDialogtext: null });
+    }
+  };
+
+  deleteUserRental = () => {
+    db.collection('userRentals')
+      .doc(this.props.userRental.id)
+      .delete()
+      .then(() => {
+        this.props.setMessage('Benuzter erfolgreich gelöscht');
+      })
+      .catch(function(error) {
+        this.props.setMessage(
+          `Benuzter konnte nicht gelöscht werden. Fehlermeldung: ${error}`
+        );
+      });
+  };
 
   editOwnerUserRental = owner => {
     const userRental = db
@@ -133,7 +166,11 @@ class RentalListItem extends React.Component {
                 label="Manager"
               />
 
-              <IconButton className={classes.button} aria-label="Delete">
+              <IconButton
+                className={classes.button}
+                aria-label="Delete"
+                onClick={this.handleDelete}
+              >
                 <DeleteIcon />
               </IconButton>
             </FormGroup>
@@ -142,7 +179,11 @@ class RentalListItem extends React.Component {
         <MessageBox
           open={this.state.openMessageBox}
           message={this.state.message}
-          onClose={this.handleCloseMessageBox}
+        />
+        <AlertDialog
+          open={this.state.openAlertDialog}
+          text={this.state.alertDialogtext}
+          handleAnswer={this.handleAnswer}
         />
       </React.Fragment>
     );
