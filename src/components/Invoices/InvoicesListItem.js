@@ -73,11 +73,11 @@ class InvoicesListItem extends Component {
   }
 
   render() {
-    const { classes } = this.props;
-    const reservation = this.props.reservation;
+    const { classes, reservation, key } = this.props;
 
+    console.log(reservation.data().startDate.toDate());
     return (
-      <TableRow key="99">
+      <TableRow key={key}>
         <TableCell component="th" scope="row">
           <Moment format="YYYY-MM-DD">
             {reservation.data().startDate.toDate()}

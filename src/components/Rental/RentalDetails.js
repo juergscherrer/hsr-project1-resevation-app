@@ -15,6 +15,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import CalendarIcon from '@material-ui/icons/CalendarToday';
 import UserIcon from '@material-ui/icons/People';
 import CloseIcon from '@material-ui/icons/Close';
+import { Link } from 'react-router-dom';
 
 const styles = theme => ({
   topButtons: {
@@ -29,6 +30,9 @@ const styles = theme => ({
   },
   iconSmall: {
     fontSize: 20
+  },
+  link: {
+    textDecoration: 'none'
   }
 });
 
@@ -140,17 +144,15 @@ class RentalDetails extends React.Component {
     return (
       <div>
         <div className={classes.topButtons}>
-          <Button
-            variant="outlined"
-            size="small"
-            className={classes.button}
-            disabled={true}
-          >
-            <CalendarIcon
-              className={classNames(classes.leftIcon, classes.iconSmall)}
-            />
-            Kalender
-          </Button>
+          <Link className={classes.link} to={`/reservations/${rentalId}`}>
+            <Button variant="outlined" size="small" className={classes.button}>
+              <CalendarIcon
+                className={classNames(classes.leftIcon, classes.iconSmall)}
+              />
+              Kalender
+            </Button>
+          </Link>
+
           <Button
             onClick={this.toggleRentalUsers}
             variant="outlined"
