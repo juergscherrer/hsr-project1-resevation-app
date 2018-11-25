@@ -6,6 +6,8 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
+import CheckIcon from '@material-ui/icons/CheckCircle';
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 const styles = theme => ({
   container: {
@@ -114,7 +116,13 @@ class RentalUsersSearch extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { emailSearch } = this.state;
+    const { emailSearch, user } = this.state;
+
+    let inputAdornment = '';
+
+    if (user) {
+      inputAdornment = <CheckIcon className={classes.icon} color="secondary" />;
+    }
 
     return (
       <React.Fragment>
@@ -132,6 +140,9 @@ class RentalUsersSearch extends React.Component {
             }}
             onChange={event => this.addUser(event)}
             value={emailSearch}
+            InputProps={{
+              endAdornment: <InputAdornment>{inputAdornment}</InputAdornment>
+            }}
           />
           <Button
             variant="fab"

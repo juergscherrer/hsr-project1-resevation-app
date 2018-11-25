@@ -121,8 +121,7 @@ class InvoicesListItem extends Component {
   }
 
   render() {
-    const { classes } = this.props;
-    const reservation = this.props.reservation;
+    const { classes, reservation, key } = this.props;
 
     // Calculate total days
     let a = moment(reservation.data().endDate.toDate());
@@ -147,9 +146,8 @@ class InvoicesListItem extends Component {
     }
 
     return (
-      <TableRow key={this.props.index}>
+      <TableRow key={key}>
         <TableCell numeric>{this.state.rental.description || ''}</TableCell>
-
         <TableCell component="th" scope="row">
           <Moment format="YYYY-MM-DD">
             {reservation.data().startDate.toDate()}

@@ -4,6 +4,7 @@ import { auth } from '../../firebase/index';
 
 import RentalForm from './RentalForm';
 import RentalUsersList from './RentalUsersList';
+import AlertDialog from '../AlertDialog';
 
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -14,6 +15,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import CalendarIcon from '@material-ui/icons/CalendarToday';
 import UserIcon from '@material-ui/icons/People';
 import CloseIcon from '@material-ui/icons/Close';
+import { Link } from 'react-router-dom';
 
 const styles = theme => ({
   topButtons: {
@@ -28,6 +30,9 @@ const styles = theme => ({
   },
   iconSmall: {
     fontSize: 20
+  },
+  link: {
+    textDecoration: 'none'
   }
 });
 
@@ -35,7 +40,9 @@ const INITIAL_STATE = {
   rentalId: null,
   showRentalUsers: false,
   showRentalForm: false,
-  deleteButtonDisabled: false
+  deleteButtonDisabled: false,
+  openAlertDialog: false,
+  alertDialogtext: null
 };
 
 class RentalDetails extends React.Component {
@@ -47,6 +54,7 @@ class RentalDetails extends React.Component {
     this.toggleRentalForm = this.toggleRentalForm.bind(this);
     this.toggleRentalUsers = this.toggleRentalUsers.bind(this);
     this.deleteRental = this.deleteRental.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
   }
 
   componentDidMount() {
@@ -89,6 +97,19 @@ class RentalDetails extends React.Component {
         });
   }
 
+  handleDelete() {
+    const text = 'Mietobjekt wirklich entfernen?';
+    this.setState({ openAlertDialog: true, alertDialogtext: text });
+  }
+
+  handleAnswer = answer => {
+    if (answer) {
+      this.deleteRental();
+    } else {
+      this.setState({ openAlertDialog: false, alertDialogtext: null });
+    }
+  };
+
   deleteRental() {
     db.collection('rentals')
       .doc(this.props.rentalId)
@@ -123,17 +144,15 @@ class RentalDetails extends React.Component {
     return (
       <div>
         <div className={classes.topButtons}>
-          <Button
-            variant="outlined"
-            size="small"
-            className={classes.button}
-            disabled={true}
-          >
-            <CalendarIcon
-              className={classNames(classes.leftIcon, classes.iconSmall)}
-            />
-            Kalender
-          </Button>
+          <Link className={classes.link} to={`/reservations/${rentalId}`}>
+            <Button variant="outlined" size="small" className={classes.button}>
+              <CalendarIcon
+                className={classNames(classes.leftIcon, classes.iconSmall)}
+              />
+              Kalender
+            </Button>
+          </Link>
+
           <Button
             onClick={this.toggleRentalUsers}
             variant="outlined"
@@ -171,7 +190,7 @@ class RentalDetails extends React.Component {
             Bearbeiten
           </Button>
           <Button
-            onClick={this.deleteRental}
+            onClick={this.handleDelete}
             variant="outlined"
             size="small"
             className={classes.button}
@@ -196,6 +215,11 @@ class RentalDetails extends React.Component {
             setMessage={this.props.setMessage}
           />
         )}
+        <AlertDialog
+          open={this.state.openAlertDialog}
+          text={this.state.alertDialogtext}
+          handleAnswer={this.handleAnswer}
+        />
       </div>
     );
   }

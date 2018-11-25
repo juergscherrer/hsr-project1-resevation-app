@@ -4,6 +4,7 @@ import PasswordForgetPage from './UserAuthentication/PasswordForgetPage';
 import SignInPage from './UserAuthentication/SignIn';
 import SignUpPage from './UserAuthentication/SignUp';
 import InvoicesPage from './Invoices/Invoices';
+import Reservations from './Reservations/Reservations';
 import * as routes from '../constants/routes';
 import AccountPage from './UserAuthentication/Account';
 import AdminPage from './Admin';
@@ -32,6 +33,7 @@ class Main extends Component {
         <Route exact path={routes.ACCOUNT} component={AccountPage} />
         <Route exact path={routes.ADMIN} component={AdminPage} />
         <Route exact path={routes.INVOICES} component={InvoicesPage} />
+        <Route exact path={routes.RESERVATIONS} component={Reservations} />
       </div>
     );
   }
