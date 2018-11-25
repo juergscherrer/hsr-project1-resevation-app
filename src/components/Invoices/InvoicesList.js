@@ -51,9 +51,11 @@ class InvoicesList extends Component {
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
+            <TableCell numeric>Objekt</TableCell>
             <TableCell>Start Date</TableCell>
             <TableCell numeric>End Datum</TableCell>
             <TableCell numeric>Anzahl Gäste</TableCell>
+            <TableCell numeric>Anzahl Tage</TableCell>
             <TableCell numeric>Kommentar</TableCell>
             <TableCell numeric>Total</TableCell>
             <TableCell numeric>Bezahlt am</TableCell>
