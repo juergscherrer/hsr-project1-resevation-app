@@ -44,7 +44,7 @@ class InvoicesPage extends Component {
     return (
       <div>
         <Paper className={classes.root}>
-          <h1 className={classes.header}>Invoices</h1>
+          <h1 className={classes.header}>Rechnungen</h1>
           <InvoicesList setMessage={this.setMessage} />
 
           <MessageBox

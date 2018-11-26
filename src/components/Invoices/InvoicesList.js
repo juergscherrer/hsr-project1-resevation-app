@@ -56,10 +56,10 @@ class InvoicesList extends Component {
             <TableCell numeric>End Datum</TableCell>
             <TableCell numeric>Anzahl Gäste</TableCell>
             <TableCell numeric>Anzahl Tage</TableCell>
-            <TableCell numeric>Kommentar</TableCell>
             <TableCell numeric>Total</TableCell>
             <TableCell numeric>Bezahlt am</TableCell>
             <TableCell numeric>Bezahlt?</TableCell>
+            <TableCell numeric>Details</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>{output}</TableBody>

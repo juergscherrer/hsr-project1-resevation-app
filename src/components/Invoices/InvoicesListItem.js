@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
+import { auth } from '../../firebase';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
+import classNames from 'classnames';
 
 import * as moment from 'moment';
 
@@ -10,7 +13,7 @@ import { withStyles } from '@material-ui/core/styles/index';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
-import { auth } from '../../firebase';
+import Button from '@material-ui/core/Button';
 
 const INITIAL_STATE = {
   isPaid: null,
@@ -18,7 +21,11 @@ const INITIAL_STATE = {
   owner: null
 };
 
-const styles = theme => ({});
+const styles = theme => ({
+  link: {
+    textDecoration: 'none'
+  }
+});
 
 function InvoiceStatus(props) {
   if (props.isPaid) {
@@ -77,8 +84,6 @@ class InvoicesListItem extends Component {
       .where('rentalId', '==', rentalId)
       .onSnapshot(userRentals => {
         userRentals.forEach(doc => {
-          console.log(doc.data().owner);
-
           if (doc.data().owner === true) {
             this.setState({ owner: true });
           } else {
@@ -164,9 +169,7 @@ class InvoicesListItem extends Component {
 
         <TableCell numeric>{days}</TableCell>
 
-        <TableCell numeric>{reservation.data().comment}</TableCell>
-
-        <TableCell numeric>{total}</TableCell>
+        <TableCell numeric>{total || ''}</TableCell>
 
         <TableCell numeric>
           <PaidAt reservation={reservation} isPaid={this.state.isPaid} />
@@ -182,6 +185,14 @@ class InvoicesListItem extends Component {
             }
             value="checkedA"
           />
+        </TableCell>
+
+        <TableCell numeric>
+          <Link className={classes.link} to={`/invoice/${reservation.id}`}>
+            <Button variant="outlined" size="small" className={classes.button}>
+              Details
+            </Button>
+          </Link>
         </TableCell>
       </TableRow>
     );
