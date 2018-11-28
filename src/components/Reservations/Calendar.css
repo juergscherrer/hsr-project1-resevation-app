@@ -1,6 +1,8 @@
 .rbc-event {
   background-color: #2196f3;
+  font-size: 0.8em;
   font-weight: bold;
+  line-height: 1.8em;
 }
 .rbc-event.rbc-selected {
   background-color: #ff9100;

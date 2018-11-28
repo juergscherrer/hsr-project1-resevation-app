@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import { bookedDates } from '../../custom/helpers';
 
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
@@ -50,9 +51,9 @@ const styles = theme => ({
 const INITIAL_STATE = {
   rentalId: '',
   reservationId: '',
-  startDate: '',
-  endDate: '',
-  numberOfGuests: '',
+  startDate: '2018-11-20',
+  endDate: '2018-11-24',
+  numberOfGuests: '4',
   comment: '',
   error: null
 };
@@ -100,12 +101,15 @@ class ReservationForm extends Component {
         comment
       );
     } else {
-      this.newReservation(startDate, endDate, Number(numberOfGuests), comment);
-      console.log(endDate);
-      console.log(firebase.firestore.Timestamp.fromDate(new Date(endDate)));
-      console.log(
-        firebase.firestore.Timestamp.fromDate(new Date(endDate)).toDate()
-      );
+      // this.newReservation(startDate, endDate, Number(numberOfGuests), comment);
+      console.log(bookedDates(new Date(startDate), new Date(endDate)));
+      this.saveBookedDates(bookedDates(new Date(startDate), new Date(endDate)));
+
+      // console.log(endDate);
+      // console.log(firebase.firestore.Timestamp.fromDate(new Date(endDate)));
+      // console.log(
+      //   firebase.firestore.Timestamp.fromDate(new Date(endDate)).toDate()
+      // );
     }
 
     event.preventDefault();
@@ -131,6 +135,20 @@ class ReservationForm extends Component {
           `Reservation konnte nicht erstellt werden. Fehlermeldung: ${error}`
         );
       });
+  };
+
+  saveBookedDates = dates => {
+    for (let date of dates) {
+      date['rentalId'] = this.props.rentalId;
+      db.collection('bookedDates')
+        .add(date)
+        .then(bookedDate => {})
+        .catch(error => {
+          this.props.setMessage(
+            `BookedDate konnte nicht gespeichert werden. Fehlermeldung: ${error}`
+          );
+        });
+    }
   };
 
   // editReservation = (rentalId, title, description, priceForGuest, priceForOwner) => {
@@ -160,7 +178,10 @@ class ReservationForm extends Component {
     const { startDate, endDate, numberOfGuests, comment } = this.state;
 
     const isInvalid =
-      startDate === '' || endDate === '' || numberOfGuests === '';
+      startDate === '' ||
+      endDate === '' ||
+      numberOfGuests === '' ||
+      startDate >= endDate;
 
     return (
       <React.Fragment>
@@ -200,6 +221,7 @@ class ReservationForm extends Component {
               type="number"
               label="Anzahl Personen"
               value={numberOfGuests}
+              inputProps={{ min: '0', max: '10' }}
               onChange={event =>
                 this.setState(byPropKey('numberOfGuests', event.target.value))
               }
