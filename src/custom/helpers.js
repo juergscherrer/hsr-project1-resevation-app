@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
+import { db } from '../firebase';
 
 export function bookedDates(startDate, endDate) {
   let bookedDates = [];
