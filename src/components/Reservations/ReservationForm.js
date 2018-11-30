@@ -101,7 +101,7 @@ class ReservationForm extends Component {
         comment
       );
     } else {
-      // this.newReservation(startDate, endDate, Number(numberOfGuests), comment);
+      this.newReservation(startDate, endDate, Number(numberOfGuests), comment);
       console.log(bookedDates(new Date(startDate), new Date(endDate)));
       this.saveBookedDates(bookedDates(new Date(startDate), new Date(endDate)));
 
