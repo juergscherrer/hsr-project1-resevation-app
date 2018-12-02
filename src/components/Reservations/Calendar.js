@@ -48,21 +48,7 @@ const messages = {
   showMore: total => `+ Mehr anzeigen (${total})`
 };
 
-const styles = theme => ({
-  // layout: {
-  //   marginRight: theme.spacing.unit * 2,
-  //   marginLeft: theme.spacing.unit * 2
-  // },
-  // paper: {
-  //   marginTop: theme.spacing.unit * 2,
-  //   paddingBottom: theme.spacing.unit * 2,
-  //   display: 'flex',
-  //   flexDirection: 'column'
-  // },
-  // header: {
-  //   padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`
-  // }
-});
+const styles = theme => ({});
 
 const INITIAL_STATE = {
   message: null,
@@ -78,7 +64,6 @@ class Calendar extends React.Component {
     this.setMessage = this.setMessage.bind(this);
     this.deleteMessage = this.deleteMessage.bind(this);
     this.loadReservations = this.loadReservations.bind(this);
-    this.handleSelect = this.handleSelect.bind(this);
   }
 
   componentDidMount() {
@@ -133,10 +118,6 @@ class Calendar extends React.Component {
     this.setState({ message: null });
   }
 
-  handleSelect({ start, end }) {
-    this.props.reservation({ start, end });
-  }
-
   render() {
     const { classes } = this.props;
     const {} = this.state;
@@ -152,8 +133,8 @@ class Calendar extends React.Component {
           events={this.state.calendarEntries}
           style={{ height: '700px' }}
           views={['month']}
-          onSelectEvent={event => alert(event.title)}
-          onSelectSlot={this.handleSelect}
+          onSelectEvent={event => this.props.editSelectedReservation(event)}
+          onSelectSlot={event => this.props.newSelectedReservation(event)}
         />
 
         <MessageBox

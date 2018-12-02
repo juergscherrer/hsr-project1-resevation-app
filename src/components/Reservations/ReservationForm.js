@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import { bookedDates } from '../../custom/helpers';
+import { withRouter } from 'react-router-dom';
+import { bookedDates, formatDate } from '../../custom/helpers';
 import { getBookedDate } from '../../firebase/queries/bookedDates';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -49,9 +49,9 @@ const styles = theme => ({
 
 const INITIAL_STATE = {
   reservationId: '',
-  startDate: '2018-11-20',
-  endDate: '2018-11-24',
-  numberOfGuests: '4',
+  startDate: '',
+  endDate: '',
+  numberOfGuests: '',
   comment: '',
   error: null
 };
@@ -67,15 +67,23 @@ class ReservationForm extends Component {
     this.state = { ...INITIAL_STATE };
   }
 
-  // componentDidMount() {
-  //   if (this.props.rentalId) {
-  //   }
-  // }
-  //
-  // componentDidUpdate(prevProps) {
-  //   if (this.props.rentalId !== prevProps.rentalId) {
-  //   }
-  // }
+  componentDidMount() {
+    if (this.props.newReservation) {
+      this.setState({
+        startDate: formatDate(this.props.newReservation.start),
+        endDate: formatDate(this.props.newReservation.end)
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.newReservation !== prevProps.newReservation) {
+      this.setState({
+        startDate: formatDate(this.props.newReservation.start),
+        endDate: formatDate(this.props.newReservation.end)
+      });
+    }
+  }
 
   componentWillUnmount() {
     this.setState({ ...INITIAL_STATE });
@@ -87,6 +95,7 @@ class ReservationForm extends Component {
       startDate,
       endDate,
       numberOfGuests,
+
       comment
     } = this.state;
 
@@ -104,7 +113,8 @@ class ReservationForm extends Component {
     startDate,
     endDate,
     numberOfGuests,
-    comment
+    comment,
+    reservationId
   ) => {
     let valid = true;
     const bDates = bookedDates(new Date(startDate), new Date(endDate));
@@ -121,16 +131,28 @@ class ReservationForm extends Component {
     for (let bDate of bDates) {
       for (let datesRef of datesRefs) {
         datesRef.forEach(doc => {
-          valid =
-            (doc.data().startDate && bDate.endDate) ||
-            (doc.data().endDate && bDate.startDate);
+          if (doc.data().date.seconds === bDate.date.seconds) {
+            valid =
+              (doc.data().startDate && bDate.endDate) ||
+              (doc.data().endDate && bDate.startDate);
+          }
         });
       }
     }
-
-    console.log(valid);
     if (valid) {
-      this.newReservation(startDate, endDate, Number(numberOfGuests), comment);
+      reservationId
+        ? this.newReservation(
+            startDate,
+            endDate,
+            Number(numberOfGuests),
+            comment
+          )
+        : this.newReservation(
+            startDate,
+            endDate,
+            Number(numberOfGuests),
+            comment
+          );
     } else {
       this.props.setMessage(
         'Reservation fehlgeschlagen, bitte Daten überprüfen.'
@@ -151,10 +173,11 @@ class ReservationForm extends Component {
       })
       .then(reservation => {
         this.saveBookedDates(
-          bookedDates(new Date(startDate), new Date(endDate))
+          bookedDates(new Date(startDate), new Date(endDate)),
+          reservation.id
         );
         this.props.setMessage(' Reservation wurde erfolgreich erstellt.');
-        this.state = { ...INITIAL_STATE };
+        this.setState({ ...INITIAL_STATE });
       })
       .catch(error => {
         this.props.setMessage(
@@ -163,9 +186,10 @@ class ReservationForm extends Component {
       });
   };
 
-  saveBookedDates = dates => {
+  saveBookedDates = (dates, reservationId) => {
     for (let date of dates) {
       date['rentalId'] = this.props.rentalId;
+      date['reservationId'] = reservationId;
       db.collection('bookedDates')
         .add(date)
         .then(bookedDate => {})

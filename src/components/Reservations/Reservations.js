@@ -34,7 +34,8 @@ const styles = theme => ({
 const INITIAL_STATE = {
   rentalId: null,
   reservations: [],
-  message: null
+  message: null,
+  newReservation: null
 };
 
 class Reservations extends React.Component {
@@ -45,6 +46,8 @@ class Reservations extends React.Component {
 
     this.setMessage = this.setMessage.bind(this);
     this.deleteMessage = this.deleteMessage.bind(this);
+    this.newSelectedReservation = this.newSelectedReservation.bind(this);
+    this.editSelectedReservation = this.editSelectedReservation.bind(this);
   }
 
   componentDidMount() {
@@ -68,8 +71,12 @@ class Reservations extends React.Component {
     this.setState({ message: null });
   }
 
-  handleReservation(reservation) {
+  editSelectedReservation(reservation) {
     console.log(reservation);
+  }
+
+  newSelectedReservation(reservation) {
+    this.setState({ newReservation: reservation });
   }
 
   render() {
@@ -103,6 +110,7 @@ class Reservations extends React.Component {
                   <ReservationForm
                     rentalId={this.state.rentalId}
                     setMessage={this.setMessage}
+                    newReservation={this.state.newReservation}
                   />
                 </div>
               </Paper>
@@ -119,7 +127,8 @@ class Reservations extends React.Component {
                 <div className={classes.content}>
                   <Calendar
                     reservations={reservations}
-                    reservation={this.handleReservation}
+                    editSelectedReservation={this.editSelectedReservation}
+                    newSelectedReservation={this.newSelectedReservation}
                   />
                 </div>
               </Paper>
