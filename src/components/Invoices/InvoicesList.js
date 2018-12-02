@@ -8,6 +8,7 @@ import InvoicesListItem from './InvoicesListItem';
 import { db } from '../../firebase/firebase';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import { auth } from '../../firebase';
 
 const INITIAL_STATE = {
   reservations: []
@@ -26,9 +27,34 @@ class InvoicesList extends Component {
   }
 
   componentDidMount() {
-    db.collection('reservations').onSnapshot(reservations => {
-      this.setState({ reservations: reservations.docs });
-    });
+    // Get current user
+    let currentUser = auth.currentUser().uid;
+
+    // Get all userRentals where userId is currentUser and manager is true
+    db.collection('userRentals')
+      .where('userId', '==', currentUser)
+      .where('manager', '==', true)
+      .onSnapshot(userRentals => {
+        // Clear state
+        this.setState({ ...INITIAL_STATE });
+
+        // Loop all userRentals and find the reservation
+        userRentals.forEach(doc => {
+          db.collection('reservations')
+            .where('rentalId', '==', doc.data().rentalId)
+            .onSnapshot(reservations => {
+              reservations.forEach(doc => {
+                this.setState({
+                  reservations: [...this.state.reservations, doc]
+                });
+              });
+            });
+        });
+      });
+  }
+
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
   }
 
   render() {
@@ -51,11 +77,10 @@ class InvoicesList extends Component {
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
+            <TableCell numeric>Mieter</TableCell>
             <TableCell numeric>Objekt</TableCell>
-            <TableCell>Start Date</TableCell>
+            <TableCell numeric>Start Date</TableCell>
             <TableCell numeric>End Datum</TableCell>
-            <TableCell numeric>Anzahl Gäste</TableCell>
-            <TableCell numeric>Anzahl Tage</TableCell>
             <TableCell numeric>Total</TableCell>
             <TableCell numeric>Bezahlt am</TableCell>
             <TableCell numeric>Bezahlt?</TableCell>
