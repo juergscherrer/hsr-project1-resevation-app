@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import * as moment from 'moment';
+import Moment from 'react-moment';
 
 import { db } from '../../firebase/firebase';
 
 import { withStyles } from '@material-ui/core/styles/index';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
-import { auth } from '../../firebase';
 
 const styles = theme => ({
   link: {
@@ -28,8 +29,8 @@ const styles = theme => ({
 
 const INITIAL_STATE = {
   rental: null,
-  reservation: [],
-  rental: []
+  reservation: null,
+  nights: null
 };
 
 class Invoice extends Component {
@@ -46,6 +47,11 @@ class Invoice extends Component {
       .onSnapshot(reservation => {
         this.setState({ reservation: reservation.data() });
 
+        // Calculate total days
+        let a = moment(this.state.reservation.endDate.toDate() || null);
+        let b = moment(this.state.reservation.startDate.toDate() || null);
+        this.setState({ days: a.diff(b, 'days') });
+
         // get rental
         db.collection('rentals')
           .doc(this.state.reservation.rentalId)
@@ -55,15 +61,45 @@ class Invoice extends Component {
       });
   }
 
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
+  }
+
   render() {
     const { classes } = this.props;
-    return (
-      <div className={classes.layout}>
-        <Paper className={classes.paper}>
+    let invoice = null;
+
+    if (this.state.reservation && this.state.rental) {
+      invoice = (
+        <div>
           <h1 className={classes.header}>
             Rechnung für {this.state.rental.description}
           </h1>
-          <p> Kommentar: {this.state.reservation.comment || ''}</p>
+          <p> Kommentar: {this.state.reservation.comment}</p>
+          <p>
+            Start:
+            <Moment format="DD.MM.YYYY">
+              {this.state.reservation.startDate.toDate()}
+            </Moment>
+          </p>
+          <p>
+            Ende:
+            <Moment format="DD.MM.YYYY">
+              {this.state.reservation.endDate.toDate()}
+            </Moment>
+          </p>
+          <p>Anzahl Gäste: {this.state.reservation.numberOfGuests}</p>
+          <p>Anzahl Nächte: {this.state.days}</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className={classes.layout}>
+        <Paper className={classes.paper}>
+          {invoice}
+
+          <br />
           <Link className={classes.link} to="/invoices">
             <Button variant="outlined" size="small" className={classes.button}>
               Zurück
@@ -74,8 +110,6 @@ class Invoice extends Component {
     );
   }
 }
-
-const authCondition = authUser => !!authUser;
 
 Invoice.propTypes = {
   classes: PropTypes.object.isRequired

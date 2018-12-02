@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import { auth } from '../../firebase';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
-import classNames from 'classnames';
-
 import * as moment from 'moment';
 
 import { db } from '../../firebase/firebase';
@@ -16,9 +13,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 
 const INITIAL_STATE = {
-  isPaid: null,
+  reservation: null,
   rental: {},
-  owner: null
+  user: {},
+  userRental: null
 };
 
 const styles = theme => ({
@@ -38,7 +36,7 @@ function InvoiceStatus(props) {
 function PaidAt(props) {
   if (props.reservation.data().paidAt) {
     return (
-      <Moment format="YYYY-MM-DD HH:mm:ss">
+      <Moment format="DD.MM.YYYY HH:mm">
         {props.reservation.data().paidAt.toDate()}
       </Moment>
     );
@@ -53,41 +51,35 @@ class InvoicesListItem extends Component {
     this.state = { ...INITIAL_STATE };
   }
 
-  componentWillMount() {
-    this.setState({ isPaid: this.props.reservation.data().paid });
-
+  componentDidMount() {
+    // Get rentalId from props
     let rentalId = this.props.reservation.data().rentalId;
 
-    var docRef = db.collection('rentals').doc(rentalId);
-
-    docRef
-      .get()
-      .then(doc => {
-        if (doc.exists) {
-          this.setState({ rental: doc.data() });
-        } else {
-          // doc.data() will be undefined in this case
-          this.props.setMessage('Dokument wurde nicht gefunden.');
-        }
-      })
-      .catch(function(error) {
-        this.props.setMessage(
-          'Fehler beim laden des Dokumentes aufgetreten:',
-          error
-        );
+    // Get rental from firestore and store it in local state
+    db.collection('rentals')
+      .doc(rentalId)
+      .onSnapshot(rental => {
+        this.setState({ rental: rental.data() });
       });
 
-    // Get userRental where userId and rentalId
-    // We need to know if the user has the owner flag
+    // Get userId from props
+    let userId = this.props.reservation.data().userId;
+
+    // Get user from firestore and store it in local state
+    db.collection('users')
+      .doc(userId)
+      .onSnapshot(user => {
+        this.setState({ user: user.data() });
+      });
+
+    // Get userRental where userId and rentalId match
     db.collection('userRentals')
-      .where('userId', '==', auth.currentUser().uid)
+      .where('userId', '==', userId)
       .where('rentalId', '==', rentalId)
       .onSnapshot(userRentals => {
         userRentals.forEach(doc => {
-          if (doc.data().owner === true) {
-            this.setState({ owner: true });
-          } else {
-            this.setState({ owner: false });
+          if (doc) {
+            this.setState({ userRental: doc.data() });
           }
         });
       });
@@ -99,9 +91,7 @@ class InvoicesListItem extends Component {
 
   handleChange(reservation, status) {
     let paid = !status;
-    this.setState({ isPaid: paid });
     let date = null;
-
     var reservationRef = db.collection('reservations').doc(reservation.id);
 
     // set new date only if checkbox is checked
@@ -152,22 +142,23 @@ class InvoicesListItem extends Component {
 
     return (
       <TableRow key={key}>
-        <TableCell numeric>{this.state.rental.description || ''}</TableCell>
+        <TableCell numeric>
+          {this.state.user.firstname || ''} {this.state.user.lastname || ''}
+        </TableCell>
+
+        <TableCell numeric>{this.state.rental.title || ''}</TableCell>
+
         <TableCell component="th" scope="row">
-          <Moment format="YYYY-MM-DD">
+          <Moment format="DD.MM.YYYY">
             {reservation.data().startDate.toDate()}
           </Moment>
         </TableCell>
 
         <TableCell numeric>
-          <Moment format="YYYY-MM-DD">
+          <Moment format="DD.MM.YYYY">
             {reservation.data().endDate.toDate()}
           </Moment>
         </TableCell>
-
-        <TableCell numeric>{reservation.data().numberOfGuests}</TableCell>
-
-        <TableCell numeric>{days}</TableCell>
 
         <TableCell numeric>{total || ''}</TableCell>
 
@@ -188,7 +179,7 @@ class InvoicesListItem extends Component {
         </TableCell>
 
         <TableCell numeric>
-          <Link className={classes.link} to={`/invoice/${reservation.id}`}>
+          <Link className={classes.link} to={`/invoices/${reservation.id}`}>
             <Button variant="outlined" size="small" className={classes.button}>
               Details
             </Button>
