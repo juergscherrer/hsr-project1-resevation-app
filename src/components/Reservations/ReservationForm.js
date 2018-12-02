@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import { bookedDates } from '../../custom/helpers';
+import { getBookedDate } from '../../firebase/queries/bookedDates';
 
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import TextField from '@material-ui/core/TextField';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
@@ -48,11 +48,10 @@ const styles = theme => ({
 });
 
 const INITIAL_STATE = {
-  rentalId: '',
   reservationId: '',
-  startDate: '',
-  endDate: '',
-  numberOfGuests: '',
+  startDate: '2018-11-20',
+  endDate: '2018-11-24',
+  numberOfGuests: '4',
   comment: '',
   error: null
 };
@@ -68,47 +67,75 @@ class ReservationForm extends Component {
     this.state = { ...INITIAL_STATE };
   }
 
-  componentDidMount() {
-    if (this.props.rentalId) {
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.rentalId !== prevProps.rentalId) {
-    }
-  }
+  // componentDidMount() {
+  //   if (this.props.rentalId) {
+  //   }
+  // }
+  //
+  // componentDidUpdate(prevProps) {
+  //   if (this.props.rentalId !== prevProps.rentalId) {
+  //   }
+  // }
 
   componentWillUnmount() {
     this.setState({ ...INITIAL_STATE });
   }
 
-  onSubmit = event => {
+  onSubmit = async event => {
     const {
-      rentalId,
+      reservationId,
       startDate,
       endDate,
       numberOfGuests,
       comment
     } = this.state;
 
-    if (rentalId) {
-      this.editReservation(
-        rentalId,
-        startDate,
-        endDate,
-        Number(numberOfGuests),
-        comment
-      );
-    } else {
-      this.newReservation(startDate, endDate, Number(numberOfGuests), comment);
-      console.log(endDate);
-      console.log(firebase.firestore.Timestamp.fromDate(new Date(endDate)));
-      console.log(
-        firebase.firestore.Timestamp.fromDate(new Date(endDate)).toDate()
-      );
+    this.validateBookingDates(
+      startDate,
+      endDate,
+      Number(numberOfGuests),
+      comment,
+      reservationId
+    );
+    event.preventDefault();
+  };
+
+  validateBookingDates = async (
+    startDate,
+    endDate,
+    numberOfGuests,
+    comment
+  ) => {
+    let valid = true;
+    const bDates = bookedDates(new Date(startDate), new Date(endDate));
+    let promiseArr = [];
+
+    for (let bDate of bDates) {
+      promiseArr = [...promiseArr, getBookedDate(bDate, this.props.rentalId)];
     }
 
-    event.preventDefault();
+    const datesRefs = await Promise.all(promiseArr);
+
+    console.log(datesRefs);
+
+    for (let bDate of bDates) {
+      for (let datesRef of datesRefs) {
+        datesRef.forEach(doc => {
+          valid =
+            (doc.data().startDate && bDate.endDate) ||
+            (doc.data().endDate && bDate.startDate);
+        });
+      }
+    }
+
+    console.log(valid);
+    if (valid) {
+      this.newReservation(startDate, endDate, Number(numberOfGuests), comment);
+    } else {
+      this.props.setMessage(
+        'Reservation fehlgeschlagen, bitte Daten überprüfen.'
+      );
+    }
   };
 
   newReservation = (startDate, endDate, numberOfGuests, comment) => {
@@ -123,6 +150,9 @@ class ReservationForm extends Component {
         paidAt: ''
       })
       .then(reservation => {
+        this.saveBookedDates(
+          bookedDates(new Date(startDate), new Date(endDate))
+        );
         this.props.setMessage(' Reservation wurde erfolgreich erstellt.');
         this.state = { ...INITIAL_STATE };
       })
@@ -131,6 +161,20 @@ class ReservationForm extends Component {
           `Reservation konnte nicht erstellt werden. Fehlermeldung: ${error}`
         );
       });
+  };
+
+  saveBookedDates = dates => {
+    for (let date of dates) {
+      date['rentalId'] = this.props.rentalId;
+      db.collection('bookedDates')
+        .add(date)
+        .then(bookedDate => {})
+        .catch(error => {
+          this.props.setMessage(
+            `BookedDate konnte nicht gespeichert werden. Fehlermeldung: ${error}`
+          );
+        });
+    }
   };
 
   // editReservation = (rentalId, title, description, priceForGuest, priceForOwner) => {
@@ -160,7 +204,10 @@ class ReservationForm extends Component {
     const { startDate, endDate, numberOfGuests, comment } = this.state;
 
     const isInvalid =
-      startDate === '' || endDate === '' || numberOfGuests === '';
+      startDate === '' ||
+      endDate === '' ||
+      numberOfGuests === '' ||
+      startDate >= endDate;
 
     return (
       <React.Fragment>
@@ -200,6 +247,7 @@ class ReservationForm extends Component {
               type="number"
               label="Anzahl Personen"
               value={numberOfGuests}
+              inputProps={{ min: '0', max: '10' }}
               onChange={event =>
                 this.setState(byPropKey('numberOfGuests', event.target.value))
               }

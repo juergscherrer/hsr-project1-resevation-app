@@ -94,7 +94,6 @@ class Calendar extends React.Component {
 
   loadReservations() {
     const { reservations } = this.props;
-    console.log(reservations);
 
     for (let reservation of reservations) {
       const userRef = db.collection('users').doc(reservation.data().userId);
@@ -104,8 +103,6 @@ class Calendar extends React.Component {
         .then(user => {
           if (user.exists) {
             let calenderEntry = {};
-
-            console.log(reservation.data().startDate);
 
             calenderEntry['start'] = reservation.data().startDate.toDate();
             calenderEntry['end'] = reservation.data().endDate.toDate();
