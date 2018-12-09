@@ -16,7 +16,8 @@ const INITIAL_STATE = {
   reservation: null,
   rental: {},
   user: {},
-  userRental: null
+  userRental: null,
+  check: null
 };
 
 const styles = theme => ({
@@ -34,11 +35,11 @@ function InvoiceStatus(props) {
 }
 
 function PaidAt(props) {
-  if (props.reservation.paid === true && props.reservation.paidAt != null) {
+  console.log(props);
+
+  if (props.reservation.paid === true && props.reservation.paidAt) {
     return (
-      <Moment format="DD.MM.YYYY HH:mm">
-        {props.reservation.paidAt.toDate()}
-      </Moment>
+      <Moment format="DD.MM.YYYY HH:mm">{props.reservation.paidAt}</Moment>
     );
   } else {
     return '';
@@ -49,6 +50,8 @@ class InvoicesListItem extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
+    this.handleChange = this.handleChange.bind(this);
+    this.updateStatus = this.updateStatus.bind(this);
   }
 
   componentWillMount() {
@@ -94,15 +97,19 @@ class InvoicesListItem extends Component {
   }
 
   handleChange(id) {
-    this.setState({
-      reservation: {
-        ...this.state.reservation,
-        paid: !this.state.reservation.paid
-      }
-    });
+    this.setState(
+      {
+        ...this.state,
+        reservation: {
+          ...this.state.reservation,
+          paid: !this.state.reservation.paid
+        }
+      },
+      () => this.updateStatus(id)
+    );
+  }
 
-    console.log(this.state.reservation.paid);
-
+  updateStatus(id) {
     var reservationRef = db.collection('reservations').doc(id);
 
     // set new date only if checkbox is checked
@@ -184,7 +191,7 @@ class InvoicesListItem extends Component {
         <TableCell numeric>{total || ''}</TableCell>
 
         <TableCell numeric>
-          {/*<PaidAt reservation={this.state.reservation}/>*/}
+          <PaidAt reservation={this.state.reservation} />
         </TableCell>
 
         <TableCell numeric>
