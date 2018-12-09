@@ -34,10 +34,10 @@ function InvoiceStatus(props) {
 }
 
 function PaidAt(props) {
-  if (props.reservation.data().paidAt) {
+  if (props.reservation.paid === true && props.reservation.paidAt != null) {
     return (
       <Moment format="DD.MM.YYYY HH:mm">
-        {props.reservation.data().paidAt.toDate()}
+        {props.reservation.paidAt.toDate()}
       </Moment>
     );
   } else {
@@ -49,6 +49,10 @@ class InvoicesListItem extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
+  }
+
+  componentWillMount() {
+    this.setState({ reservation: this.props.reservation.data() });
   }
 
   componentDidMount() {
@@ -89,23 +93,40 @@ class InvoicesListItem extends Component {
     this.setState({ ...INITIAL_STATE });
   }
 
-  handleChange(reservation, status) {
-    let paid = !status;
-    let date = null;
-    var reservationRef = db.collection('reservations').doc(reservation.id);
+  handleChange(id) {
+    this.setState({
+      reservation: {
+        ...this.state.reservation,
+        paid: !this.state.reservation.paid
+      }
+    });
+
+    console.log(this.state.reservation.paid);
+
+    var reservationRef = db.collection('reservations').doc(id);
 
     // set new date only if checkbox is checked
-    if (paid === true) {
-      date = new Date();
+    if (this.state.reservation.paid === true) {
+      this.setState({
+        reservation: {
+          ...this.state.reservation,
+          paidAt: new Date()
+        }
+      });
     } else {
-      date = null;
+      this.setState({
+        reservation: {
+          ...this.state.reservation,
+          paidAt: this.props.reservation.data().paidAt
+        }
+      });
     }
 
     // update status
     return reservationRef
       .update({
-        paid: paid,
-        paidAt: date
+        paid: this.state.reservation.paid,
+        paidAt: this.state.reservation.paidAt
       })
       .then(() => {
         this.props.setMessage('Der Status wurde erfolgreich aktualisiert.');
@@ -163,17 +184,15 @@ class InvoicesListItem extends Component {
         <TableCell numeric>{total || ''}</TableCell>
 
         <TableCell numeric>
-          <PaidAt reservation={reservation} isPaid={this.state.isPaid} />
+          {/*<PaidAt reservation={this.state.reservation}/>*/}
         </TableCell>
 
         <TableCell numeric>
-          <InvoiceStatus isPaid={this.state.isPaid} />
+          <InvoiceStatus isPaid={this.state.reservation.paid} />
 
           <Checkbox
-            checked={reservation.data().paid}
-            onChange={e =>
-              this.handleChange(reservation, reservation.data().paid)
-            }
+            checked={this.state.reservation.paid}
+            onChange={e => this.handleChange(this.props.reservation.id)}
             value="checkedA"
           />
         </TableCell>

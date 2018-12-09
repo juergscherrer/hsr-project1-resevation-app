@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { auth } from '../../firebase';
+
+import { db } from '../../firebase/firebase';
+import InvoicesListItem from './InvoicesListItem';
+
 import { withStyles } from '@material-ui/core/styles/index';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableHead from '@material-ui/core/TableHead';
-import InvoicesListItem from './InvoicesListItem';
-import { db } from '../../firebase/firebase';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import { auth } from '../../firebase';
 
 const INITIAL_STATE = {
   reservations: []
@@ -34,22 +36,27 @@ class InvoicesList extends Component {
     db.collection('userRentals')
       .where('userId', '==', currentUser)
       .where('manager', '==', true)
-      .onSnapshot(userRentals => {
-        // Clear state
-        this.setState({ ...INITIAL_STATE });
-
+      .get()
+      .then(querySnapshot => {
         // Loop all userRentals and find the reservation
-        userRentals.forEach(doc => {
+        querySnapshot.forEach(doc => {
           db.collection('reservations')
             .where('rentalId', '==', doc.data().rentalId)
-            .onSnapshot(reservations => {
-              reservations.forEach(doc => {
+            .get()
+            .then(querySnapshot => {
+              querySnapshot.forEach(doc => {
                 this.setState({
                   reservations: [...this.state.reservations, doc]
                 });
               });
+            })
+            .catch(function(error) {
+              console.log('Error getting documents: ', error);
             });
         });
+      })
+      .catch(function(error) {
+        console.log('Error getting documents: ', error);
       });
   }
 
@@ -81,7 +88,7 @@ class InvoicesList extends Component {
             <TableCell numeric>Objekt</TableCell>
             <TableCell numeric>Start Date</TableCell>
             <TableCell numeric>End Datum</TableCell>
-            <TableCell numeric>Total</TableCell>
+            <TableCell numeric>Total [CHF]</TableCell>
             <TableCell numeric>Bezahlt am</TableCell>
             <TableCell numeric>Bezahlt?</TableCell>
             <TableCell numeric>Details</TableCell>
