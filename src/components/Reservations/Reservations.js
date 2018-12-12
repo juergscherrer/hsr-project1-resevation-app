@@ -1,10 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { auth, db } from '../../firebase';
-
+import { getReservations } from '../../firebase/queries/reservations';
 import Calendar from './Calendar';
 import ReservationForm from './ReservationForm';
-
 import MessageBox from '../MessageBox';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -35,7 +32,8 @@ const INITIAL_STATE = {
   rentalId: null,
   reservations: [],
   message: null,
-  newReservation: null
+  newReservation: null,
+  editReservationId: null
 };
 
 class Reservations extends React.Component {
@@ -43,11 +41,6 @@ class Reservations extends React.Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
-
-    this.setMessage = this.setMessage.bind(this);
-    this.deleteMessage = this.deleteMessage.bind(this);
-    this.newSelectedReservation = this.newSelectedReservation.bind(this);
-    this.editSelectedReservation = this.editSelectedReservation.bind(this);
   }
 
   componentDidMount() {
@@ -55,29 +48,32 @@ class Reservations extends React.Component {
     this.getReservations(this.props.match.params.rentalId);
   }
 
-  getReservations(rentalId) {
-    db.collection('reservations')
-      .where('rentalId', '==', rentalId)
-      .onSnapshot(reservations => {
-        this.setState({ reservations: reservations.docs });
-      });
-  }
+  getReservations = async rentalId => {
+    const reservationsRef = await getReservations(rentalId);
+    return reservationsRef.onSnapshot(reservations => {
+      this.setState({ reservations: reservations.docs });
+    });
+  };
 
-  setMessage(msg) {
+  setMessage = msg => {
     this.setState({ message: msg });
-  }
+  };
 
-  deleteMessage() {
+  deleteMessage = () => {
     this.setState({ message: null });
-  }
+  };
 
-  editSelectedReservation(reservation) {
-    console.log(reservation);
-  }
+  editSelectedReservation = reservation => {
+    this.setState({ editReservationId: reservation.reservationId });
+  };
 
-  newSelectedReservation(reservation) {
-    this.setState({ newReservation: reservation });
-  }
+  newSelectedReservation = reservation => {
+    this.setState({ newReservation: reservation, editReservationId: null });
+  };
+
+  clearEditReservation = () => {
+    this.setState({ editReservationId: null });
+  };
 
   render() {
     const { classes } = this.props;
@@ -99,7 +95,9 @@ class Reservations extends React.Component {
                   <Grid container justify="space-between" alignItems="center">
                     <Grid item>
                       <Typography variant="headline">
-                        Neue Reservation
+                        {this.state.editReservationId
+                          ? 'Reservation bearbeiten'
+                          : 'Neue Reservation erstellen'}
                       </Typography>
                     </Grid>
                     <Grid item />
@@ -111,6 +109,8 @@ class Reservations extends React.Component {
                     rentalId={this.state.rentalId}
                     setMessage={this.setMessage}
                     newReservation={this.state.newReservation}
+                    editReservationId={this.state.editReservationId}
+                    clearEditReservation={this.clearEditReservation}
                   />
                 </div>
               </Paper>
@@ -127,6 +127,7 @@ class Reservations extends React.Component {
                 <div className={classes.content}>
                   <Calendar
                     reservations={reservations}
+                    setMessage={this.setMessage}
                     editSelectedReservation={this.editSelectedReservation}
                     newSelectedReservation={this.newSelectedReservation}
                   />

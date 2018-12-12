@@ -1,11 +1,28 @@
 import { db } from '../index';
 
-export async function getBookedDate(bDate, rentalId) {
-  const response = await db
+// get bookedDates with rentalId
+export async function getBookedDatesWithRental(bDate, rentalId) {
+  return await db
     .collection('bookedDates')
     .where('rentalId', '==', rentalId)
     .where('date', '==', bDate.date)
     .get();
+}
 
-  return response;
+// get bookedDates with reservationId
+export async function getBookedDatesWithReservation(reservationId) {
+  return await db
+    .collection('bookedDates')
+    .where('reservationId', '==', reservationId)
+    .get();
+}
+
+// delete bookedDate with object ref
+export async function deleteBookedDate(bookedDate) {
+  return await bookedDate.ref.delete();
+}
+
+// create new bookedDate with bookedDateData
+export async function createBookedDate(bookedDateData) {
+  return await db.collection('bookedDates').add(bookedDateData);
 }

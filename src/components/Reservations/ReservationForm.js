@@ -1,16 +1,29 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { bookedDates, formatDate } from '../../custom/helpers';
-import { getBookedDate } from '../../firebase/queries/bookedDates';
+import {
+  getBookedDatesWithRental,
+  getBookedDatesWithReservation,
+  deleteBookedDate,
+  createBookedDate
+} from '../../firebase/queries/bookedDates';
+import {
+  createReservation,
+  deleteReservation,
+  getReservation,
+  updateReservation
+} from '../../firebase/queries/reservations';
 
-import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
+import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
+import RenewIcon from '@material-ui/icons/Autorenew';
+import DeleteIcon from '@material-ui/icons/Delete';
 
-import { auth, db } from '../../firebase/index';
+import { auth } from '../../firebase/index';
 
 import firebase from 'firebase/app';
 import 'firebase/firestore';
@@ -48,12 +61,11 @@ const styles = theme => ({
 });
 
 const INITIAL_STATE = {
-  reservationId: '',
+  reservationId: null,
   startDate: '',
   endDate: '',
   numberOfGuests: '',
-  comment: '',
-  error: null
+  comment: ''
 };
 
 const byPropKey = (propertyName, value) => () => ({
@@ -67,21 +79,18 @@ class ReservationForm extends Component {
     this.state = { ...INITIAL_STATE };
   }
 
-  componentDidMount() {
-    if (this.props.newReservation) {
-      this.setState({
-        startDate: formatDate(this.props.newReservation.start),
-        endDate: formatDate(this.props.newReservation.end)
-      });
-    }
-  }
-
   componentDidUpdate(prevProps) {
     if (this.props.newReservation !== prevProps.newReservation) {
       this.setState({
+        reservationId: null,
         startDate: formatDate(this.props.newReservation.start),
         endDate: formatDate(this.props.newReservation.end)
       });
+    } else if (
+      this.props.editReservationId &&
+      this.props.editReservationId !== prevProps.editReservationId
+    ) {
+      this.getExistingReservation(this.props.editReservationId);
     }
   }
 
@@ -89,13 +98,28 @@ class ReservationForm extends Component {
     this.setState({ ...INITIAL_STATE });
   }
 
+  getExistingReservation = async editReservationId => {
+    const reservation = await getReservation(editReservationId);
+    if (reservation && reservation.data().userId === auth.currentUser().uid) {
+      this.setState({
+        reservationId: reservation.id,
+        startDate: formatDate(reservation.data().startDate.toDate()),
+        endDate: formatDate(reservation.data().endDate.toDate()),
+        numberOfGuests: reservation.data().numberOfGuests,
+        comment: reservation.data().comment
+      });
+    } else {
+      this.props.setMessage('Reservation kann nicht bearbeitet werden.');
+      this.clearForm();
+    }
+  };
+
   onSubmit = async event => {
     const {
       reservationId,
       startDate,
       endDate,
       numberOfGuests,
-
       comment
     } = this.state;
 
@@ -106,6 +130,7 @@ class ReservationForm extends Component {
       comment,
       reservationId
     );
+
     event.preventDefault();
   };
 
@@ -121,17 +146,21 @@ class ReservationForm extends Component {
     let promiseArr = [];
 
     for (let bDate of bDates) {
-      promiseArr = [...promiseArr, getBookedDate(bDate, this.props.rentalId)];
+      promiseArr = [
+        ...promiseArr,
+        getBookedDatesWithRental(bDate, this.props.rentalId)
+      ];
     }
 
     const datesRefs = await Promise.all(promiseArr);
 
-    console.log(datesRefs);
-
     for (let bDate of bDates) {
       for (let datesRef of datesRefs) {
         datesRef.forEach(doc => {
-          if (doc.data().date.seconds === bDate.date.seconds) {
+          if (
+            doc.data().date.seconds === bDate.date.seconds &&
+            doc.data().reservationId !== reservationId
+          ) {
             valid =
               (doc.data().startDate && bDate.endDate) ||
               (doc.data().endDate && bDate.startDate);
@@ -141,7 +170,8 @@ class ReservationForm extends Component {
     }
     if (valid) {
       reservationId
-        ? this.newReservation(
+        ? this.editReservation(
+            reservationId,
             startDate,
             endDate,
             Number(numberOfGuests),
@@ -155,24 +185,24 @@ class ReservationForm extends Component {
           );
     } else {
       this.props.setMessage(
-        'Reservation fehlgeschlagen, bitte Daten überprüfen.'
+        'Reservation fehlgeschlagen, bitte die eingegebenen Daten überprüfen.'
       );
     }
   };
 
   newReservation = (startDate, endDate, numberOfGuests, comment) => {
-    db.collection('reservations')
-      .add({
-        startDate: firebase.firestore.Timestamp.fromDate(new Date(startDate)),
-        endDate: firebase.firestore.Timestamp.fromDate(new Date(endDate)),
-        numberOfGuests,
-        comment,
-        userId: auth.currentUser().uid,
-        rentalId: this.props.rentalId,
-        paidAt: ''
-      })
+    const reservationRef = createReservation({
+      startDate: firebase.firestore.Timestamp.fromDate(new Date(startDate)),
+      endDate: firebase.firestore.Timestamp.fromDate(new Date(endDate)),
+      numberOfGuests,
+      comment,
+      userId: auth.currentUser().uid,
+      rentalId: this.props.rentalId,
+      paidAt: null
+    });
+    return reservationRef
       .then(reservation => {
-        this.saveBookedDates(
+        this.manageBookedDates(
           bookedDates(new Date(startDate), new Date(endDate)),
           reservation.id
         );
@@ -186,50 +216,91 @@ class ReservationForm extends Component {
       });
   };
 
-  saveBookedDates = (dates, reservationId) => {
-    for (let date of dates) {
-      date['rentalId'] = this.props.rentalId;
-      date['reservationId'] = reservationId;
-      db.collection('bookedDates')
-        .add(date)
-        .then(bookedDate => {})
-        .catch(error => {
-          this.props.setMessage(
-            `BookedDate konnte nicht gespeichert werden. Fehlermeldung: ${error}`
-          );
-        });
-    }
+  editReservation = (
+    reservationId,
+    startDate,
+    endDate,
+    numberOfGuests,
+    comment
+  ) => {
+    const reservationData = {
+      startDate: firebase.firestore.Timestamp.fromDate(new Date(startDate)),
+      endDate: firebase.firestore.Timestamp.fromDate(new Date(endDate)),
+      numberOfGuests,
+      comment
+    };
+    const reservationRef = updateReservation(reservationId, reservationData);
+    return reservationRef
+      .then(() => {
+        this.manageBookedDates(
+          bookedDates(new Date(startDate), new Date(endDate)),
+          reservationId
+        );
+        this.props.setMessage(' Reservation wurde erfolgreich aktualisiert.');
+        this.clearForm();
+      })
+      .catch(error => {
+        this.props.setMessage(
+          `Reservation konnte nicht aktualisiert werden. Fehlermeldung: ${error}`
+        );
+      });
   };
 
-  // editReservation = (rentalId, title, description, priceForGuest, priceForOwner) => {
-  //     const userRental = db.collection('rentals').doc(rentalId);
-  //
-  //     return userRental
-  //         .update({
-  //             title,
-  //             description,
-  //             priceForGuest,
-  //             priceForOwner
-  //         })
-  //         .then(() => {
-  //             this.setState({ ...INITIAL_STATE });
-  //             this.props.handleClick();
-  //             this.props.setMessage(`${title} wurde erfolgreich aktualisiert.`);
-  //         })
-  //         .catch(error => {
-  //             this.props.setMessage(
-  //                 `Mietobjekt konnte nicht aktualisiert werden. Fehlermeldung: ${error}`
-  //             );
-  //         });
-  // };
+  deleteReservation = () => {
+    const reservationRef = deleteReservation(this.state.reservationId);
+    return reservationRef
+      .then(() => {
+        this.manageBookedDates(null, this.state.reservationId);
+        this.props.setMessage(' Reservation wurde erfolgreich gelöscht.');
+        this.clearForm();
+      })
+      .catch(error => {
+        this.props.setMessage(
+          `Reservation konnte nicht gelöscht werden. Fehlermeldung: ${error}`
+        );
+      });
+  };
+
+  manageBookedDates = (dates, reservationId) => {
+    getBookedDatesWithReservation(reservationId)
+      .then(bookedDates => {
+        bookedDates.forEach(bookedDate => {
+          deleteBookedDate(bookedDate).catch(error => {
+            this.props.setMessage(
+              `BookedDate konnte nicht gelöscht werden. Fehlermeldung: ${error}`
+            );
+          });
+        });
+      })
+      .then(() => {
+        if (dates) {
+          for (let date of dates) {
+            date['rentalId'] = this.props.rentalId;
+            date['reservationId'] = reservationId;
+            createBookedDate(date).catch(error => {
+              this.props.setMessage(
+                `BookedDate konnte nicht gespeichert werden. Fehlermeldung: ${error}`
+              );
+            });
+          }
+        }
+      });
+  };
+
+  clearForm = () => {
+    this.props.clearEditReservation();
+    this.setState({ ...INITIAL_STATE });
+  };
 
   render() {
     const { classes } = this.props;
     const { startDate, endDate, numberOfGuests, comment } = this.state;
-
+    const today = formatDate(Date.now());
     const isInvalid =
       startDate === '' ||
+      startDate < today ||
       endDate === '' ||
+      endDate < today ||
       numberOfGuests === '' ||
       startDate >= endDate;
 
@@ -295,17 +366,47 @@ class ReservationForm extends Component {
             />
           </FormControl>
           <Button
+            className={classes.button}
             color="primary"
             disabled={isInvalid}
             type="submit"
-            fullWidth
             variant="raised"
           >
-            <SaveIcon
-              className={classNames(classes.leftIcon, classes.iconSmall)}
-            />
-            Speichern
+            {this.props.editReservationId ? (
+              <RenewIcon
+                className={classNames(classes.leftIcon, classes.iconSmall)}
+              />
+            ) : (
+              <SaveIcon
+                className={classNames(classes.leftIcon, classes.iconSmall)}
+              />
+            )}
+            {this.props.editReservationId ? 'Aktualisieren' : 'Speichern'}
           </Button>
+          {this.props.editReservationId && (
+            <React.Fragment>
+              <Button
+                className={classes.button}
+                color="secondary"
+                disabled={isInvalid}
+                variant="raised"
+                onClick={this.deleteReservation}
+              >
+                <DeleteIcon
+                  className={classNames(classes.leftIcon, classes.iconSmall)}
+                />
+                Löschen
+              </Button>
+              <Button
+                className={classes.button}
+                disabled={isInvalid}
+                variant="raised"
+                onClick={this.clearForm}
+              >
+                Abbrechen
+              </Button>
+            </React.Fragment>
+          )}
         </form>
       </React.Fragment>
     );

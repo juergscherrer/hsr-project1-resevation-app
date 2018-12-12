@@ -1,14 +1,10 @@
 import React from 'react';
-
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
+import { getUser } from '../../firebase/queries/users';
+
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './Calendar.css';
-
-import MessageBox from '../MessageBox';
-
-import { withStyles } from '@material-ui/core/styles';
-import { auth, db } from '../../firebase';
 
 moment.locale('de', {
   week: {
@@ -48,8 +44,6 @@ const messages = {
   showMore: total => `+ Mehr anzeigen (${total})`
 };
 
-const styles = theme => ({});
-
 const INITIAL_STATE = {
   message: null,
   calendarEntries: []
@@ -60,10 +54,6 @@ class Calendar extends React.Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
-
-    this.setMessage = this.setMessage.bind(this);
-    this.deleteMessage = this.deleteMessage.bind(this);
-    this.loadReservations = this.loadReservations.bind(this);
   }
 
   componentDidMount() {
@@ -77,14 +67,11 @@ class Calendar extends React.Component {
     }
   }
 
-  loadReservations() {
+  loadReservations = () => {
     const { reservations } = this.props;
 
     for (let reservation of reservations) {
-      const userRef = db.collection('users').doc(reservation.data().userId);
-
-      userRef
-        .get()
+      getUser(reservation.data().userId)
         .then(user => {
           if (user.exists) {
             let calenderEntry = {};
@@ -96,32 +83,25 @@ class Calendar extends React.Component {
             } ${reservation.data().comment &&
               '(' + reservation.data().comment + ')'}`;
             calenderEntry['allDay'] = true;
+            calenderEntry['reservationId'] = reservation.id;
 
             this.setState(prevState => ({
               calendarEntries: [...prevState.calendarEntries, calenderEntry]
             }));
+            this.props.setMessage('Reservationen wurden erfolgreich geladen.');
           } else {
-            console.log('No such document!');
+            this.props.setMessage('Benutzer wurde nicht gefunden.');
           }
         })
-        .catch(function(error) {
-          console.log('Error getting document:', error);
+        .catch(error => {
+          this.props.setMessage(
+            `Benutzer dieser Reservation konnte nicht gefunden werden. Fehlermeldung: ${error}`
+          );
         });
     }
-  }
-
-  setMessage(msg) {
-    this.setState({ message: msg });
-  }
-
-  deleteMessage() {
-    this.setState({ message: null });
-  }
+  };
 
   render() {
-    const { classes } = this.props;
-    const {} = this.state;
-
     return (
       <React.Fragment>
         <BigCalendar
@@ -136,15 +116,9 @@ class Calendar extends React.Component {
           onSelectEvent={event => this.props.editSelectedReservation(event)}
           onSelectSlot={event => this.props.newSelectedReservation(event)}
         />
-
-        <MessageBox
-          open={!!this.state.message}
-          message={this.state.message}
-          onClose={this.deleteMessage}
-        />
       </React.Fragment>
     );
   }
 }
 
-export default withStyles(styles)(Calendar);
+export default Calendar;

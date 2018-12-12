@@ -7,3 +7,7 @@
 .rbc-event.rbc-selected {
   background-color: #ff9100;
 }
+
+/*.rbc-event.rbc-selected:focus {*/
+/*background-color: #ff9100;*/
+/*}*/
