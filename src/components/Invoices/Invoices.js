@@ -14,6 +14,12 @@ const styles = theme => ({
   },
   header: {
     padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`
+  },
+  layout: {
+    maxWidth: 1280,
+    marginRight: 'auto',
+    marginLeft: 'auto',
+    marginBottom: `${theme.spacing.unit * 6}px`
   }
 });
 
@@ -42,7 +48,7 @@ class InvoicesPage extends Component {
     const { classes } = this.props;
 
     return (
-      <div>
+      <div className={classes.layout}>
         <Paper className={classes.root}>
           <h1 className={classes.header}>Rechnungen</h1>
           <InvoicesList setMessage={this.setMessage} />
