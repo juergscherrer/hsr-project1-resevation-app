@@ -35,12 +35,18 @@ function InvoiceStatus(props) {
 }
 
 function PaidAt(props) {
-  console.log(props);
-
-  if (props.reservation.paid === true && props.reservation.paidAt) {
-    return (
-      <Moment format="DD.MM.YYYY HH:mm">{props.reservation.paidAt}</Moment>
-    );
+  if (props.reservation.paid === true && props.reservation.paidAt != null) {
+    if (props.reservation.paidAt instanceof Date) {
+      return (
+        <Moment format="DD.MM.YYYY HH:mm:ss">{props.reservation.paidAt}</Moment>
+      );
+    } else {
+      return (
+        <Moment format="DD.MM.YYYY HH:mm:ss">
+          {props.reservation.paidAt.toDate()}
+        </Moment>
+      );
+    }
   } else {
     return '';
   }
@@ -52,6 +58,11 @@ class InvoicesListItem extends Component {
     this.state = { ...INITIAL_STATE };
     this.handleChange = this.handleChange.bind(this);
     this.updateStatus = this.updateStatus.bind(this);
+    this.updateReservation = this.updateReservation.bind(this);
+  }
+
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
   }
 
   componentWillMount() {
@@ -92,10 +103,6 @@ class InvoicesListItem extends Component {
       });
   }
 
-  componentWillUnmount() {
-    this.setState({ ...INITIAL_STATE });
-  }
-
   handleChange(id) {
     this.setState(
       {
@@ -111,26 +118,26 @@ class InvoicesListItem extends Component {
 
   updateStatus(id) {
     var reservationRef = db.collection('reservations').doc(id);
+    var reservationCopy = { ...this.state.reservation };
 
     // set new date only if checkbox is checked
     if (this.state.reservation.paid === true) {
-      this.setState({
-        reservation: {
-          ...this.state.reservation,
-          paidAt: new Date()
-        }
-      });
+      this.setState(
+        { reservation: reservationCopy },
+        this.updateReservation(reservationRef)
+      );
     } else {
-      this.setState({
-        reservation: {
-          ...this.state.reservation,
-          paidAt: this.props.reservation.data().paidAt
-        }
-      });
+      reservationCopy.paidAt = new Date();
+      this.setState(
+        { reservation: reservationCopy },
+        this.updateReservation(reservationRef)
+      );
     }
+  }
 
+  updateReservation(reservationRef) {
     // update status
-    return reservationRef
+    reservationRef
       .update({
         paid: this.state.reservation.paid,
         paidAt: this.state.reservation.paidAt
