@@ -1,6 +1,6 @@
 import { auth, db } from '../index';
 
-// get Reservation with reservationId
+// get Reservation with reservationId once
 export async function getReservation(reservationId) {
   return await db
     .collection('reservations')
@@ -8,7 +8,7 @@ export async function getReservation(reservationId) {
     .get();
 }
 
-// get Reservations with rentalId (realtime updates)
+// get Reservations with rentalId
 export async function getReservations(rentalId) {
   return await db.collection('reservations').where('rentalId', '==', rentalId);
 }

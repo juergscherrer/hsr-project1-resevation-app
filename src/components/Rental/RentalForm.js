@@ -9,7 +9,13 @@ import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
 
-import { auth, db } from '../../firebase/index';
+import { auth } from '../../firebase/index';
+import {
+  createRental,
+  getRental,
+  updateRental
+} from '../../firebase/queries/rentals';
+import { createUserRental } from '../../firebase/queries/userRentals';
 
 const styles = theme => ({
   form: {
@@ -67,13 +73,21 @@ class RentalForm extends Component {
 
   componentDidMount() {
     if (this.props.rentalId) {
-      this.getRental();
+      this.getRental().catch(error => {
+        this.props.setMessage(
+          `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
+        );
+      });
     }
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.rentalId !== prevProps.rentalId) {
-      this.getRental();
+      this.getRental().catch(error => {
+        this.props.setMessage(
+          `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
+        );
+      });
     }
   }
 
@@ -81,19 +95,18 @@ class RentalForm extends Component {
     this.setState({ ...INITIAL_STATE });
   }
 
-  getRental() {
-    db.collection('rentals')
-      .doc(this.props.rentalId)
-      .onSnapshot(rental => {
-        this.setState({
-          rentalId: rental.id,
-          title: rental.data().title,
-          description: rental.data().description,
-          priceForGuest: rental.data().priceForGuest,
-          priceForOwner: rental.data().priceForOwner
-        });
+  getRental = async () => {
+    const rentalRef = await getRental(this.props.rentalId);
+    return rentalRef.onSnapshot(rental => {
+      this.setState({
+        rentalId: rental.id,
+        title: rental.data().title,
+        description: rental.data().description,
+        priceForGuest: rental.data().priceForGuest,
+        priceForOwner: rental.data().priceForOwner
       });
-  }
+    });
+  };
 
   onSubmit = event => {
     const {
@@ -125,26 +138,26 @@ class RentalForm extends Component {
   };
 
   newRental = (title, description, priceForGuest, priceForOwner) => {
-    db.collection('rentals')
-      .add({
-        title,
-        description,
-        priceForGuest,
-        priceForOwner
-      })
+    const rentalRef = createRental({
+      title,
+      description,
+      priceForGuest,
+      priceForOwner
+    });
+    return rentalRef
       .then(rental => {
-        db.collection('userRentals')
-          .add({
-            userId: auth.currentUser().uid,
-            rentalId: rental.id,
-            owner: true,
-            manager: true
-          })
-          .then(userRental => {
-            this.setState({ ...INITIAL_STATE });
-            this.props.handleClick();
-            this.props.setMessage(`${title} wurde erfolgreich erstellt.`);
-          });
+        const userRentalRef = createUserRental({
+          userId: auth.currentUser().uid,
+          rentalId: rental.id,
+          owner: true,
+          manager: true
+        });
+
+        return userRentalRef.then(() => {
+          this.setState({ ...INITIAL_STATE });
+          this.props.handleClick();
+          this.props.setMessage(`${title} wurde erfolgreich erstellt.`);
+        });
       })
       .catch(function(error) {
         this.props.setMessage(
@@ -154,15 +167,9 @@ class RentalForm extends Component {
   };
 
   editRental = (rentalId, title, description, priceForGuest, priceForOwner) => {
-    const userRental = db.collection('rentals').doc(rentalId);
-
-    return userRental
-      .update({
-        title,
-        description,
-        priceForGuest,
-        priceForOwner
-      })
+    const rentalData = { title, description, priceForGuest, priceForOwner };
+    const userRentalRef = updateRental(rentalId, rentalData);
+    return userRentalRef
       .then(() => {
         this.setState({ ...INITIAL_STATE });
         this.props.handleClick();

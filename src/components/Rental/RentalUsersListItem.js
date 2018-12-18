@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { db } from '../../firebase';
 
 import MessageBox from '../MessageBox';
 import AlertDialog from '../AlertDialog';
@@ -16,6 +15,11 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { getUser } from '../../firebase/queries/users';
+import {
+  deleteUserRentalWithId,
+  updateUserRental
+} from '../../firebase/queries/userRentals';
 
 const styles = theme => ({});
 
@@ -35,24 +39,31 @@ class RentalListItem extends React.Component {
   }
 
   componentDidMount() {
-    this.getUser();
+    this.getUser().catch(error => {
+      this.props.setMessage(
+        `Benutzer konnte nicht geladen werden. Fehlermeldung: ${error}`
+      );
+    });
   }
 
   componentDidUpdate(prevProps) {
     if (
       this.props.userRental.data().userId !== prevProps.userRental.data().userId
     ) {
-      this.getUser();
+      this.getUser().catch(error => {
+        this.props.setMessage(
+          `Benutzer konnte nicht geladen werden. Fehlermeldung: ${error}`
+        );
+      });
     }
   }
 
-  getUser() {
-    db.collection('users')
-      .doc(this.props.userRental.data().userId)
-      .onSnapshot(user => {
-        this.setState({ user: user.data() });
-      });
-  }
+  getUser = async () => {
+    const userRef = await getUser(this.props.userRental.data().userId);
+    return userRef.onSnapshot(user => {
+      this.setState({ user: user.data() });
+    });
+  };
 
   handleOwnerChange(event) {
     let owner = event.target.checked;
@@ -80,13 +91,11 @@ class RentalListItem extends React.Component {
   };
 
   deleteUserRental = () => {
-    db.collection('userRentals')
-      .doc(this.props.userRental.id)
-      .delete()
+    deleteUserRentalWithId(this.props.userRental.id)
       .then(() => {
         this.props.setMessage('Benuzter erfolgreich gelöscht');
       })
-      .catch(function(error) {
+      .catch(error => {
         this.props.setMessage(
           `Benuzter konnte nicht gelöscht werden. Fehlermeldung: ${error}`
         );
@@ -94,14 +103,8 @@ class RentalListItem extends React.Component {
   };
 
   editOwnerUserRental = owner => {
-    const userRental = db
-      .collection('userRentals')
-      .doc(this.props.userRental.id);
-
-    return userRental
-      .update({
-        owner
-      })
+    const userRentalRef = updateUserRental(this.props.userRental.id, { owner });
+    return userRentalRef
       .then(() => {
         this.props.setMessage('Benuzter erfolgreich aktualisiert');
       })
@@ -111,14 +114,10 @@ class RentalListItem extends React.Component {
   };
 
   editManagerUserRental = manager => {
-    const userRental = db
-      .collection('userRentals')
-      .doc(this.props.userRental.id);
-
-    return userRental
-      .update({
-        manager
-      })
+    const userRentalRef = updateUserRental(this.props.userRental.id, {
+      manager
+    });
+    return userRentalRef
       .then(() => {
         this.props.setMessage('Benuzter erfolgreich aktualisiert');
       })

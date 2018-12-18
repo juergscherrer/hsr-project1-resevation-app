@@ -1,7 +1,7 @@
 import React from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
-import { getUser } from '../../firebase/queries/users';
+import { getUserOnce } from '../../firebase/queries/users';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './Calendar.css';
@@ -71,7 +71,7 @@ class Calendar extends React.Component {
     const { reservations } = this.props;
 
     for (let reservation of reservations) {
-      getUser(reservation.data().userId)
+      getUserOnce(reservation.data().userId)
         .then(user => {
           if (user.exists) {
             let calenderEntry = {};

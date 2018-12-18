@@ -5,6 +5,7 @@ import { db, auth } from '../../firebase';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
+import { getUserRentalsWithUser } from '../../firebase/queries/userRentals';
 
 const styles = theme => ({
   root: {
@@ -24,16 +25,19 @@ class RentalList extends React.Component {
   }
 
   componentDidMount() {
-    this.getUserRentals();
+    this.getUserRentals().catch(error => {
+      this.props.setMessage(
+        `Mietobjekte konnten nicht geladen werden. Fehlermeldung: ${error}`
+      );
+    });
   }
 
-  getUserRentals() {
-    db.collection('userRentals')
-      .where('userId', '==', auth.currentUser().uid)
-      .onSnapshot(userRentals => {
-        this.setState({ rentals: userRentals.docs });
-      });
-  }
+  getUserRentals = async () => {
+    const userRentalsRef = await getUserRentalsWithUser(auth.currentUser().uid);
+    return userRentalsRef.onSnapshot(userRentals => {
+      this.setState({ rentals: userRentals.docs });
+    });
+  };
 
   componentWillUnmount() {
     this.setState({ rentals: null });

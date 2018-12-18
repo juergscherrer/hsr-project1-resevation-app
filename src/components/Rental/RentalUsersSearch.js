@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { db } from '../../firebase';
+import { auth, db } from '../../firebase';
 
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -8,6 +8,11 @@ import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import CheckIcon from '@material-ui/icons/CheckCircle';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import { getUserWithEmailOnce } from '../../firebase/queries/users';
+import {
+  createUserRental,
+  getUserRentalsWithRentalAndUserOnce
+} from '../../firebase/queries/userRentals';
 
 const styles = theme => ({
   container: {
@@ -53,9 +58,8 @@ class RentalUsersSearch extends React.Component {
 
   addUser(event) {
     this.setState({ user: null, emailSearch: event.target.value });
-    db.collection('users')
-      .where('email', '==', event.target.value)
-      .get()
+    const email = event.target.value;
+    getUserWithEmailOnce(email)
       .then(users => {
         users.forEach(doc => {
           this.setState({ user: doc });
@@ -70,10 +74,10 @@ class RentalUsersSearch extends React.Component {
 
   validateUser(event) {
     if (this.state.user) {
-      db.collection('userRentals')
-        .where('userId', '==', this.state.user.id)
-        .where('rentalId', '==', this.props.rentalId)
-        .get()
+      getUserRentalsWithRentalAndUserOnce(
+        this.props.rentalId,
+        this.state.user.id
+      )
         .then(usersRentals => {
           if (usersRentals.docs.length === 0) {
             this.saveUserRental();
@@ -96,13 +100,14 @@ class RentalUsersSearch extends React.Component {
   }
 
   saveUserRental() {
-    db.collection('userRentals')
-      .add({
-        userId: this.state.user.id,
-        rentalId: this.props.rentalId,
-        manager: false,
-        owner: false
-      })
+    const userRentalRef = createUserRental({
+      userId: this.state.user.id,
+      rentalId: this.props.rentalId,
+      manager: false,
+      owner: false
+    });
+
+    return userRentalRef
       .then(userRental => {
         this.props.setMessage('Benutzer wurde hinzugefügt');
         this.setState({ ...INITIAL_STATE });

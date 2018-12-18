@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
-import { db } from '../../firebase/index';
+import { withRouter } from 'react-router-dom';
 
 import RentalUsersListItem from './RentalUsersListItem';
 import RentalUsersSearch from './RentalUsersSearch';
 
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
+import { getUserRentalsWithRental } from '../../firebase/queries/userRentals';
 
 const styles = theme => ({
   header: {
@@ -29,23 +29,30 @@ class RentalUsersList extends Component {
 
   componentDidMount() {
     if (this.props.rentalId) {
-      this.getUserRentals();
+      this.getUserRentals().catch(error => {
+        this.props.setMessage(
+          `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
+        );
+      });
     }
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.rentalId !== prevProps.rentalId) {
-      this.getUserRentals();
+      this.getUserRentals().catch(error => {
+        this.props.setMessage(
+          `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
+        );
+      });
     }
   }
 
-  getUserRentals() {
-    db.collection('userRentals')
-      .where('rentalId', '==', this.props.rentalId)
-      .onSnapshot(userRentals => {
-        this.setState({ userRentals: userRentals.docs });
-      });
-  }
+  getUserRentals = async () => {
+    const userRentalsRef = await getUserRentalsWithRental(this.props.rentalId);
+    return userRentalsRef.onSnapshot(userRentals => {
+      this.setState({ userRentals: userRentals.docs });
+    });
+  };
 
   componentWillUnmount() {
     this.setState({ ...INITIAL_STATE });

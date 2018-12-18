@@ -1,17 +1,13 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
 
-import { withStyles } from "@material-ui/core/styles";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import Avatar from "@material-ui/core/Avatar";
-import HomeIcon from "@material-ui/icons/Home";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import IconButton from "@material-ui/core/IconButton";
-import CalendarIcon from "@material-ui/icons/CalendarToday";
-import { db } from "../../firebase";
-
-const styles = theme => ({});
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import HomeIcon from '@material-ui/icons/Home';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import IconButton from '@material-ui/core/IconButton';
+import CalendarIcon from '@material-ui/icons/CalendarToday';
+import { getRental } from '../../firebase/queries/rentals';
 
 class RentalListItem extends React.Component {
   constructor(props) {
@@ -23,22 +19,29 @@ class RentalListItem extends React.Component {
   }
 
   componentDidMount() {
-    this.getRental();
+    this.getRental().catch(error => {
+      this.props.setMessage(
+        `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
+      );
+    });
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.rental.rentalId !== this.props.rental.rentalId) {
-      this.getRental();
+      this.getRental().catch(error => {
+        this.props.setMessage(
+          `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
+        );
+      });
     }
   }
 
-  getRental() {
-    db.collection("rentals")
-      .doc(this.props.rental.rentalId)
-      .onSnapshot(rental => {
-        this.setState({ rental: rental.data() });
-      });
-  }
+  getRental = async () => {
+    const rentalRef = await getRental(this.props.rental.rentalId);
+    return rentalRef.onSnapshot(rental => {
+      this.setState({ rental: rental.data() });
+    });
+  };
 
   openDetails = () => {
     this.props.openDetails(this.props.rental.rentalId);
@@ -56,7 +59,7 @@ class RentalListItem extends React.Component {
         selected={this.props.selected}
       >
         <Avatar>
-          <HomeIcon color={owner ? "primary" : "inherit"} />
+          <HomeIcon color={owner ? 'primary' : 'inherit'} />
         </Avatar>
         <ListItemText
           primary={rental && rental.title}
@@ -72,8 +75,4 @@ class RentalListItem extends React.Component {
   }
 }
 
-RentalListItem.propTypes = {
-  classes: PropTypes.object.isRequired
-};
-
-export default withStyles(styles)(RentalListItem);
+export default RentalListItem;

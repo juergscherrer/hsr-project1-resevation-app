@@ -1,12 +1,8 @@
 import React from 'react';
-import { db } from '../../firebase';
-import { auth } from '../../firebase/index';
-
 import RentalForm from './RentalForm';
 import RentalUsersList from './RentalUsersList';
 import AlertDialog from '../AlertDialog';
 
-import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -16,6 +12,11 @@ import CalendarIcon from '@material-ui/icons/CalendarToday';
 import UserIcon from '@material-ui/icons/People';
 import CloseIcon from '@material-ui/icons/Close';
 import { Link } from 'react-router-dom';
+import { deleteRental } from '../../firebase/queries/rentals';
+import {
+  deleteUserRental,
+  getUserRentalsWithRentalOnce
+} from '../../firebase/queries/userRentals';
 
 const styles = theme => ({
   topButtons: {
@@ -111,13 +112,11 @@ class RentalDetails extends React.Component {
   };
 
   deleteRental() {
-    db.collection('rentals')
-      .doc(this.props.rentalId)
-      .delete()
+    deleteRental(this.props.rentalId)
       .then(() => {
         this.deleteUserRental();
       })
-      .catch(function(error) {
+      .catch(error => {
         this.props.setMessage(
           `Rental konnte nicht gelöscht werden. Fehlermeldung: ${error}`
         );
@@ -125,14 +124,20 @@ class RentalDetails extends React.Component {
   }
 
   deleteUserRental() {
-    let deletableUserRentals = db
-      .collection('userRentals')
-      .where('rentalId', '==', this.props.rentalId);
-    deletableUserRentals.get().then(snap => {
-      snap.forEach(doc => {
-        doc.ref.delete();
-        this.props.closeDetails();
-        this.props.setMessage('Rental wurde erfolgreich gelöscht.');
+    const userRentalsRef = getUserRentalsWithRentalOnce(this.props.rentalId);
+
+    userRentalsRef.then(userRentals => {
+      userRentals.forEach(userRental => {
+        deleteUserRental(userRental)
+          .then(() => {
+            this.props.closeDetails();
+            this.props.setMessage('Rental wurde erfolgreich gelöscht.');
+          })
+          .catch(error => {
+            this.props.setMessage(
+              `User Rental konnte nicht gelöscht werden. Fehlermeldung: ${error}`
+            );
+          });
       });
     });
   }
