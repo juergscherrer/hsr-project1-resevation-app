@@ -1,6 +1,6 @@
 import React from 'react';
 import RentalListItem from './RentalListItem';
-import { db, auth } from '../../firebase';
+import { auth } from '../../firebase';
 
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';

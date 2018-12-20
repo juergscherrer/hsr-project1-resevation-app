@@ -81,7 +81,6 @@ class PasswordChangeForm extends Component {
           />
         </FormControl>
         <Button
-          disabled={isInvalid}
           type="submit"
           variant="raised"
           color="primary"

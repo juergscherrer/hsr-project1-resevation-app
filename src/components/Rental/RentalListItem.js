@@ -49,7 +49,7 @@ class RentalListItem extends React.Component {
   };
 
   render() {
-    const { owner, manager, rentalId } = this.props.rental;
+    const { owner } = this.props.rental;
     const { rental } = this.state;
 
     return (

@@ -90,7 +90,11 @@ class ReservationForm extends Component {
       this.props.editReservationId &&
       this.props.editReservationId !== prevProps.editReservationId
     ) {
-      this.getExistingReservation(this.props.editReservationId);
+      this.getExistingReservation(this.props.editReservationId).catch(error => {
+        this.props.setMessage(
+          `Reservation konnte nicht geladen werden. Fehlermeldung: ${error}`
+        );
+      });
     }
   }
 
@@ -157,8 +161,8 @@ class ReservationForm extends Component {
     for (let bDate of bDates) {
       for (let datesRef of datesRefs) {
         if (!datesRef.empty) {
+          /* eslint-disable */
           datesRef.forEach(doc => {
-            console.log('alter loop', bDate, doc.data());
             if (
               doc.data().date.seconds === bDate.date.seconds &&
               doc.data().reservationId !== reservationId
@@ -169,6 +173,7 @@ class ReservationForm extends Component {
                   (doc.data().endDate && bDate.startDate));
             }
           });
+          /* eslint-enable */
         }
       }
     }

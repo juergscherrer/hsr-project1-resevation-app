@@ -78,7 +78,7 @@ class PasswordForgetForm extends Component {
   }
 
   render() {
-    const { email, error } = this.state;
+    const { email } = this.state;
 
     const isInvalid = email === '';
     const { classes } = this.props;
@@ -101,8 +101,6 @@ class PasswordForgetForm extends Component {
               placeholder="E-Mail"
               value={this.state.email}
               onChange={event => this.setState({ email: event.target.value })}
-              type="text"
-              placeholder="Email Address"
             />
           </FormControl>
           <Grid

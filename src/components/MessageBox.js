@@ -2,10 +2,6 @@ import React from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
 
 class MessageBox extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <React.Fragment>

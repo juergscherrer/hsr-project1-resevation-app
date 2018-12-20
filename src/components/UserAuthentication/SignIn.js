@@ -120,7 +120,7 @@ class SignInForm extends Component {
   render() {
     const { classes } = this.props;
     const { passwordIsMasked } = this.state;
-    const { email, password, error } = this.state;
+    const { email, password } = this.state;
     const isInvalid = password === '' || email === '';
 
     return (

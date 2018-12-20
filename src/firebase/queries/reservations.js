@@ -1,4 +1,4 @@
-import { auth, db } from '../index';
+import { db } from '../index';
 
 // get Reservation with reservationId once
 export async function getReservation(reservationId) {

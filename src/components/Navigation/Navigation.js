@@ -48,7 +48,7 @@ class Navigation extends React.Component {
               color="inherit"
               className={classes.grow}
             >
-              Reservations-App
+              Reservations - App
             </Typography>
             <NavigationUserMenu />
           </Toolbar>

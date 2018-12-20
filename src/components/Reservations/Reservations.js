@@ -9,6 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import withAuthorization from '../UserAuthentication/withAuthorization';
+import { getRental } from '../../firebase/queries/rentals';
 
 const styles = theme => ({
   layout: {
@@ -31,6 +32,7 @@ const styles = theme => ({
 
 const INITIAL_STATE = {
   rentalId: null,
+  rental: null,
   reservations: [],
   message: null,
   newReservation: null,
@@ -46,13 +48,29 @@ class Reservations extends React.Component {
 
   componentDidMount() {
     this.setState({ rentalId: this.props.match.params.rentalId });
-    this.getReservations(this.props.match.params.rentalId);
+    this.getReservations(this.props.match.params.rentalId).catch(error => {
+      this.props.setMessage(
+        `Reservationen konnten nicht geladen werden. Fehlermeldung: ${error}`
+      );
+    });
+    this.getRental(this.props.match.params.rentalId).catch(error => {
+      this.props.setMessage(
+        `Mietobjekt konnten nicht geladen werden. Fehlermeldung: ${error}`
+      );
+    });
   }
 
   getReservations = async rentalId => {
     const reservationsRef = await getReservations(rentalId);
     return reservationsRef.onSnapshot(reservations => {
       this.setState({ reservations: reservations.docs });
+    });
+  };
+
+  getRental = async rentalId => {
+    const rentalRef = await getRental(rentalId);
+    return rentalRef.onSnapshot(rental => {
+      this.setState({ rental: rental.data() });
     });
   };
 
@@ -78,7 +96,7 @@ class Reservations extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { rentalId, reservations } = this.state;
+    const { rental, reservations } = this.state;
 
     return (
       <React.Fragment>
@@ -121,7 +139,9 @@ class Reservations extends React.Component {
                 <div className={classes.header}>
                   <Grid container justify="space-between" alignItems="center">
                     <Grid item>
-                      <Typography variant="headline">Kalender</Typography>
+                      <Typography variant="headline">
+                        {rental ? `Kalender ${rental.title}` : 'Kalender'}
+                      </Typography>
                     </Grid>
                   </Grid>
                 </div>

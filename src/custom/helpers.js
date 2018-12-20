@@ -14,13 +14,13 @@ export function bookedDates(startDate, endDate) {
   }
   return bookedDates;
 }
-
+/* eslint-disable */
 Date.prototype.addDays = function(days) {
   let date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
   return date;
 };
-
+/* eslint-enable */
 export function formatDate(date) {
   let d = new Date(date),
     month = '' + (d.getMonth() + 1),
