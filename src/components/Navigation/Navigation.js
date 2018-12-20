@@ -1,19 +1,19 @@
-import React from "react";
-import PropTypes from "prop-types";
-import AppBar from "@material-ui/core/AppBar";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import { withStyles } from "@material-ui/core/styles";
+import React from 'react';
+import PropTypes from 'prop-types';
+import AppBar from '@material-ui/core/AppBar';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 
-import AuthUserContext from "../UserAuthentication/AuthUserContext";
+import AuthUserContext from '../UserAuthentication/AuthUserContext';
 
-import NavigationMainMenu from "./NavigationMainMenu";
-import NavigationUserMenu from "./NavigationUserMenu";
+import NavigationMainMenu from './NavigationMainMenu';
+import NavigationUserMenu from './NavigationUserMenu';
 
 const styles = theme => ({
   appBar: {
-    position: "relative"
+    position: 'relative'
   },
 
   grow: {
@@ -48,7 +48,7 @@ class Navigation extends React.Component {
               color="inherit"
               className={classes.grow}
             >
-              Reservation App
+              Reservations-App
             </Typography>
             <NavigationUserMenu />
           </Toolbar>

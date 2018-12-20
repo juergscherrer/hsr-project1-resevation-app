@@ -88,7 +88,9 @@ class Calendar extends React.Component {
             this.setState(prevState => ({
               calendarEntries: [...prevState.calendarEntries, calenderEntry]
             }));
-            this.props.setMessage('Reservationen wurden erfolgreich geladen.');
+            this.props.setMessage(
+              'Reservationen wurden erfolgreich aktualisiert.'
+            );
           } else {
             this.props.setMessage('Benutzer wurde nicht gefunden.');
           }

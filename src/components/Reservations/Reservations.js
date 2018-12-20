@@ -8,6 +8,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
+import withAuthorization from '../UserAuthentication/withAuthorization';
 
 const styles = theme => ({
   layout: {
@@ -146,4 +147,8 @@ class Reservations extends React.Component {
   }
 }
 
-export default withStyles(styles)(Reservations);
+const authCondition = authUser => !!authUser;
+
+export default withAuthorization(authCondition)(
+  withStyles(styles)(Reservations)
+);

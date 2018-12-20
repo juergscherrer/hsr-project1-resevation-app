@@ -9,6 +9,7 @@ import { db } from '../../firebase/firebase';
 import { withStyles } from '@material-ui/core/styles/index';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import withAuthorization from '../UserAuthentication/withAuthorization';
 
 const styles = theme => ({
   link: {
@@ -155,8 +156,10 @@ class Invoice extends Component {
   }
 }
 
+const authCondition = authUser => !!authUser;
+
 Invoice.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withRouter(withStyles(styles)(Invoice));
+export default withAuthorization(authCondition)(withStyles(styles)(Invoice));

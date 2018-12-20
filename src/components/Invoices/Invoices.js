@@ -28,7 +28,7 @@ const INITIAL_STATE = {
   isPaid: false
 };
 
-class InvoicesPage extends Component {
+class Invoices extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
@@ -66,10 +66,8 @@ class InvoicesPage extends Component {
 
 const authCondition = authUser => !!authUser;
 
-InvoicesPage.propTypes = {
+Invoices.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withAuthorization(authCondition)(
-  withStyles(styles)(InvoicesPage)
-);
+export default withAuthorization(authCondition)(withStyles(styles)(Invoices));

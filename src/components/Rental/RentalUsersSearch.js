@@ -79,12 +79,15 @@ class RentalUsersSearch extends React.Component {
         this.state.user.id
       )
         .then(usersRentals => {
-          if (usersRentals.docs.length === 0) {
-            this.saveUserRental();
-          } else if (usersRentals.docs.length === 1) {
-            this.props.setMessage('Benutzer ist bereits hinzugefügt.');
-          } else {
-            this.props.setMessage('Benutzer kann nicht hinzugefügt werden.');
+          switch (usersRentals.docs.length) {
+            case 0:
+              this.saveUserRental();
+              break;
+            case 1:
+              this.props.setMessage('Benutzer ist bereits hinzugefügt.');
+              break;
+            default:
+              this.props.setMessage('Benutzer kann nicht hinzugefügt werden.');
           }
         })
         .catch(error => {
