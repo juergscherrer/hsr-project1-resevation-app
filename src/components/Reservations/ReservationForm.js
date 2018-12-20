@@ -141,7 +141,6 @@ class ReservationForm extends Component {
     comment,
     reservationId
   ) => {
-    let valid = true;
     const bDates = bookedDates(new Date(startDate), new Date(endDate));
     let promiseArr = [];
 
@@ -154,21 +153,27 @@ class ReservationForm extends Component {
 
     const datesRefs = await Promise.all(promiseArr);
 
+    let isValid = true;
     for (let bDate of bDates) {
       for (let datesRef of datesRefs) {
-        datesRef.forEach(doc => {
-          if (
-            doc.data().date.seconds === bDate.date.seconds &&
-            doc.data().reservationId !== reservationId
-          ) {
-            valid =
-              (doc.data().startDate && bDate.endDate) ||
-              (doc.data().endDate && bDate.startDate);
-          }
-        });
+        if (!datesRef.empty) {
+          datesRef.forEach(doc => {
+            console.log('alter loop', bDate, doc.data());
+            if (
+              doc.data().date.seconds === bDate.date.seconds &&
+              doc.data().reservationId !== reservationId
+            ) {
+              isValid =
+                isValid &&
+                ((doc.data().startDate && bDate.endDate) ||
+                  (doc.data().endDate && bDate.startDate));
+            }
+          });
+        }
       }
     }
-    if (valid) {
+
+    if (isValid) {
       reservationId
         ? this.editReservation(
             reservationId,
