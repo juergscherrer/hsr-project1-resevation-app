@@ -10,6 +10,7 @@ import AuthUserContext from '../UserAuthentication/AuthUserContext';
 
 import NavigationMainMenu from './NavigationMainMenu';
 import NavigationUserMenu from './NavigationUserMenu';
+import NavigationDrawer from './NavigationDrawer';
 
 const styles = theme => ({
   appBar: {
@@ -42,7 +43,8 @@ class Navigation extends React.Component {
         <CssBaseline />
         <AppBar position="static" className={classes.appBar}>
           <Toolbar disableGutters={true}>
-            <NavigationMainMenu />
+            {/*<NavigationMainMenu />*/}
+            <NavigationDrawer />
             <Typography
               variant="title"
               color="inherit"
@@ -50,7 +52,7 @@ class Navigation extends React.Component {
             >
               Reservations - App
             </Typography>
-            <NavigationUserMenu />
+            {/*<NavigationUserMenu />*/}
           </Toolbar>
         </AppBar>
       </React.Fragment>

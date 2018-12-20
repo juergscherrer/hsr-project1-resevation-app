@@ -66,9 +66,7 @@ class NavigationUserMenu extends React.Component {
               Mein Konto
             </Link>
           </MenuItem>
-          <MenuItem onClick={this.handleCloseRight}>
-            <SignOutButton />
-          </MenuItem>
+          <MenuItem onClick={this.handleCloseRight} />
         </Menu>
       </React.Fragment>
     );
