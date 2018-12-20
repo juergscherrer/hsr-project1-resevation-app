@@ -20,3 +20,11 @@ export async function getUserWithEmailOnce(email) {
     .where('email', '==', email)
     .get();
 }
+
+// update user with userId
+export async function updateUser(userId, userData) {
+  return await db
+    .collection('users')
+    .doc(userId)
+    .update(userData);
+}

@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import TextField from '@material-ui/core/TextField';
-import { withStyles } from '@material-ui/core/styles/index';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { db, auth } from '../../firebase';
+import { auth } from '../../firebase';
 import firebase from 'firebase/app';
+
+import { withStyles } from '@material-ui/core/styles/index';
+import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+
+import { getUser, updateUser } from '../../firebase/queries/users';
 
 const styles = theme => ({
   submit: {
@@ -29,18 +32,22 @@ class PersonalInformationForm extends Component {
   }
 
   componentDidMount() {
-    // Updating the `users` local state attribute when the Firebase Realtime Database data
-    // under the '/users' path changes.
-
-    db.collection('users')
-      .doc(auth.currentUser().uid)
-      .onSnapshot(doc => {
-        this.setState({ user: doc.data() });
-      });
+    this.getUser().catch(error => {
+      this.props.setMessage(
+        `Benutzer konnte nicht geladen werden. Fehlermeldung: ${error}`
+      );
+    });
   }
 
+  getUser = async () => {
+    const userRef = await getUser(auth.currentUser().uid);
+    return userRef.onSnapshot(doc => {
+      this.setState({ user: doc.data() });
+    });
+  };
+
   handleChange(event) {
-    var user = { ...this.state.user };
+    let user = { ...this.state.user };
     user[event.target.name] = event.target.value;
 
     this.setState({ user: user });
@@ -56,7 +63,7 @@ class PersonalInformationForm extends Component {
     // check if email has changed
     if (this.state.emailChanged) {
       // update email in firebase auth
-      var currentUser = firebase.auth().currentUser;
+      let currentUser = firebase.auth().currentUser;
 
       currentUser
         .updateEmail(this.state.user.email)
@@ -74,9 +81,9 @@ class PersonalInformationForm extends Component {
   updateUserData() {
     let user = { ...this.state.user };
 
-    db.collection('users')
-      .doc(auth.currentUser().uid)
-      .set(user)
+    const userRef = updateUser(auth.currentUser().uid, user);
+    return userRef
+
       .then(() => {
         // Update successful.
         this.props.setMessage('Änderungen erfolgreich gespeichert.');

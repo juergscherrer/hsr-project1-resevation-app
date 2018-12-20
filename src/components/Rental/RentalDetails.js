@@ -24,7 +24,8 @@ const styles = theme => ({
     paddingRight: `${theme.spacing.unit * 3}px`
   },
   button: {
-    marginRight: theme.spacing.unit
+    marginRight: theme.spacing.unit,
+    marginBottom: theme.spacing.unit
   },
   leftIcon: {
     marginRight: theme.spacing.unit
