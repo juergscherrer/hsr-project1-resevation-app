@@ -8,7 +8,7 @@ import Reservations from './Reservations/Reservations';
 import Invoice from './Invoices/Invoice';
 import * as routes from '../constants/routes';
 import AccountPage from './UserAuthentication/Account';
-import AdminPage from './Admin';
+import AdminPage from './Admin/Admin';
 import { Route } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles/index';

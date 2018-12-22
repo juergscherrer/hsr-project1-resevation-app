@@ -1,5 +1,11 @@
 import { db } from '../index';
 
+// get all users
+export async function getUsers() {
+  const snapshot = await db.collection('users').get();
+  return await snapshot.docs.map(doc => doc.data());
+}
+
 // get user with userId once
 export async function getUserOnce(userId) {
   return await db
