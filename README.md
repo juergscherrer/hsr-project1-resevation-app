@@ -2,7 +2,7 @@
 
 - [Projektidee](#projektidee)
 - [Module](#module)
-  - [1. User Management & Security](#1-user-management---security)
+  - [1. User Management und Security](#1-user-management-und-security)
   - [2. Reservation](#2-reservation)
   - [3. Rechnung](#3-rechnung)
   - [4. Wohnobjekt](#4-wohnobjekt)
