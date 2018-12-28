@@ -20,7 +20,7 @@ automatisch eine E-Mail mit der Rechnung an den jeweiligen Nutzer gesendet werde
 
 ## Module
 
-### 1. User Management & Security
+### 1. User Management und Security
 
 User Management mit [Firebase](https://firebase.google.com/) Authentication
 
