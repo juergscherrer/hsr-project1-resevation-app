@@ -208,7 +208,8 @@ class ReservationForm extends Component {
       comment,
       userId: auth.currentUser().uid,
       rentalId: this.props.rentalId,
-      paidAt: null
+      paidAt: null,
+      paid: false
     });
     return reservationRef
       .then(reservation => {

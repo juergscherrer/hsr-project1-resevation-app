@@ -35,7 +35,7 @@ gegenüber normalen Benutzern ledigich einen Preisvorteil bei der Buchung.
 ### Kalender
 
 In der Kalenderansicht können Reservationen für angelegte Mietobjekte getätigt werden. Dabei ist es möglich,
-dass an Anreise- und Abreisetag sich überschneiden. Doppelte Buchungen sind nicht möglich. Markiert man einen Bereich im
+dass Anreise- und Abreisetag sich überschneiden. Doppelte Buchungen sind nicht möglich. Markiert man einen Bereich im
 Kalender wird Start- und Enddatum direkt im Formular übernommen. Wählt man eine bereits erstellte Buchtung aus, lässt
 sich diese bearbeiten oder löschen.
 
