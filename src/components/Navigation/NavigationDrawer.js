@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import * as routes from '../../constants/routes';
 import { Link } from 'react-router-dom';
 import { auth } from '../../firebase/index';
+import { getUser } from '../../firebase/queries/users';
+import firebase from 'firebase/app';
 
 import { withStyles } from '@material-ui/core/styles';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
@@ -18,6 +20,15 @@ import SecurityIcon from '@material-ui/icons/Security';
 import MoneyIcon from '@material-ui/icons/Money';
 import AccountIcon from '@material-ui/icons/AccountCircle';
 import ExitIcon from '@material-ui/icons/ExitToApp';
+
+const INITIAL_STATE = {
+  top: false,
+  left: false,
+  bottom: false,
+  right: false,
+  admin: null,
+  userId: null
+};
 
 const styles = theme => ({
   list: {
@@ -37,11 +48,27 @@ const styles = theme => ({
 });
 
 class NavigationDrawer extends React.Component {
-  state = {
-    top: false,
-    left: false,
-    bottom: false,
-    right: false
+  constructor(props) {
+    super(props);
+    this.state = { ...INITIAL_STATE };
+  }
+
+  componentDidMount() {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        // User is signed in.
+        this.setState({ userId: user.uid }, () => this.getUser());
+      } else {
+        // No user is signed in.
+      }
+    });
+  }
+
+  getUser = async () => {
+    const userRef = await getUser(this.state.userId);
+    return userRef.onSnapshot(user => {
+      this.setState({ admin: user.data().admin });
+    });
   };
 
   toggleDrawer = (side, open) => () => {
@@ -52,6 +79,21 @@ class NavigationDrawer extends React.Component {
 
   render() {
     const { classes } = this.props;
+    const isAdmin = this.state.admin;
+    let adminDashboardLink;
+
+    if (isAdmin === true) {
+      adminDashboardLink = (
+        <Link className={classes.menuLink} to={routes.ADMIN}>
+          <ListItem button>
+            <ListItemIcon>
+              <SecurityIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Admin Dashboard'} />
+          </ListItem>
+        </Link>
+      );
+    }
 
     const sideList = (
       <div className={classes.list}>
@@ -64,14 +106,9 @@ class NavigationDrawer extends React.Component {
               <ListItemText primary={'Dashboard'} />
             </ListItem>
           </Link>
-          <Link className={classes.menuLink} to={routes.ADMIN}>
-            <ListItem button>
-              <ListItemIcon>
-                <SecurityIcon />
-              </ListItemIcon>
-              <ListItemText primary={'Admin Dashboard'} />
-            </ListItem>
-          </Link>
+
+          {adminDashboardLink}
+
           <Link className={classes.menuLink} to={routes.INVOICES}>
             <ListItem button>
               <ListItemIcon>
