@@ -17,6 +17,10 @@ Eine Projektarbeit im CAS Frontend Engineering an der HSR Hochschule für Techni
   - [5. Wohnobjekt](#5-wohnobjekt)
 - [Installationsanleitung](#installationsanleitung)
 - [Besondere Leistungen](#besondere-leistungen)
+- [Usability Testing](#usability-testing)
+  - [Test-Ziele](#test-ziele)
+  - [Test-Aufgaben](#test-aufgaben)
+  - [Test Erkenntnisse](#test-erkenntnisse)
 
 ## Projektbeschreibung
 
@@ -102,3 +106,73 @@ Aus Sicherheitsgründen fehlt die Datei mit der Firebase Konfiguration.
 
 - Komplexe Datenbankstruktur mit Zwischentabelle
 - Verschiedene Benutzer Rollen
+
+## Usability Testing
+
+### Test-Ziele
+
+- Mögliche Schewachstellen oder Fehler in der Applikation finden.
+- Herasufinden wie gut ein Benutzer in der Applikation zurecht kommt.
+- Was muss noch verbessert werden bevor die Applikation live gehen kann?
+
+### Test-Aufgaben
+
+- **Mietobjekt erstellen**  
+  Du willst deine Ferienwohnung mit deinen Familienmitgliedern teilen. Erstelle ein neues Mietobjekt. Wähle einen
+  beliebigen Titel, Beschreibungstext und Preis.
+
+- **Benutzer zum Mietobjekt hinzufügen**  
+  Du möchtest einen Benutzer zu deinem Mietobjekt hinzufügen, damit auch dieser Reservationen tätigen kann. Füge den bereits
+  regisrierten Benutzer «Markus Tobler» mail@markustobler.ch zu deinem neu erstellten Mietobjekt hinzu.
+
+- **Mietobjekt bearbeiten**  
+  Du hast gemerkt, dass du einen unpassenden Titel für dein Mietobjekt gewählt hast und möchtest diesen nun ändern. Bearbeite
+  dein Mietobjekt und wähle einen neuen Titel.
+
+- **Rolle Mietobjekt / Benutzer**  
+  Du möchtest, dass der neu hinzugefügte Benutzer Markus Tobler nicht Manager ist. Stell sicher, dass der Benutzer «Markus Tobler»
+  kein Manager von deinem Mietobkjekt ist.
+
+- **Neue Reservation**  
+  Du möchtest für deinen Familien-Skiurlaub eine neue Reservation tätigen. Erstelle eine neue Reservation über fünf Nächte
+  für 8 Personen. Zum ausfüllen der Kalenderdaten markiere die Daten direkt in der Kalenderansicht.
+
+- **Reservation bearbeiten**  
+  Eines deiner Familienmitglieder ist die Treppe hinunter gefallen und kann leider nicht zum Skiurlaub mitgehen. Ändere
+  die Anzahl an Personen für deine bereits getätigte Reservation.
+
+- **Reservation löschen**  
+  Der Skiurlaub kann leider nicht stattfinden. Lösche deine getätigte Reservation.
+
+- **Zahlungseingang bestätigen**  
+  Der Benutzer «Markus Tobler» hat eine Buchung gemacht und die Rechnung bereits bezahlt. Markiere die Rechnung vom Benutzer
+  «Markus Tobler» als bezahlt.
+
+- **Benutzer Admin**  
+  Du bist ein Admin des Portals «Reservations-App». Finde die Liste aller bisher registrierter Benutzer.
+
+- **Passwort ändern**  
+  Du hast dein Passwort mehr als ein jahr nicht mehr geöndert und willst dein Passwort ändern. Ändere das Passwort.
+
+- **Persönliche Daten ändern**  
+  Bei der Registrierung hast du bei deiem Vornahmen einen Tippfehler gemacht. Korrigiere deinen Vornamen.
+
+### Fragen im Anschluss
+
+**_Welche Aufgaben konnten nicht oder nur Teilweise gelöst werden? Warum?_**  
+**Testuser 1:** ?  
+**Testuser 2:** ?
+
+**_Welche Funktionen Fehlen deiner Meinung nach in der Applikation?_**  
+**Testuser 1:** ?  
+**Testuser 2:** ?
+
+**_Wurden deine Erwartungen an die Applikation erfüllt?_**  
+**Testuser 1:** ?  
+**Testuser 2:** ?
+
+**_Ist das Dashboard für dich Verständlich?_**
+**Testuser 1:** ?  
+**Testuser 2:** ?
+
+### Test Erkenntnisse

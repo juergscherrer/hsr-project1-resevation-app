@@ -82,6 +82,7 @@ class InvoicesListItem extends Component {
 
     // Get userId from props
     let userId = this.props.reservation.data().userId;
+    console.log(userId);
 
     // Get user from firestore and store it in local state
     db.collection('users')
