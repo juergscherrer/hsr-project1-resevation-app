@@ -112,7 +112,7 @@ Aus Sicherheitsgründen fehlt die Datei mit der Firebase Konfiguration.
 ### Test-Ziele
 
 - Mögliche Schewachstellen oder Fehler in der Applikation finden.
-- Herasufinden wie gut ein Benutzer in der Applikation zurecht kommt.
+- Herausfinden wie gut ein Benutzer in der Applikation zurecht kommt.
 - Was muss noch verbessert werden bevor die Applikation live gehen kann?
 
 ### Test-Aufgaben
@@ -171,7 +171,7 @@ Aus Sicherheitsgründen fehlt die Datei mit der Firebase Konfiguration.
 **Testuser 1:** ?  
 **Testuser 2:** ?
 
-**_Ist das Dashboard für dich Verständlich?_**
+**_Ist das Dashboard für dich Verständlich?_**  
 **Testuser 1:** ?  
 **Testuser 2:** ?
 
