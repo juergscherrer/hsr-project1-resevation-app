@@ -251,7 +251,6 @@ class SignUpFormWithoutStyles extends Component {
                 <Button
                   className={classes.cancel}
                   onClick={() => {
-                    console.log('onClick');
                     this.handleCancelSubmit();
                   }}
                 >

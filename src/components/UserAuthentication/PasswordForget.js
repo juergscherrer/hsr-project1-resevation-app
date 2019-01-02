@@ -112,7 +112,6 @@ class PasswordForgetForm extends Component {
             <Button
               className={classes.cancel}
               onClick={() => {
-                console.log('onClick');
                 this.handleCancelSubmit();
               }}
             >
@@ -125,7 +124,7 @@ class PasswordForgetForm extends Component {
               disabled={isInvalid}
               type="submit"
             >
-              Reset My Password
+              Passwort zurücksetzen
             </Button>
           </Grid>
         </form>

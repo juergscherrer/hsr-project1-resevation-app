@@ -46,7 +46,11 @@ class Reservations extends React.Component {
     this.state = { ...INITIAL_STATE };
   }
 
+  _isMounted = false;
+
   componentDidMount() {
+    this._isMounted = true;
+
     this.setState({ rentalId: this.props.match.params.rentalId });
     this.getReservations(this.props.match.params.rentalId).catch(error => {
       this.props.setMessage(
@@ -60,10 +64,17 @@ class Reservations extends React.Component {
     });
   }
 
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.setState({ ...INITIAL_STATE });
+  }
+
   getReservations = async rentalId => {
     const reservationsRef = await getReservations(rentalId);
     return reservationsRef.onSnapshot(reservations => {
-      this.setState({ reservations: reservations.docs });
+      if (this._isMounted) {
+        this.setState({ reservations: reservations.docs });
+      }
     });
   };
 

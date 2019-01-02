@@ -82,6 +82,7 @@ class InvoicesListItem extends Component {
 
     // Get userId from props
     let userId = this.props.reservation.data().userId;
+    console.log(userId);
 
     // Get user from firestore and store it in local state
     db.collection('users')
@@ -122,14 +123,16 @@ class InvoicesListItem extends Component {
 
     // set new date only if checkbox is checked
     if (this.state.reservation.paid === true) {
-      this.setState(
-        { reservation: reservationCopy },
+      if (reservationCopy.paidAt === null) {
+        reservationCopy.paidAt = new Date();
+      }
+
+      this.setState({ reservation: reservationCopy }, () =>
         this.updateReservation(reservationRef)
       );
     } else {
       reservationCopy.paidAt = new Date();
-      this.setState(
-        { reservation: reservationCopy },
+      this.setState({ reservation: reservationCopy }, () =>
         this.updateReservation(reservationRef)
       );
     }

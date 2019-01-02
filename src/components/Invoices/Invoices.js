@@ -44,6 +44,10 @@ class Invoices extends Component {
     this.setState({ message: null });
   }
 
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
+  }
+
   render() {
     const { classes } = this.props;
 
