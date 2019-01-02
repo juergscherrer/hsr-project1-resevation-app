@@ -1,7 +1,9 @@
 import React from 'react';
 import RentalForm from './RentalForm';
 import RentalUsersList from './RentalUsersList';
+import RentalReservations from './RentalReservations';
 import AlertDialog from '../AlertDialog';
+import { auth } from '../../firebase';
 
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
@@ -15,6 +17,7 @@ import { Link } from 'react-router-dom';
 import { deleteRental } from '../../firebase/queries/rentals';
 import {
   deleteUserRental,
+  getUserRentalsWithRentalAndUserOnce,
   getUserRentalsWithRentalOnce
 } from '../../firebase/queries/userRentals';
 
@@ -40,6 +43,7 @@ const styles = theme => ({
 
 const INITIAL_STATE = {
   rentalId: null,
+  userRental: null,
   showRentalUsers: false,
   showRentalForm: false,
   deleteButtonDisabled: false,
@@ -64,6 +68,7 @@ class RentalDetails extends React.Component {
       this.setState({
         rentalId: this.props.rentalId
       });
+      this.getUserRental();
     }
   }
 
@@ -72,6 +77,7 @@ class RentalDetails extends React.Component {
       this.setState({
         rentalId: this.props.rentalId
       });
+      this.getUserRental();
     }
   }
 
@@ -143,6 +149,24 @@ class RentalDetails extends React.Component {
     });
   }
 
+  getUserRental = () => {
+    if (this.props.rentalId) {
+      getUserRentalsWithRentalAndUserOnce(
+        this.props.rentalId,
+        auth.currentUser().uid
+      )
+        .then(userRental => {
+          this.setState({ userRental: userRental.docs[0].data() });
+        })
+        .catch(error => {
+          console.error(error);
+          this.props.setMessage(
+            `UserRental wurde nicht gefunden. Fehlermeldung: ${error}`
+          );
+        });
+    }
+  };
+
   render() {
     const { classes } = this.props;
     const { rentalId } = this.state;
@@ -177,48 +201,57 @@ class RentalDetails extends React.Component {
             )}
             Benutzer
           </Button>
-          <Button
-            onClick={this.toggleRentalForm}
-            variant="outlined"
-            size="small"
-            className={classes.button}
-            color={this.state.showRentalForm ? 'secondary' : 'default'}
-          >
-            {this.state.showRentalForm ? (
-              <CloseIcon
-                className={classNames(classes.leftIcon, classes.iconSmall)}
-              />
-            ) : (
-              <EditIcon
-                className={classNames(classes.leftIcon, classes.iconSmall)}
+          {this.state.userRental && this.state.userRental.manager && (
+            <React.Fragment>
+              <Button
+                onClick={this.toggleRentalForm}
+                variant="outlined"
+                size="small"
+                className={classes.button}
+                color={this.state.showRentalForm ? 'secondary' : 'default'}
+              >
+                {this.state.showRentalForm ? (
+                  <CloseIcon
+                    className={classNames(classes.leftIcon, classes.iconSmall)}
+                  />
+                ) : (
+                  <EditIcon
+                    className={classNames(classes.leftIcon, classes.iconSmall)}
+                  />
+                )}
+                Bearbeiten
+              </Button>
+
+              <Button
+                onClick={this.handleDelete}
+                variant="outlined"
+                size="small"
+                className={classes.button}
+                disabled={this.state.deleteButtonDisabled}
+              >
+                <DeleteIcon
+                  className={classNames(classes.leftIcon, classes.iconSmall)}
+                />
+                Löschen
+              </Button>
+            </React.Fragment>
+          )}
+          <RentalReservations rentalId={rentalId} />
+          {this.state.userRental &&
+            this.state.userRental.manager &&
+            this.state.showRentalForm && (
+              <RentalForm
+                handleClick={this.toggleRentalForm}
+                rentalId={rentalId}
+                setMessage={this.props.setMessage}
               />
             )}
-            Bearbeiten
-          </Button>
-          <Button
-            onClick={this.handleDelete}
-            variant="outlined"
-            size="small"
-            className={classes.button}
-            disabled={this.state.deleteButtonDisabled}
-          >
-            <DeleteIcon
-              className={classNames(classes.leftIcon, classes.iconSmall)}
-            />
-            Löschen
-          </Button>
-          {this.state.showRentalForm && (
-            <RentalForm
-              handleClick={this.toggleRentalForm}
-              rentalId={rentalId}
-              setMessage={this.props.setMessage}
-            />
-          )}
         </div>
         {this.state.showRentalUsers && (
           <RentalUsersList
             rentalId={rentalId}
             setMessage={this.props.setMessage}
+            userIsManager={this.state.userRental.manager}
           />
         )}
         <AlertDialog

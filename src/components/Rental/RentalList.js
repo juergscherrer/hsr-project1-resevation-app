@@ -14,14 +14,16 @@ const styles = theme => ({
   }
 });
 
+const INITIAL_STATE = {
+  rentals: null,
+  activeItem: null
+};
+
 class RentalList extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      rentals: [],
-      activeItem: null
-    };
+    this.state = { ...INITIAL_STATE };
   }
 
   componentDidMount() {
@@ -32,16 +34,16 @@ class RentalList extends React.Component {
     });
   }
 
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
+  }
+
   getUserRentals = async () => {
     const userRentalsRef = await getUserRentalsWithUser(auth.currentUser().uid);
     return userRentalsRef.onSnapshot(userRentals => {
       this.setState({ rentals: userRentals.docs });
     });
   };
-
-  componentWillUnmount() {
-    this.setState({ rentals: null });
-  }
 
   setActiveItem = key => {
     this.setState({ activeItem: key });

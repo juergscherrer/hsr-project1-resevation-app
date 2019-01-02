@@ -74,6 +74,7 @@ class RentalUsersList extends Component {
                   userRental={userRental}
                   key={index}
                   setMessage={this.props.setMessage}
+                  userIsManager={this.props.userIsManager}
                 />
               );
             })}
@@ -87,10 +88,12 @@ class RentalUsersList extends Component {
         <div className={classes.header}>
           <h3>Benuzter</h3>
         </div>
-        <RentalUsersSearch
-          rentalId={this.props.rentalId}
-          setMessage={this.props.setMessage}
-        />
+        {this.props.userIsManager && (
+          <RentalUsersSearch
+            rentalId={this.props.rentalId}
+            setMessage={this.props.setMessage}
+          />
+        )}
         {list}
       </div>
     );

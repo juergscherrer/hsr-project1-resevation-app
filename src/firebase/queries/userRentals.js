@@ -35,7 +35,6 @@ export async function deleteUserRental(userRentalRef) {
 
 // delete userRental with rentalId
 export async function deleteUserRentalWithId(userRentalId) {
-  console.log(userRentalId);
   return await db
     .collection('userRentals')
     .doc(userRentalId)

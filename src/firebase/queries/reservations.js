@@ -1,6 +1,10 @@
 import { db } from '../index';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
-// get Reservation with reservationId once
+let yesterday = new Date();
+yesterday.setDate(yesterday.getDate() - 1);
+
 export async function getReservation(reservationId) {
   return await db
     .collection('reservations')
@@ -11,6 +15,15 @@ export async function getReservation(reservationId) {
 // get Reservations with rentalId
 export async function getReservations(rentalId) {
   return await db.collection('reservations').where('rentalId', '==', rentalId);
+}
+
+// get Reservations with rentalId and userId
+export async function getReservationsWithUserId(rentalId, userId) {
+  return await db
+    .collection('reservations')
+    .where('rentalId', '==', rentalId)
+    .where('userId', '==', userId)
+    .where('endDate', '>', firebase.firestore.Timestamp.fromDate(yesterday));
 }
 
 // create new Reservation with reservationData

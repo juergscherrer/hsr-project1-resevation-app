@@ -21,7 +21,7 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column'
   },
-  header: {
+  content: {
     padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`
   },
 
@@ -32,10 +32,10 @@ const styles = theme => ({
 });
 
 const INITIAL_STATE = {
-  rentals: null,
   showRentalForm: false,
   showRentalDetails: false,
   rentalId: null,
+  clearActiveItem: false,
   message: null
 };
 
@@ -52,10 +52,19 @@ class Rental extends React.Component {
     this.deleteMessage = this.deleteMessage.bind(this);
   }
 
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
+  }
+
   openForm() {
     this.state.showRentalForm
       ? this.setState({ showRentalForm: false, rentalId: null })
-      : this.setState({ showRentalForm: true });
+      : this.setState({
+          showRentalForm: true,
+          showRentalDetails: false,
+          rentalId: null
+        });
+    this.setState({ clearActiveItem: true });
   }
 
   openDetails(rentalId) {
@@ -81,7 +90,6 @@ class Rental extends React.Component {
     return (
       <React.Fragment>
         <Grid
-          className={classes.content}
           container
           direction="row"
           justify="center"
@@ -90,7 +98,7 @@ class Rental extends React.Component {
         >
           <Grid item xs={12} sm={4} display="flex">
             <Paper className={classes.paper}>
-              <div className={classes.header}>
+              <div className={classes.content}>
                 <Grid container justify="space-between" alignItems="center">
                   <Grid item>
                     <Typography variant="headline">Mietobjekte</Typography>
@@ -108,22 +116,26 @@ class Rental extends React.Component {
                     </Button>
                   </Grid>
                 </Grid>
-                {this.state.showRentalForm && (
+              </div>
+              {this.state.showRentalForm ? (
+                <div className={classes.content}>
                   <RentalForm
                     handleClick={this.openForm}
                     setMessage={this.setMessage}
                   />
-                )}
-              </div>
-              <RentalList
-                openDetails={this.openDetails}
-                setMessage={this.setMessage}
-              />
+                </div>
+              ) : (
+                <RentalList
+                  openDetails={this.openDetails}
+                  setMessage={this.setMessage}
+                  clearActiveItem={this.state.clearActiveItem}
+                />
+              )}
             </Paper>
           </Grid>
           <Grid item xs={12} sm={8} display="flex">
             <Paper className={classes.paper}>
-              <div className={classes.header}>
+              <div className={classes.content}>
                 <Grid container justify="space-between" alignItems="center">
                   <Grid item>
                     <Typography variant="headline">Details</Typography>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -9,19 +10,21 @@ import IconButton from '@material-ui/core/IconButton';
 import CalendarIcon from '@material-ui/icons/CalendarToday';
 import { getRental } from '../../firebase/queries/rentals';
 
+const INITIAL_STATE = {
+  rental: null
+};
+
 class RentalListItem extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      rental: null
-    };
+    this.state = { ...INITIAL_STATE };
   }
 
   componentDidMount() {
     this.getRental().catch(error => {
       this.props.setMessage(
-        `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
+        `Rental konnte nicht geladen werden1. Fehlermeldung: ${error}`
       );
     });
   }
@@ -34,6 +37,10 @@ class RentalListItem extends React.Component {
         );
       });
     }
+  }
+
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
   }
 
   getRental = async () => {
@@ -49,7 +56,7 @@ class RentalListItem extends React.Component {
   };
 
   render() {
-    const { owner } = this.props.rental;
+    const { owner, rentalId } = this.props.rental;
     const { rental } = this.state;
 
     return (
@@ -66,9 +73,11 @@ class RentalListItem extends React.Component {
           secondary={rental && rental.description}
         />
         <ListItemSecondaryAction>
-          <IconButton>
-            <CalendarIcon />
-          </IconButton>
+          <Link to={`/reservations/${rentalId}`}>
+            <IconButton>
+              <CalendarIcon />
+            </IconButton>
+          </Link>
         </ListItemSecondaryAction>
       </ListItem>
     );

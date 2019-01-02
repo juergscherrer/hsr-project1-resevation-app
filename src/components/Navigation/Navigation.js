@@ -43,7 +43,6 @@ class Navigation extends React.Component {
         <CssBaseline />
         <AppBar position="static" className={classes.appBar}>
           <Toolbar disableGutters={true}>
-            {/*<NavigationMainMenu />*/}
             <NavigationDrawer />
             <Typography
               variant="title"
@@ -52,7 +51,6 @@ class Navigation extends React.Component {
             >
               Reservations - App
             </Typography>
-            {/*<NavigationUserMenu />*/}
           </Toolbar>
         </AppBar>
       </React.Fragment>

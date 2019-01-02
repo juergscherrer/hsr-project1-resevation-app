@@ -23,15 +23,17 @@ import {
 
 const styles = theme => ({});
 
+const INITIAL_STATE = {
+  user: null,
+  openAlertDialog: false,
+  alertDialogtext: null
+};
+
 class RentalListItem extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      user: null,
-      openAlertDialog: false,
-      alertDialogtext: null
-    };
+    this.state = { ...INITIAL_STATE };
 
     this.handleOwnerChange = this.handleOwnerChange.bind(this);
     this.handleManagerChange = this.handleManagerChange.bind(this);
@@ -56,6 +58,10 @@ class RentalListItem extends React.Component {
         );
       });
     }
+  }
+
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
   }
 
   getUser = async () => {
@@ -143,37 +149,39 @@ class RentalListItem extends React.Component {
             }
             secondary={this.state.user && this.state.user.email}
           />
-          <ListItemSecondaryAction>
-            <FormGroup row>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={owner === true}
-                    onChange={this.handleOwnerChange}
-                  />
-                }
-                label="Besitzer"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={manager === true}
-                    onChange={this.handleManagerChange}
-                    value="checkedA"
-                  />
-                }
-                label="Manager"
-              />
+          {this.props.userIsManager && (
+            <ListItemSecondaryAction>
+              <FormGroup row>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={owner === true}
+                      onChange={this.handleOwnerChange}
+                    />
+                  }
+                  label="Besitzer"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={manager === true}
+                      onChange={this.handleManagerChange}
+                      value="checkedA"
+                    />
+                  }
+                  label="Manager"
+                />
 
-              <IconButton
-                className={classes.button}
-                aria-label="Delete"
-                onClick={this.handleDelete}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </FormGroup>
-          </ListItemSecondaryAction>
+                <IconButton
+                  className={classes.button}
+                  aria-label="Delete"
+                  onClick={this.handleDelete}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </FormGroup>
+            </ListItemSecondaryAction>
+          )}
         </ListItem>
         <MessageBox
           open={this.state.openMessageBox}

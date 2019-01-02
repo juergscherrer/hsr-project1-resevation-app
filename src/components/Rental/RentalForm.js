@@ -82,7 +82,7 @@ class RentalForm extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.rentalId !== prevProps.rentalId) {
+    if (this.props.rentalId !== prevProps.rentalId && this.props.rentalId) {
       this.getRental().catch(error => {
         this.props.setMessage(
           `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
@@ -211,6 +211,7 @@ class RentalForm extends Component {
                 this.setState(byPropKey('title', event.target.value))
               }
               autoFocus
+              spellCheck={false}
             />
           </FormControl>
           <FormControl margin="normal" required fullWidth>
@@ -221,6 +222,7 @@ class RentalForm extends Component {
               onChange={event =>
                 this.setState(byPropKey('description', event.target.value))
               }
+              spellCheck={false}
             />
           </FormControl>
           <FormControl margin="normal" required fullWidth>
