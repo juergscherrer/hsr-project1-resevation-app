@@ -21,4 +21,4 @@ chrome-user-data
 *.swp
 *.swo
 src/config.js
-src/firebase/firebase.js
+.env
