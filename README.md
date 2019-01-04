@@ -100,12 +100,41 @@ User Management mit [Firebase](https://firebase.google.com/) Authentication
 
 ## Installationsanleitung
 
-Aus Sicherheitsgründen fehlt die Datei mit der Firebase Konfiguration.
+Aus Sicherheitsgründen wurde die .env Datei mit der Firebase Konfiguration nicht auf Github gepuscht.
+
+1. Reservations App von Github klonen.
+
+   ```console
+   git clone git@github.com:juergscherrer/hsr-project2-resevation-app.git
+   ```
+
+2. Neue Datei .env im Root erstellen und mit der Firebase Konfiguration erweitern.
+
+   ```console
+   REACT_APP_FIREBASE_KEY=
+   REACT_APP_FIREBASE_DOMAIN=
+   REACT_APP_FIREBASE_DATABASE=
+   REACT_APP_FIREBASE_PROJECT_ID=
+   REACT_APP_FIREBASE_STORAGE_BUCKET=
+   REACT_APP_FIREBASE_SENDER_ID=
+   ```
+
+3. NPM install and App starten.
+
+   ```console
+   npm install
+   nmp run start
+   ```
+
+4. Tests starten
+   ```console
+   npm run test
+   ```
 
 ## Besondere Leistungen
 
 - Komplexe Datenbankstruktur mit Zwischentabelle
-- Verschiedene Benutzer Rollen
+- Verschiedene Benutzer Rollen auf den UserRentals (Manager und Owner)
 
 ## Usability Testing
 
