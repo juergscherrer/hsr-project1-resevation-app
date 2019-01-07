@@ -147,6 +147,10 @@ User Management mit [Firebase](https://firebase.google.com/) Authentication
 
 ### Test-Aufgaben
 
+- **Registrierung**  
+  Du hast noch keinen Account für das Reservations-App und möchtest dich gerne registrieren. Erstelle ein Konto mit deiner
+  eigenen E-Mailadresse.
+
 - **Mietobjekt erstellen**  
   Du willst deine Ferienwohnung mit deinen Familienmitgliedern teilen. Erstelle ein neues Mietobjekt. Wähle einen
   beliebigen Titel, Beschreibungstext und Preis.
@@ -190,25 +194,58 @@ User Management mit [Firebase](https://firebase.google.com/) Authentication
 ### Fragen im Anschluss
 
 **_Welche Aufgaben konnten nicht oder nur Teilweise gelöst werden? Warum?_**  
-**Testuser 1:** ?  
-**Testuser 2:** ?
+**Testuser 1:** Es war nicht ganz klar zu erkennen, dass man die Checkbox anwählen muss bei der Rechnungliste. Der Hinweis
+«Bezahlt Ja» ist eher verwirrend als hilfreich.
+**Testuser 2:** Es konnten alle Aufgaben ohne grössere Probleme gelöst werden.
 
 **_Welche Funktionen Fehlen deiner Meinung nach in der Applikation?_**  
-**Testuser 1:** ?  
-**Testuser 2:** ?
+**Testuser 1:** Um Sich ein besseres Bild der Mietobjekte zu machen währen Fotos sehr hilfreich.
+**Testuser 2:** Eine Karte mit einer Übersicht der Mietobjekte wäre toll.
 
 **_Wurden deine Erwartungen an die Applikation erfüllt?_**  
-**Testuser 1:** ?  
-**Testuser 2:** ?
+**Testuser 1:** Ja, die Applikation ist übersichtlich Aufgebaut und man findet sich im Grossen und Ganzen sehr gut zurecht.
+**Testuser 2:** Ja, es gab keine Grösseren Probleme.
 
 **_Ist das Dashboard für dich Verständlich?_**  
-**Testuser 1:** ?  
-**Testuser 2:** ?
+**Testuser 1:** Es ist nicht ganz klar, dass man ein Listenelement anwählen muss um weitere Informationen zu erhalten. Wenn
+man aber den Hinweis auf der Seite sieht ist alles klar.
+**Testuser 2:** Die Dashboard Ansicht ist klar. Es ist nicht ganz klar was der Unterschied zwischen Dashboard und Admin Dashboard ist.
 
 ### Beweis Fotos
 
-|                                                                Simon Tobler                                                                 |                                                                Markus Sitzmann                                                                 |
+|                                                     Usability Testing mit Simon Tobler                                                      |                                                     Usability Testing mit Markus Sitzmann                                                      |
 | :-----------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------: |
 | ![Usability Test Simon Tobler](https://github.com/juergscherrer/hsr-project2-resevation-app/blob/master/public/img/usability-testing-1.jpg) | ![Usability Test Markus Sitzmann](https://github.com/juergscherrer/hsr-project2-resevation-app/blob/master/public/img/usability-testing-2.jpg) |
 
 ### Test Erkenntnisse
+
+Der Test hat uns gezeigt, dass noch einige Verbesserungen im Bereich Usability möglich sind. Grundsätzlich sind aber alle
+Testpersonen mit der Applikation zurecht gekommen und konnten fast alle Aufgaben ohne grössere Probleme bewältigen.
+
+Folgende Usability-Probleme konnten festgestellt werden:
+
+- **Mietobjekt erstellen**
+  Der Benutzer weiss nich in welcher Währung er die Preise hinterlegen muss. Er hat nicht gewusst, dass nur
+  eine Zahl in CHF in die Input Felder geschrieben werden darf und hat verschiedene Dinge ausprobiert, konnte dann aber das
+  Formular nicht speichern.
+
+- **Benutzer zum Mietobjekt hinzufügen**
+  Es ist nicht ganz klar für den Benutzer, dass andere Benutzer sich zuerst an der Applikation anmelden müssen, bevor man
+  diese zu einem Mietobjekt hinzufügen kann. Hier wäre ein Hinweis für den Benutzer sinnvoll. Daher war es auch nicht klar,
+  was genau der orange Haken bedeutet der aufpoppt, wenn man eine E-Mailadresse von einem bereits registreirten Benutzer eingibt.
+
+- **Neue Reservation**
+  Reservationen konnten von allen Testpersonen ohne Probleme getätigt werden. Dass man mit einer Markierung im Kalender
+  ein Datumsbereich auswählen kann, haben aber nicht alle gleich verstanden.
+  Es ist etwas umständlich für den Nutzer wieder auf die Listenansicht (Dashboard) zu kommen. Dies ist nur über die
+  Navigation möglich. Hier könnte man dem Benutzer eine etwas komfortablere Lösung anbieten.
+
+- **Zahlungseingang bestätigen**
+  Dem Benutzer ist nicht klar, warum neben der Checkbox ein «Nein» bzw. ein «Ja» steht. Wählt man die Checkbox an, wechselt der Status
+  von bezahlt «Nein» zu bezahlt «Ja». Dies ist aber für den Benutzer verwirrend. Es währe besser wenn man lediglich die
+  Checkbox verwendet.
+
+Die Wichtigkeit von Usability Tests wird oft unterschätzt. Wie hilfreich solche Tests sind, sieht man erst, wenn man den Test
+wirklich durchgeführt hat. Wichtig ist es, dass man die Apllikation mit Personen mit unterschiedlichen EDV-Kenntnissen testet.
+Menschen die täglich am Computer arbeiten sehen gewisse Dinge viel schneller, als Menschen die nur sehr selten am Computer
+arbeiten.
