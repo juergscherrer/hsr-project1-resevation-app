@@ -204,4 +204,8 @@ Aus Sicherheitsgründen wurde die .env Datei mit der Firebase Konfiguration nich
 **Testuser 1:** ?  
 **Testuser 2:** ?
 
+### Beweis Fotos
+
+![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
+
 ### Test Erkenntnisse
