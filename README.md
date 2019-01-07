@@ -195,21 +195,22 @@ User Management mit [Firebase](https://firebase.google.com/) Authentication
 
 **_Welche Aufgaben konnten nicht oder nur Teilweise gelöst werden? Warum?_**  
 **Testuser 1:** Es war nicht ganz klar zu erkennen, dass man die Checkbox anwählen muss bei der Rechnungliste. Der Hinweis
-«Bezahlt Ja» ist eher verwirrend als hilfreich.
+«Bezahlt Ja» ist eher verwirrend als hilfreich.  
 **Testuser 2:** Es konnten alle Aufgaben ohne grössere Probleme gelöst werden.
 
 **_Welche Funktionen Fehlen deiner Meinung nach in der Applikation?_**  
-**Testuser 1:** Um Sich ein besseres Bild der Mietobjekte zu machen währen Fotos sehr hilfreich.
+**Testuser 1:** Um Sich ein besseres Bild der Mietobjekte zu machen währen Fotos sehr hilfreich.  
 **Testuser 2:** Eine Karte mit einer Übersicht der Mietobjekte wäre toll.
 
 **_Wurden deine Erwartungen an die Applikation erfüllt?_**  
-**Testuser 1:** Ja, die Applikation ist übersichtlich Aufgebaut und man findet sich im Grossen und Ganzen sehr gut zurecht.
+**Testuser 1:** Ja, die Applikation ist übersichtlich Aufgebaut und man findet sich im Grossen und Ganzen sehr gut zurecht.  
 **Testuser 2:** Ja, es gab keine Grösseren Probleme.
 
 **_Ist das Dashboard für dich Verständlich?_**  
 **Testuser 1:** Es ist nicht ganz klar, dass man ein Listenelement anwählen muss um weitere Informationen zu erhalten. Wenn
-man aber den Hinweis auf der Seite sieht ist alles klar.
-**Testuser 2:** Die Dashboard Ansicht ist klar. Es ist nicht ganz klar was der Unterschied zwischen Dashboard und Admin Dashboard ist.
+man aber den Hinweis auf der Seite sieht ist alles klar.  
+**Testuser 2:** Die Dashboard Ansicht ist klar. Es ist nicht ganz klar was der Unterschied zwischen Dashboard und Admin
+Dashboard ist.
 
 ### Beweis Fotos
 
