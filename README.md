@@ -207,7 +207,8 @@ User Management mit [Firebase](https://firebase.google.com/) Authentication
 
 ### Beweis Fotos
 
-![Usability Test Simon Tobler](https://github.com/juergscherrer/hsr-project2-resevation-app/blob/master/public/img/usability-testing-1.jpg)
-![Usability Test Markus Sitzmann](https://github.com/juergscherrer/hsr-project2-resevation-app/blob/master/public/img/usability-testing-2.jpg)
+|                                                                Simon Tobler                                                                 |                                                                Markus Sitzmann                                                                 |
+| :-----------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------: |
+| ![Usability Test Simon Tobler](https://github.com/juergscherrer/hsr-project2-resevation-app/blob/master/public/img/usability-testing-1.jpg) | ![Usability Test Markus Sitzmann](https://github.com/juergscherrer/hsr-project2-resevation-app/blob/master/public/img/usability-testing-2.jpg) |
 
 ### Test Erkenntnisse
