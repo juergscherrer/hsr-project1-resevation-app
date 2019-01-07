@@ -225,23 +225,23 @@ Testpersonen mit der Applikation zurecht gekommen und konnten fast alle Aufgaben
 
 Folgende Usability-Probleme konnten festgestellt werden:
 
-- **Mietobjekt erstellen**
+- **Mietobjekt erstellen**  
   Der Benutzer weiss nich in welcher Währung er die Preise hinterlegen muss. Er hat nicht gewusst, dass nur
   eine Zahl in CHF in die Input Felder geschrieben werden darf und hat verschiedene Dinge ausprobiert, konnte dann aber das
   Formular nicht speichern.
 
-- **Benutzer zum Mietobjekt hinzufügen**
+- **Benutzer zum Mietobjekt hinzufügen**  
   Es ist nicht ganz klar für den Benutzer, dass andere Benutzer sich zuerst an der Applikation anmelden müssen, bevor man
   diese zu einem Mietobjekt hinzufügen kann. Hier wäre ein Hinweis für den Benutzer sinnvoll. Daher war es auch nicht klar,
   was genau der orange Haken bedeutet der aufpoppt, wenn man eine E-Mailadresse von einem bereits registreirten Benutzer eingibt.
 
-- **Neue Reservation**
+- **Neue Reservation**  
   Reservationen konnten von allen Testpersonen ohne Probleme getätigt werden. Dass man mit einer Markierung im Kalender
   ein Datumsbereich auswählen kann, haben aber nicht alle gleich verstanden.
   Es ist etwas umständlich für den Nutzer wieder auf die Listenansicht (Dashboard) zu kommen. Dies ist nur über die
   Navigation möglich. Hier könnte man dem Benutzer eine etwas komfortablere Lösung anbieten.
 
-- **Zahlungseingang bestätigen**
+- **Zahlungseingang bestätigen**  
   Dem Benutzer ist nicht klar, warum neben der Checkbox ein «Nein» bzw. ein «Ja» steht. Wählt man die Checkbox an, wechselt der Status
   von bezahlt «Nein» zu bezahlt «Ja». Dies ist aber für den Benutzer verwirrend. Es währe besser wenn man lediglich die
   Checkbox verwendet.
