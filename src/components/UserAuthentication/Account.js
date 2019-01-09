@@ -17,11 +17,8 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'column'
   },
-  header: {
-    padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`
-  },
   layout: {
-    maxWidth: 1280,
+    maxWidth: 600,
     marginRight: 'auto',
     marginLeft: 'auto'
   }
@@ -55,42 +52,39 @@ class AccountPage extends React.Component {
 
     return (
       <div className={classes.layout}>
-        <div className={classes.header}>
-          <Grid
-            className={classes.content}
-            container
-            direction="row"
-            alignItems="flex-start"
-            spacing={24}
-          >
-            <Grid item xs={12} sm={6} display="flex">
-              <Paper className={classes.paper}>
-                <AuthUserContext.Consumer>
-                  {authUser => (
-                    <div>
-                      <Typography variant="headline" gutterBottom={true}>
-                        Mein Konto
-                      </Typography>
-                      <strong>{admin}</strong>
+        <Grid
+          className={classes.content}
+          container
+          direction="row"
+          alignItems="flex-start"
+        >
+          <Grid item xs={12} sm={12} display="flex">
+            <Paper className={classes.paper}>
+              <AuthUserContext.Consumer>
+                {authUser => (
+                  <div>
+                    <Typography variant="headline" gutterBottom={true}>
+                      Mein Konto
+                    </Typography>
+                    <strong>{admin}</strong>
 
-                      <Typography variant="title">Persönliche Daten</Typography>
-                      <PersonalInformtionForm setMessage={this.setMessage} />
+                    <Typography variant="title">Persönliche Daten</Typography>
+                    <PersonalInformtionForm setMessage={this.setMessage} />
 
-                      <Typography variant="title">Passwort ändern</Typography>
-                      <PasswordChangeForm setMessage={this.setMessage} />
+                    <Typography variant="title">Passwort ändern</Typography>
+                    <PasswordChangeForm setMessage={this.setMessage} />
 
-                      <MessageBox
-                        open={!!this.state.message}
-                        message={this.state.message}
-                        onClose={this.deleteMessage}
-                      />
-                    </div>
-                  )}
-                </AuthUserContext.Consumer>
-              </Paper>
-            </Grid>
+                    <MessageBox
+                      open={!!this.state.message}
+                      message={this.state.message}
+                      onClose={this.deleteMessage}
+                    />
+                  </div>
+                )}
+              </AuthUserContext.Consumer>
+            </Paper>
           </Grid>
-        </div>
+        </Grid>
       </div>
     );
   }

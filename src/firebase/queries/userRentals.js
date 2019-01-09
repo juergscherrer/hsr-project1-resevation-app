@@ -14,6 +14,23 @@ export async function getUserRentalsWithRentalOnce(rentalId) {
     .get();
 }
 
+// get userRentals with userId and user is manager
+export async function getUserRentalsWithUserAndManagerOnce(userId) {
+  return await db
+    .collection('userRentals')
+    .where('userId', '==', userId)
+    .where('manager', '==', true)
+    .get();
+}
+
+// get userRentals with rentalId and userId
+export async function getUserRentalsWithRentalAndUser(rentalId, userId) {
+  return await db
+    .collection('userRentals')
+    .where('rentalId', '==', rentalId)
+    .where('userId', '==', userId);
+}
+
 // get userRentals with rentalId and userId
 export async function getUserRentalsWithRentalAndUserOnce(rentalId, userId) {
   return await db
@@ -52,4 +69,10 @@ export async function updateUserRental(userRentalId, userRentalData) {
     .collection('userRentals')
     .doc(userRentalId)
     .update(userRentalData);
+}
+
+// unsubscribe from userRental
+
+export async function unsubscribeUserRental() {
+  return await db.collection('userRentals').onSnapshot(function() {});
 }

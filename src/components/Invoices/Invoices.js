@@ -32,21 +32,19 @@ class Invoices extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
-    this.setMessage = this.setMessage.bind(this);
-    this.deleteMessage = this.deleteMessage.bind(this);
-  }
-
-  setMessage(msg) {
-    this.setState({ message: msg });
-  }
-
-  deleteMessage() {
-    this.setState({ message: null });
   }
 
   componentWillUnmount() {
     this.setState({ ...INITIAL_STATE });
   }
+
+  setMessage = msg => {
+    this.setState({ message: msg });
+  };
+
+  deleteMessage = () => {
+    this.setState({ message: null });
+  };
 
   render() {
     const { classes } = this.props;

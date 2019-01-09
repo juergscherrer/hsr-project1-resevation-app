@@ -46,7 +46,8 @@ const messages = {
 
 const INITIAL_STATE = {
   message: null,
-  calendarEntries: []
+  calendarEntries: [],
+  initDate: null
 };
 
 class Calendar extends React.Component {
@@ -57,6 +58,9 @@ class Calendar extends React.Component {
   }
 
   componentDidMount() {
+    const date = this.props.initDate && new Date(this.props.initDate);
+    const initDate = date instanceof Date && !isNaN(date) ? date : new Date();
+    this.setState({ initDate: initDate });
     this.loadReservations();
   }
 
@@ -106,18 +110,20 @@ class Calendar extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <BigCalendar
-          selectable
-          messages={messages}
-          localizer={localizer}
-          defaultDate={new Date()}
-          defaultView="month"
-          events={this.state.calendarEntries}
-          style={{ height: '700px' }}
-          views={['month']}
-          onSelectEvent={event => this.props.editSelectedReservation(event)}
-          onSelectSlot={event => this.props.newSelectedReservation(event)}
-        />
+        {this.state.initDate && (
+          <BigCalendar
+            selectable
+            messages={messages}
+            localizer={localizer}
+            defaultDate={this.state.initDate}
+            defaultView="month"
+            events={this.state.calendarEntries}
+            style={{ height: '700px' }}
+            views={['month']}
+            onSelectEvent={event => this.props.editSelectedReservation(event)}
+            onSelectSlot={event => this.props.newSelectedReservation(event)}
+          />
+        )}
       </React.Fragment>
     );
   }

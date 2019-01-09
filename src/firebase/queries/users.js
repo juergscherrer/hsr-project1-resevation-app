@@ -34,3 +34,11 @@ export async function updateUser(userId, userData) {
     .doc(userId)
     .update(userData);
 }
+
+// create new User with userData
+export async function createUser(userId, userData) {
+  return await db
+    .collection('users')
+    .doc(userId)
+    .set(userData);
+}
