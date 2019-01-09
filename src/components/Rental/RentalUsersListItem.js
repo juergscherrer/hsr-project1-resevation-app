@@ -7,14 +7,18 @@ import AlertDialog from '../AlertDialog';
 import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import List from '@material-ui/core/List';
+import Collapse from '@material-ui/core/Collapse';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import Avatar from '@material-ui/core/Avatar';
 import PersonIcon from '@material-ui/icons/Person';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+
 import { getUser } from '../../firebase/queries/users';
 import {
   deleteUserRentalWithId,
@@ -26,7 +30,8 @@ const styles = theme => ({});
 const INITIAL_STATE = {
   user: null,
   openAlertDialog: false,
-  alertDialogtext: null
+  alertDialogtext: null,
+  nestedOpen: false
 };
 
 class RentalListItem extends React.Component {
@@ -102,6 +107,10 @@ class RentalListItem extends React.Component {
     }
   };
 
+  handleClick = () => {
+    this.setState(state => ({ nestedOpen: !state.nestedOpen }));
+  };
+
   deleteUserRental = () => {
     deleteUserRentalWithId(this.props.userRental.id)
       .then(() => {
@@ -144,7 +153,7 @@ class RentalListItem extends React.Component {
 
     return (
       <React.Fragment>
-        <ListItem>
+        <ListItem button onClick={this.props.userIsManager && this.handleClick}>
           <Avatar>
             <PersonIcon />
           </Avatar>
@@ -155,40 +164,48 @@ class RentalListItem extends React.Component {
             }
             secondary={this.state.user && this.state.user.email}
           />
-          {this.props.userIsManager && (
-            <ListItemSecondaryAction>
-              <FormGroup row>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={owner === true}
-                      onChange={this.handleOwnerChange}
-                    />
-                  }
-                  label="Besitzer"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={manager === true}
-                      onChange={this.handleManagerChange}
-                      value="checkedA"
-                    />
-                  }
-                  label="Manager"
-                />
 
-                <IconButton
-                  className={classes.button}
-                  aria-label="Delete"
-                  onClick={this.handleDelete}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </FormGroup>
-            </ListItemSecondaryAction>
-          )}
+          {this.props.userIsManager &&
+            (this.state.nestedOpen ? <ExpandLess /> : <ExpandMore />)}
         </ListItem>
+        <Collapse in={this.state.nestedOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItem button className={classes.nested}>
+              {this.props.userIsManager && (
+                <FormGroup row>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={owner === true}
+                        onChange={this.handleOwnerChange}
+                      />
+                    }
+                    label="Besitzer"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={manager === true}
+                        onChange={this.handleManagerChange}
+                        value="checkedA"
+                      />
+                    }
+                    label="Manager"
+                  />
+
+                  <IconButton
+                    className={classes.button}
+                    aria-label="Delete"
+                    onClick={this.handleDelete}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </FormGroup>
+              )}
+            </ListItem>
+          </List>
+        </Collapse>
+
         <MessageBox
           open={this.state.openMessageBox}
           message={this.state.message}

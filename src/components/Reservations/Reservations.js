@@ -13,7 +13,7 @@ import { getRental } from '../../firebase/queries/rentals';
 
 const styles = theme => ({
   paper: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit,
     display: 'flex',
     flexDirection: 'column'
   },
@@ -116,7 +116,7 @@ class Reservations extends React.Component {
           direction="row"
           justify="center"
           alignItems="flex-start"
-          spacing={24}
+          spacing={8}
         >
           <Grid item xs={12} sm={3} display="flex">
             <Paper className={classes.paper}>

@@ -16,7 +16,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 const styles = theme => ({
   paper: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit,
     paddingBottom: theme.spacing.unit * 2,
     display: 'flex',
     flexDirection: 'column'
@@ -88,7 +88,7 @@ class Rental extends React.Component {
           direction="row"
           justify="center"
           alignItems="flex-start"
-          spacing={24}
+          spacing={8}
         >
           <Grid item xs={12} sm={4} display="flex">
             <Paper className={classes.paper}>
@@ -145,8 +145,8 @@ class Rental extends React.Component {
               ) : (
                 <div className={classes.emptyMessage}>
                   <span>
-                    Bitte wähle ein Mietobjekt aus der Liste aus, oder erstelle
-                    ein neues.
+                    Bitte wähle ein Mietobjekt aus der Liste, oder klicke auf
+                    das + Symbol um ein neues zu erstellen.
                   </span>
                 </div>
               )}

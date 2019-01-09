@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Link, withRouter, Redirect } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { auth } from '../../firebase/index';
-import * as routes from '../../constants/routes';
 import Background from '../../img/loginscreen-jaunpassstrasse.jpg';
 import MessageBox from '../MessageBox';
 
@@ -77,6 +76,10 @@ const styles = theme => ({
   avatar: {
     margin: theme.spacing.unit,
     backgroundColor: theme.palette.primary.main
+  },
+  link: {
+    textDecoration: 'none',
+    color: theme.palette.primary.main
   }
 });
 
@@ -283,14 +286,10 @@ class SignUpFormWithoutStyles extends Component {
   }
 }
 
-const SignUpLink = () => (
-  <Link to={routes.SIGN_UP}>Noch nicht registriert?</Link>
-);
-
 SignUpPage.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
 export default withRouter(withStyles(styles)(SignUpPage));
 const SignUpForm = withStyles(styles)(SignUpFormWithoutStyles);
-export { SignUpForm, SignUpLink };
+export { SignUpForm };

@@ -136,7 +136,7 @@ class RentalUsersSearch extends React.Component {
           onSubmit={this.validateUser}
         >
           <TextField
-            style={{ margin: 8, width: 400 }}
+            style={{ margin: 8, width: 250 }}
             placeholder="Email Adresse hinzufügen"
             InputLabelProps={{
               shrink: true
@@ -146,6 +146,7 @@ class RentalUsersSearch extends React.Component {
             InputProps={{
               endAdornment: <InputAdornment>{inputAdornment}</InputAdornment>
             }}
+            autoFocus
           />
           <Button
             variant="fab"

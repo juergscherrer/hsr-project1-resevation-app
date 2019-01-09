@@ -12,7 +12,7 @@ import MessageBox from '../MessageBox';
 
 const styles = theme => ({
   paper: {
-    marginTop: theme.spacing.unit * 2,
+    marginTop: theme.spacing.unit,
     padding: `${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
     display: 'flex',
     flexDirection: 'column'

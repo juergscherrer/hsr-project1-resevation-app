@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 
 import Background from '../../img/loginscreen-jaunpassstrasse.jpg';
 import { withRouter } from 'react-router-dom';
-import { SignUpLink } from './SignUp';
 import { auth } from '../../firebase/index';
 import * as routes from '../../constants/routes';
 import MessageBox from '../MessageBox';
@@ -71,8 +70,10 @@ const styles = theme => ({
   eye: {
     cursor: 'pointer'
   },
-  passwordForgetLink: {
-    marginRight: theme.spacing.unit * 3
+  link: {
+    marginRight: theme.spacing.unit * 3,
+    textDecoration: 'none',
+    color: theme.palette.primary.main
   }
 });
 
@@ -194,13 +195,12 @@ class SignInForm extends Component {
                 Login
               </Button>
 
-              <Link
-                className={classes.passwordForgetLink}
-                to={routes.PASSWORD_FORGET}
-              >
+              <Link className={classes.link} to={routes.PASSWORD_FORGET}>
                 Passwort vergessen?
               </Link>
-              <SignUpLink />
+              <Link className={classes.link} to={routes.SIGN_UP}>
+                Registrieren
+              </Link>
             </form>
             <MessageBox
               open={!!this.state.message}

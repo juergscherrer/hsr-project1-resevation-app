@@ -246,7 +246,9 @@ class RentalDetails extends React.Component {
           <RentalUsersList
             rentalId={rentalId}
             setMessage={this.props.setMessage}
-            userIsManager={this.state.userRental.manager}
+            userIsManager={
+              this.state.userRental && this.state.userRental.manager
+            }
           />
         )}
         <AlertDialog

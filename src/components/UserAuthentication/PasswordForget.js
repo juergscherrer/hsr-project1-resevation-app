@@ -124,7 +124,7 @@ class PasswordForgetForm extends Component {
               disabled={isInvalid}
               type="submit"
             >
-              Passwort zurücksetzen
+              zurücksetzen
             </Button>
           </Grid>
         </form>
