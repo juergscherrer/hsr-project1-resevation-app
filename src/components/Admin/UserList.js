@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Linking } from 'react';
-
 import withAuthorization from '../UserAuthentication/withAuthorization';
 
 import { withStyles } from '@material-ui/core/styles/index';

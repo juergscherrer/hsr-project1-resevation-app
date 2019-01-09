@@ -4,16 +4,22 @@ import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 import * as moment from 'moment';
 
-import { db } from '../../firebase/firebase';
-
 import { withStyles } from '@material-ui/core/styles/index';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 
+import { getRental } from '../../firebase/queries/rentals';
+import { getUser } from '../../firebase/queries/users';
+import { updateReservation } from '../../firebase/queries/reservations';
+import { getUserRentalsWithRentalAndUser } from '../../firebase/queries/userRentals';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+
 const INITIAL_STATE = {
   reservation: null,
+  reservationId: null,
   rental: {},
   user: {},
   userRental: null,
@@ -26,196 +32,175 @@ const styles = theme => ({
   }
 });
 
-function InvoiceStatus(props) {
-  if (props.isPaid) {
-    return <span>Ja</span>;
-  } else {
-    return <span>Nein</span>;
-  }
-}
-
-function PaidAt(props) {
-  if (props.reservation.paid === true && props.reservation.paidAt != null) {
-    if (props.reservation.paidAt instanceof Date) {
-      return (
-        <Moment format="DD.MM.YYYY HH:mm:ss">{props.reservation.paidAt}</Moment>
-      );
-    } else {
-      return (
-        <Moment format="DD.MM.YYYY HH:mm:ss">
-          {props.reservation.paidAt.toDate()}
-        </Moment>
-      );
-    }
-  } else {
-    return '';
-  }
-}
-
 class InvoicesListItem extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
-    this.handleChange = this.handleChange.bind(this);
-    this.updateStatus = this.updateStatus.bind(this);
-    this.updateReservation = this.updateReservation.bind(this);
-  }
-
-  componentWillUnmount() {
-    this.setState({ ...INITIAL_STATE });
+    this.unsubscribeRental = null;
+    this.unsubscribeUser = null;
+    this.unsubscribeUserRentals = null;
   }
 
   componentWillMount() {
-    this.setState({ reservation: this.props.reservation.data() });
+    this.setState({
+      reservation: this.props.reservation.data(),
+      reservationId: this.props.reservation.id
+    });
   }
 
   componentDidMount() {
+    this.getRental().catch(error => {
+      this.props.setMessage(
+        `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
+      );
+    });
+
+    this.getUser().catch(error => {
+      this.props.setMessage(
+        `User konnte nicht geladen werden. Fehlermeldung: ${error}`
+      );
+    });
+
+    this.getUserRental().catch(error => {
+      this.props.setMessage(
+        `UserRental konnte nicht geladen werden. Fehlermeldung: ${error}`
+      );
+    });
+  }
+
+  componentWillUnmount() {
+    this.unsubscriber();
+    this.setState({ ...INITIAL_STATE });
+  }
+
+  unsubscriber = () => {
+    this.unsubscribeRental && this.unsubscribeRental();
+    this.unsubscribeUser && this.unsubscribeUser();
+    this.unsubscribeUserRentals && this.unsubscribeUserRentals();
+  };
+
+  getRental = async () => {
     // Get rentalId from props
-    let rentalId = this.props.reservation.data().rentalId;
-
+    const rentalId = this.state.reservation.rentalId;
     // Get rental from firestore and store it in local state
-    db.collection('rentals')
-      .doc(rentalId)
-      .onSnapshot(rental => {
-        this.setState({ rental: rental.data() });
-      });
+    const rentalRef = await getRental(rentalId);
+    const rentalSnap = rentalRef.onSnapshot(rental => {
+      this.setState({ rental: rental.data() });
+    });
 
-    // Get userId from props
-    let userId = this.props.reservation.data().userId;
-    console.log(userId);
+    this.unsubscribeRental = rentalSnap;
+    return rentalSnap;
+  };
 
-    // Get user from firestore and store it in local state
-    db.collection('users')
-      .doc(userId)
-      .onSnapshot(user => {
-        this.setState({ user: user.data() });
-      });
+  getUser = async () => {
+    // Get rentalId from props
+    const userId = this.state.reservation.userId;
+    // Get rental from firestore and store it in local state
+    const userRef = await getUser(userId);
+    const userSnap = userRef.onSnapshot(user => {
+      this.setState({ user: user.data() });
+    });
+    this.unsubscribeUser = userSnap;
+    return userSnap;
+  };
 
-    // Get userRental where userId and rentalId match
-    db.collection('userRentals')
-      .where('userId', '==', userId)
-      .where('rentalId', '==', rentalId)
-      .onSnapshot(userRentals => {
-        userRentals.forEach(doc => {
-          if (doc) {
-            this.setState({ userRental: doc.data() });
-          }
-        });
-      });
-  }
-
-  handleChange(id) {
-    this.setState(
-      {
-        ...this.state,
-        reservation: {
-          ...this.state.reservation,
-          paid: !this.state.reservation.paid
-        }
-      },
-      () => this.updateStatus(id)
+  getUserRental = async () => {
+    // Get rentalId from props
+    const userId = this.state.reservation.userId;
+    const rentalId = this.state.reservation.rentalId;
+    // Get rental from firestore and store it in local state
+    const userRentalsRef = await getUserRentalsWithRentalAndUser(
+      rentalId,
+      userId
     );
-  }
-
-  updateStatus(id) {
-    var reservationRef = db.collection('reservations').doc(id);
-    var reservationCopy = { ...this.state.reservation };
-
-    // set new date only if checkbox is checked
-    if (this.state.reservation.paid === true) {
-      if (reservationCopy.paidAt === null) {
-        reservationCopy.paidAt = new Date();
+    const userRentalsSnap = userRentalsRef.onSnapshot(userRentals => {
+      if (!userRentals.empty) {
+        this.setState({ userRental: userRentals.docs[0].data() });
       }
+    });
+    this.unsubscribeUserRentals = userRentalsSnap;
+    return userRentalsSnap;
+  };
 
-      this.setState({ reservation: reservationCopy }, () =>
-        this.updateReservation(reservationRef)
-      );
-    } else {
-      reservationCopy.paidAt = new Date();
-      this.setState({ reservation: reservationCopy }, () =>
-        this.updateReservation(reservationRef)
-      );
-    }
-  }
+  updateReservation = () => {
+    let reservationData = this.state.reservation;
+    reservationData['paid'] = !this.state.reservation.paid;
+    reservationData['paidAt'] = !this.state.reservation.paid
+      ? null
+      : firebase.firestore.Timestamp.fromDate(new Date());
 
-  updateReservation(reservationRef) {
-    // update status
-    reservationRef
-      .update({
-        paid: this.state.reservation.paid,
-        paidAt: this.state.reservation.paidAt
-      })
+    const reservationRef = updateReservation(
+      this.state.reservationId,
+      reservationData
+    );
+    return reservationRef
       .then(() => {
         this.props.setMessage('Der Status wurde erfolgreich aktualisiert.');
       })
       .catch(error => {
-        this.props.setMessage('Die Aktualisierung ist leider fehlgeschlagen.');
+        this.props.setMessage(
+          `Die Aktualisierung ist leider fehlgeschlagen. ${error}`
+        );
       });
-  }
+  };
 
   render() {
-    const { classes, reservation, key } = this.props;
+    const { classes, key } = this.props;
+    const { user, reservation, rental, userRental, reservationId } = this.state;
 
     // Calculate total days
-    let a = moment(reservation.data().endDate.toDate());
-    let b = moment(reservation.data().startDate.toDate());
+    let a = moment(reservation.endDate.toDate());
+    let b = moment(reservation.startDate.toDate());
     const days = a.diff(b, 'days');
 
     // Calculate price
     let total = null;
 
-    if (this.state.owner === true) {
+    if (userRental && userRental.owner === true) {
       // price owner * days * guests
-      total =
-        this.state.rental.priceForOwner *
-        days *
-        reservation.data().numberOfGuests;
+      total = rental.priceForOwner * days * reservation.numberOfGuests;
     } else {
       // price guest * days * guests
-      total =
-        this.state.rental.priceForGuest *
-        days *
-        reservation.data().numberOfGuests;
+      total = rental.priceForGuest * days * reservation.numberOfGuests;
     }
 
     return (
       <TableRow key={key}>
         <TableCell numeric>
-          {this.state.user.firstname || ''} {this.state.user.lastname || ''}
+          {user.firstname || ''} {user.lastname || ''}
         </TableCell>
 
-        <TableCell numeric>{this.state.rental.title || ''}</TableCell>
+        <TableCell numeric>{rental.title || ''}</TableCell>
 
         <TableCell component="th" scope="row">
-          <Moment format="DD.MM.YYYY">
-            {reservation.data().startDate.toDate()}
-          </Moment>
+          <Moment format="DD.MM.YYYY">{reservation.startDate.toDate()}</Moment>
         </TableCell>
 
         <TableCell numeric>
-          <Moment format="DD.MM.YYYY">
-            {reservation.data().endDate.toDate()}
-          </Moment>
+          <Moment format="DD.MM.YYYY">{reservation.endDate.toDate()}</Moment>
         </TableCell>
 
         <TableCell numeric>{total || ''}</TableCell>
 
         <TableCell numeric>
-          <PaidAt reservation={this.state.reservation} />
+          {reservation.paid && reservation.paidAt && (
+            <Moment format="DD.MM.YYYY HH:mm:ss">
+              {reservation.paidAt.toDate()}
+            </Moment>
+          )}
         </TableCell>
 
         <TableCell numeric>
-          <InvoiceStatus isPaid={this.state.reservation.paid} />
-
+          {reservation.paid ? 'Ja' : 'Nein'}
           <Checkbox
-            checked={this.state.reservation.paid}
-            onChange={e => this.handleChange(this.props.reservation.id)}
+            checked={reservation.paid}
+            onChange={this.updateReservation}
             value="checkedA"
           />
         </TableCell>
 
         <TableCell numeric>
-          <Link className={classes.link} to={`/invoices/${reservation.id}`}>
+          <Link className={classes.link} to={`/invoices/${reservationId}`}>
             <Button variant="outlined" size="small" className={classes.button}>
               Details
             </Button>

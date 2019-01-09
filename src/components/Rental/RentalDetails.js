@@ -56,11 +56,6 @@ class RentalDetails extends React.Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
-
-    this.toggleRentalForm = this.toggleRentalForm.bind(this);
-    this.toggleRentalUsers = this.toggleRentalUsers.bind(this);
-    this.deleteRental = this.deleteRental.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
   }
 
   componentDidMount() {
@@ -85,7 +80,7 @@ class RentalDetails extends React.Component {
     this.setState({ ...INITIAL_STATE });
   }
 
-  toggleRentalForm() {
+  toggleRentalForm = () => {
     this.state.showRentalForm
       ? this.setState({ showRentalForm: false, deleteButtonDisabled: false })
       : this.setState({
@@ -93,9 +88,9 @@ class RentalDetails extends React.Component {
           showRentalUsers: false,
           deleteButtonDisabled: true
         });
-  }
+  };
 
-  toggleRentalUsers() {
+  toggleRentalUsers = () => {
     this.state.showRentalUsers
       ? this.setState({ showRentalUsers: false, deleteButtonDisabled: false })
       : this.setState({
@@ -103,12 +98,12 @@ class RentalDetails extends React.Component {
           showRentalForm: false,
           deleteButtonDisabled: true
         });
-  }
+  };
 
-  handleDelete() {
+  handleDelete = () => {
     const text = 'Mietobjekt wirklich entfernen?';
     this.setState({ openAlertDialog: true, alertDialogtext: text });
-  }
+  };
 
   handleAnswer = answer => {
     if (answer) {
@@ -118,7 +113,7 @@ class RentalDetails extends React.Component {
     }
   };
 
-  deleteRental() {
+  deleteRental = () => {
     deleteRental(this.props.rentalId)
       .then(() => {
         this.deleteUserRental();
@@ -128,9 +123,9 @@ class RentalDetails extends React.Component {
           `Rental konnte nicht gelöscht werden. Fehlermeldung: ${error}`
         );
       });
-  }
+  };
 
-  deleteUserRental() {
+  deleteUserRental = () => {
     const userRentalsRef = getUserRentalsWithRentalOnce(this.props.rentalId);
 
     userRentalsRef.then(userRentals => {
@@ -147,7 +142,7 @@ class RentalDetails extends React.Component {
           });
       });
     });
-  }
+  };
 
   getUserRental = () => {
     if (this.props.rentalId) {

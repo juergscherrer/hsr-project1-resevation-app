@@ -5,6 +5,10 @@ import 'firebase/firestore';
 let yesterday = new Date();
 yesterday.setDate(yesterday.getDate() - 1);
 
+export async function getReservationRealtime(reservationId) {
+  return await db.collection('reservations').doc(reservationId);
+}
+
 export async function getReservation(reservationId) {
   return await db
     .collection('reservations')
@@ -15,6 +19,14 @@ export async function getReservation(reservationId) {
 // get Reservations with rentalId
 export async function getReservations(rentalId) {
   return await db.collection('reservations').where('rentalId', '==', rentalId);
+}
+
+// get Reservations with rentalId Once
+export async function getReservationsOnce(rentalId) {
+  return await db
+    .collection('reservations')
+    .where('rentalId', '==', rentalId)
+    .get();
 }
 
 // get Reservations with rentalId and userId

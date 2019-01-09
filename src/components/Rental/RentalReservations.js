@@ -9,6 +9,10 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import { getReservationsWithUserId } from '../../firebase/queries/reservations';
+import { Link } from 'react-router-dom';
+import { formatDate } from '../../custom/helpers';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/RemoveRedEyeOutlined';
 
 const INITIAL_STATE = {
   reservations: []
@@ -26,6 +30,12 @@ const styles = theme => ({
   emptyMessage: {
     textAlign: 'center',
     color: 'rgba(0, 0, 0, 0.54)'
+  },
+  link: {
+    textDecoration: 'none'
+  },
+  button: {
+    margin: theme.spacing.unit
   }
 });
 
@@ -33,10 +43,13 @@ class RentalReservations extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
+
+    this.unsubscribeReservations = null;
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.rentalId !== this.props.rentalId) {
+      this.unsubscriber();
       this.getReservationsFromUser().catch(error => {
         this.props.setMessage(
           `Reservationen konnten nicht geladen werden. Fehlermeldung: ${error}`
@@ -46,23 +59,32 @@ class RentalReservations extends Component {
   }
 
   componentWillUnmount() {
+    this.unsubscriber();
     this.setState({ ...INITIAL_STATE });
   }
+
+  unsubscriber = () => {
+    this.unsubscribeReservations && this.unsubscribeReservations();
+  };
 
   getReservationsFromUser = async () => {
     const reservationsRef = await getReservationsWithUserId(
       this.props.rentalId,
       auth.currentUser().uid
     );
-    return reservationsRef.onSnapshot(reservations => {
+    const reservationsSnap = reservationsRef.onSnapshot(reservations => {
       this.setState({ reservations: reservations.docs });
     });
+    this.unsubscribeReservations = reservationsSnap;
+    return reservationsSnap;
   };
 
   loadReservationContent = () => {
+    const { classes } = this.props;
     let content = [];
     if (this.state.reservations) {
       content = this.state.reservations.map((reservation, index) => {
+        const dateString = formatDate(reservation.data().startDate.toDate());
         return (
           <TableRow key={index}>
             <TableCell>
@@ -73,6 +95,17 @@ class RentalReservations extends Component {
               <Moment format="DD.MM.YYYY">
                 {reservation.data().endDate.toDate()}
               </Moment>
+              <Link
+                className={this.props.classes.link}
+                to={`/reservations/${this.props.rentalId}/${dateString}`}
+              >
+                <IconButton
+                  className={classes.button}
+                  aria-label="Show Reservation"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Link>
             </TableCell>
             <TableCell>{reservation.data().numberOfGuests}</TableCell>
             <TableCell>{reservation.data().comment}</TableCell>

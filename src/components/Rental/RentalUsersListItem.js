@@ -35,9 +35,7 @@ class RentalListItem extends React.Component {
 
     this.state = { ...INITIAL_STATE };
 
-    this.handleOwnerChange = this.handleOwnerChange.bind(this);
-    this.handleManagerChange = this.handleManagerChange.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
+    this.unsubscribeUser = null;
   }
 
   componentDidMount() {
@@ -52,6 +50,7 @@ class RentalListItem extends React.Component {
     if (
       this.props.userRental.data().userId !== prevProps.userRental.data().userId
     ) {
+      this.unsubscriber();
       this.getUser().catch(error => {
         this.props.setMessage(
           `Benutzer konnte nicht geladen werden. Fehlermeldung: ${error}`
@@ -61,32 +60,39 @@ class RentalListItem extends React.Component {
   }
 
   componentWillUnmount() {
+    this.unsubscriber();
     this.setState({ ...INITIAL_STATE });
   }
 
-  getUser = async () => {
-    const userRef = await getUser(this.props.userRental.data().userId);
-    return userRef.onSnapshot(user => {
-      this.setState({ user: user.data() });
-    });
+  unsubscriber = () => {
+    this.unsubscribeUser && this.unsubscribeUser();
   };
 
-  handleOwnerChange(event) {
+  getUser = async () => {
+    const userRef = await getUser(this.props.userRental.data().userId);
+    const userSnap = userRef.onSnapshot(user => {
+      this.setState({ user: user.data() });
+    });
+    this.unsubscribeUser = userSnap;
+    return userSnap;
+  };
+
+  handleOwnerChange = event => {
     let owner = event.target.checked;
     this.editOwnerUserRental(owner);
-  }
+  };
 
-  handleManagerChange(event) {
+  handleManagerChange = event => {
     let manager = event.target.checked;
     this.editManagerUserRental(manager);
-  }
+  };
 
-  handleDelete() {
+  handleDelete = () => {
     const text = `${this.state.user.firstname} ${
       this.state.user.lastname
     } wirklich entfernen?`;
     this.setState({ openAlertDialog: true, alertDialogtext: text });
-  }
+  };
 
   handleAnswer = answer => {
     if (answer) {

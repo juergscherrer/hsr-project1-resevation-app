@@ -85,6 +85,10 @@ class SignInForm extends Component {
     this.deleteMessage = this.deleteMessage.bind(this);
   }
 
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
+  }
+
   onSubmit = event => {
     const { email, password } = this.state;
     const { history } = this.props;

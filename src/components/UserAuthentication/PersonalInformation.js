@@ -26,9 +26,8 @@ class PersonalInformationForm extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
-    this.handleChange = this.handleChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-    this.updateUserData = this.updateUserData.bind(this);
+
+    this.unsubscribeUser = null;
   }
 
   componentDidMount() {
@@ -39,14 +38,26 @@ class PersonalInformationForm extends Component {
     });
   }
 
-  getUser = async () => {
-    const userRef = await getUser(auth.currentUser().uid);
-    return userRef.onSnapshot(doc => {
-      this.setState({ user: doc.data() });
-    });
+  componentWillUnmount() {
+    this.unsubscriber();
+    this.setState({ ...INITIAL_STATE });
+  }
+
+  unsubscriber = () => {
+    this.unsubscribeUser && this.unsubscribeUser();
   };
 
-  handleChange(event) {
+  getUser = async () => {
+    const userRef = await getUser(auth.currentUser().uid);
+    const userSnap = userRef.onSnapshot(user => {
+      this.setState({ user: user.data() });
+    });
+
+    this.unsubscribeUser = userSnap;
+    return userSnap;
+  };
+
+  handleChange = event => {
     let user = { ...this.state.user };
     user[event.target.name] = event.target.value;
 
@@ -55,7 +66,7 @@ class PersonalInformationForm extends Component {
     if (event.target.name === 'email') {
       this.setState({ emailChanged: true });
     }
-  }
+  };
 
   onSubmit = event => {
     event.preventDefault();
@@ -78,7 +89,7 @@ class PersonalInformationForm extends Component {
     }
   };
 
-  updateUserData() {
+  updateUserData = () => {
     let user = { ...this.state.user };
 
     const userRef = updateUser(auth.currentUser().uid, user);
@@ -92,7 +103,7 @@ class PersonalInformationForm extends Component {
         // An error happened.
         this.props.setMessage(error.message);
       });
-  }
+  };
 
   render() {
     const { classes } = this.props;

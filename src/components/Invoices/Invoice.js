@@ -4,12 +4,14 @@ import PropTypes from 'prop-types';
 import * as moment from 'moment';
 import Moment from 'react-moment';
 
-import { db } from '../../firebase/firebase';
-
 import { withStyles } from '@material-ui/core/styles/index';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import withAuthorization from '../UserAuthentication/withAuthorization';
+import { getUserRentalsWithRentalAndUser } from '../../firebase/queries/userRentals';
+import { getUser } from '../../firebase/queries/users';
+import { getRental } from '../../firebase/queries/rentals';
+import { getReservationRealtime } from '../../firebase/queries/reservations';
 
 const styles = theme => ({
   link: {
@@ -36,105 +38,137 @@ const INITIAL_STATE = {
   userRental: null
 };
 
-// Calculate price
-var total = null;
-var totalPerNight = null;
-
 class Invoice extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
+    this.unsubscribeReservation = null;
+    this.unsubscribeRental = null;
+    this.unsubscribeUser = null;
+    this.unsubscribeUserRentals = null;
   }
 
-  // TODO error handling
   componentDidMount() {
-    // get reservation
-    db.collection('reservations')
-      .doc(this.props.match.params.reservationId)
-      .onSnapshot(reservation => {
-        this.setState({ reservation: reservation.data() });
-
-        // Calculate total days
-        let a = moment(this.state.reservation.endDate.toDate() || null);
-        let b = moment(this.state.reservation.startDate.toDate() || null);
-        this.setState({ days: a.diff(b, 'days') });
-
-        // get rental
-        db.collection('rentals')
-          .doc(this.state.reservation.rentalId)
-          .onSnapshot(rental => {
-            this.setState({ rental: rental.data() });
-          });
-
-        // Get user from firestore and store it in local state
-        db.collection('userRentals')
-          .where('rentalId', '==', this.state.reservation.rentalId)
-          .onSnapshot(userRental => {
-            userRental.forEach(doc => {
-              this.setState({ userRental: doc.data() });
-
-              if (this.state.userRental.owner === true) {
-                // price owner * days * guests
-                total =
-                  this.state.rental.priceForOwner *
-                  this.state.days *
-                  reservation.data().numberOfGuests;
-                totalPerNight = this.state.rental.priceForOwner;
-              } else {
-                // price guest * days * guests
-                total =
-                  this.state.rental.priceForGuest *
-                  this.state.days *
-                  reservation.data().numberOfGuests;
-                totalPerNight = this.state.rental.priceForGuest;
-              }
-
-              let userId = doc.data().userId;
-              db.collection('users')
-                .doc(userId)
-                .onSnapshot(user => {
-                  this.setState({ user: user.data() });
-                });
-            });
-          });
-      });
+    this.getReservation().catch(error => {});
   }
 
   componentWillUnmount() {
+    this.unsubscriber();
     this.setState({ ...INITIAL_STATE });
   }
 
+  unsubscriber = () => {
+    this.unsubscribeReservation && this.unsubscribeReservation();
+    this.unsubscribeRental && this.unsubscribeRental();
+    this.unsubscribeUser && this.unsubscribeUser();
+    this.unsubscribeUserRentals && this.unsubscribeUserRentals();
+  };
+
+  getReservation = async () => {
+    const reservationId = this.props.match.params.reservationId;
+    const reservationRef = await getReservationRealtime(reservationId);
+    const reservationSnap = reservationRef.onSnapshot(reservation => {
+      this.setState({ reservation: reservation.data() }, () =>
+        this.getData(reservation.data())
+      );
+    });
+
+    this.unsubscribeReservation = reservationSnap;
+    return reservationSnap;
+  };
+
+  getData = reservationData => {
+    this.getRental(reservationData).catch(error => {});
+    this.getUserRental(reservationData).catch(error => {});
+    this.getUser(reservationData).catch(error => {});
+  };
+
+  getRental = async reservationData => {
+    const rentalRef = await getRental(reservationData.rentalId);
+    const rentalSnap = rentalRef.onSnapshot(rental => {
+      this.setState({ rental: rental.data() });
+    });
+    this.unsubscribeRental = rentalSnap;
+    return rentalSnap;
+  };
+
+  getUserRental = async reservationData => {
+    const userId = reservationData.userId;
+    const rentalId = reservationData.rentalId;
+    const userRentalsRef = await getUserRentalsWithRentalAndUser(
+      rentalId,
+      userId
+    );
+    const userRentalsSnap = userRentalsRef.onSnapshot(userRentals => {
+      if (!userRentals.empty) {
+        this.setState({ userRental: userRentals.docs[0].data() });
+      }
+    });
+
+    this.unsubscribeUserRentals = userRentalsSnap;
+    return userRentalsSnap;
+  };
+
+  getUser = async reservationData => {
+    const userId = reservationData.userId;
+    const userRef = await getUser(userId);
+    const userSnap = userRef.onSnapshot(user => {
+      this.setState({ user: user.data() });
+    });
+
+    this.unsubscribeUser = userSnap;
+    return userSnap;
+  };
+
   render() {
     const { classes } = this.props;
+    const { reservation, rental, userRental, user } = this.state;
     let invoice = null;
 
-    if (this.state.reservation && this.state.rental && this.state.user) {
+    if (reservation && rental && user) {
+      // Calculate total days
+      let a = moment(reservation.endDate.toDate());
+      let b = moment(reservation.startDate.toDate());
+      const nights = a.diff(b, 'days');
+
+      // Calculate price
+      let total = '';
+      let totalPerNight = '';
+
+      if (userRental && userRental.owner === true) {
+        // price owner * days * guests
+        total = rental.priceForOwner * nights * reservation.numberOfGuests;
+        totalPerNight = rental.priceForOwner * reservation.numberOfGuests;
+      } else {
+        // price guest * days * guests
+        total = rental.priceForGuest * nights * reservation.numberOfGuests;
+        totalPerNight = rental.priceForGuest * reservation.numberOfGuests;
+      }
+
       invoice = (
         <div>
           <h1 className={classes.header}>
-            Rechnung für {this.state.rental.description}
+            Rechnung für {rental.title} {rental.description}
           </h1>
 
           <p>
-            Empfänger: {this.state.user.firstname} {this.state.user.lastname}
+            Empfänger: {user.firstname} {user.lastname}
           </p>
-          <p> Kommentar: {this.state.reservation.comment}</p>
+          <p> Kommentar: {reservation.comment}</p>
           <p>
             Start:&nbsp;
             <Moment format="DD.MM.YYYY">
-              {this.state.reservation.startDate.toDate()}
+              {reservation.startDate.toDate()}
             </Moment>
           </p>
           <p>
             Ende:&nbsp;
-            <Moment format="DD.MM.YYYY">
-              {this.state.reservation.endDate.toDate()}
-            </Moment>
+            <Moment format="DD.MM.YYYY">{reservation.endDate.toDate()}</Moment>
           </p>
-          <p>Anzahl Gäste: {this.state.reservation.numberOfGuests}</p>
-          <p>Anzahl Nächte: {this.state.days}</p>
-          <p>Total pro Nacht: {totalPerNight || ''}</p>
-          <p>Total: {total || ''}</p>
+          <p>Anzahl Gäste: {reservation.numberOfGuests}</p>
+          <p>Anzahl Nächte: {nights}</p>
+          <p>Total pro Nacht: {totalPerNight} Fr.</p>
+          <p>Total: {total} Fr.</p>
         </div>
       );
     }
@@ -143,7 +177,6 @@ class Invoice extends Component {
       <div className={classes.layout}>
         <Paper className={classes.paper}>
           {invoice}
-
           <br />
           <Link className={classes.link} to="/invoices">
             <Button variant="outlined" size="small" className={classes.button}>

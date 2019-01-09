@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import * as routes from '../../constants/routes';
 import { Link } from 'react-router-dom';
 import { auth } from '../../firebase/index';
-import { getUser } from '../../firebase/queries/users';
-import firebase from 'firebase/app';
+import { getUserOnce } from '../../firebase/queries/users';
 
 import { withStyles } from '@material-ui/core/styles';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
@@ -26,8 +25,7 @@ const INITIAL_STATE = {
   left: false,
   bottom: false,
   right: false,
-  admin: null,
-  userId: null
+  admin: null
 };
 
 const styles = theme => ({
@@ -54,21 +52,27 @@ class NavigationDrawer extends React.Component {
   }
 
   componentDidMount() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        // User is signed in.
-        this.setState({ userId: user.uid }, () => this.getUser());
-      } else {
-        // No user is signed in.
-      }
-    });
+    this.getUser();
   }
 
-  getUser = async () => {
-    const userRef = await getUser(this.state.userId);
-    return userRef.onSnapshot(user => {
-      this.setState({ admin: user.data().admin });
-    });
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
+  }
+
+  getUser = () => {
+    if (auth.currentUser()) {
+      getUserOnce(auth.currentUser().uid)
+        .then(user => {
+          if (user.exists) {
+            this.setState({ admin: user.data().admin });
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    } else {
+      this.setState({ admin: false });
+    }
   };
 
   toggleDrawer = (side, open) => () => {

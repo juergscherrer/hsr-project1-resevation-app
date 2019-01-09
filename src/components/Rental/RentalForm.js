@@ -69,6 +69,8 @@ class RentalForm extends Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
+
+    this.unsubscribeRental = null;
   }
 
   componentDidMount() {
@@ -83,6 +85,7 @@ class RentalForm extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.rentalId !== prevProps.rentalId && this.props.rentalId) {
+      this.unsubscriber();
       this.getRental().catch(error => {
         this.props.setMessage(
           `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
@@ -92,12 +95,17 @@ class RentalForm extends Component {
   }
 
   componentWillUnmount() {
+    this.unsubscriber();
     this.setState({ ...INITIAL_STATE });
   }
 
+  unsubscriber = () => {
+    this.unsubscribeRental && this.unsubscribeRental();
+  };
+
   getRental = async () => {
     const rentalRef = await getRental(this.props.rentalId);
-    return rentalRef.onSnapshot(rental => {
+    const rentalSnap = rentalRef.onSnapshot(rental => {
       this.setState({
         rentalId: rental.id,
         title: rental.data().title,
@@ -106,6 +114,8 @@ class RentalForm extends Component {
         priceForOwner: rental.data().priceForOwner
       });
     });
+    this.unsubscribeRental = rentalSnap;
+    return rentalSnap;
   };
 
   onSubmit = event => {
@@ -215,7 +225,9 @@ class RentalForm extends Component {
             />
           </FormControl>
           <FormControl margin="normal" required fullWidth>
-            <InputLabel htmlFor="description">Beschreibung</InputLabel>
+            <InputLabel htmlFor="description">
+              Beschreibung (z.B. Standort, Art des Objekts)
+            </InputLabel>
             <Input
               id="description"
               value={description}
@@ -227,7 +239,7 @@ class RentalForm extends Component {
           </FormControl>
           <FormControl margin="normal" required fullWidth>
             <InputLabel htmlFor="priceForGuest">
-              Preis für Gast (pro Nacht)
+              Preis für Gast (pro Nacht in CHF)
             </InputLabel>
             <Input
               id="priceForGuest"
@@ -240,7 +252,7 @@ class RentalForm extends Component {
           </FormControl>
           <FormControl margin="normal" required fullWidth>
             <InputLabel htmlFor="priceForOwner">
-              Preis für Besitzer (pro Nacht)
+              Preis für Besitzer (pro Nacht in CHF)
             </InputLabel>
             <Input
               id="priceForOwner"

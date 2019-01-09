@@ -39,10 +39,6 @@ class RentalUsersSearch extends React.Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
-
-    this.addUser = this.addUser.bind(this);
-    this.validateUser = this.validateUser.bind(this);
-    this.saveUserRental = this.saveUserRental.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -55,7 +51,7 @@ class RentalUsersSearch extends React.Component {
     this.setState({ ...INITIAL_STATE });
   }
 
-  addUser(event) {
+  addUser = event => {
     this.setState({ user: null, emailSearch: event.target.value });
     const email = event.target.value;
     getUserWithEmailOnce(email)
@@ -69,9 +65,9 @@ class RentalUsersSearch extends React.Component {
           `Fehler in der Benutzer Suche. Fehlermeldung: ${error}`
         );
       });
-  }
+  };
 
-  validateUser(event) {
+  validateUser = event => {
     if (this.state.user) {
       getUserRentalsWithRentalAndUserOnce(
         this.props.rentalId,
@@ -99,9 +95,9 @@ class RentalUsersSearch extends React.Component {
       this.props.setMessage('Benutzer wurde nicht gefunden');
     }
     event.preventDefault();
-  }
+  };
 
-  saveUserRental() {
+  saveUserRental = () => {
     const userRentalRef = createUserRental({
       userId: this.state.user.id,
       rentalId: this.props.rentalId,
@@ -119,7 +115,7 @@ class RentalUsersSearch extends React.Component {
           `Benutzer konnte nicht hinzugefügt werden. Fehlermeldung: ${error}`
         );
       });
-  }
+  };
 
   render() {
     const { classes } = this.props;

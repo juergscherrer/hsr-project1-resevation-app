@@ -35,16 +35,6 @@ class AdminPage extends Component {
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
-    this.setMessage = this.setMessage.bind(this);
-    this.deleteMessage = this.deleteMessage.bind(this);
-  }
-
-  setMessage(msg) {
-    this.setState({ message: msg });
-  }
-
-  deleteMessage() {
-    this.setState({ message: null });
   }
 
   componentDidMount() {
@@ -59,6 +49,14 @@ class AdminPage extends Component {
         console.log(error);
       });
   }
+
+  setMessage = msg => {
+    this.setState({ message: msg });
+  };
+
+  deleteMessage = () => {
+    this.setState({ message: null });
+  };
 
   render() {
     const { users } = this.state;

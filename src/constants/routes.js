@@ -6,4 +6,4 @@ export const PASSWORD_FORGET = '/pw-forget';
 export const ADMIN = '/admin';
 export const INVOICES = '/invoices';
 export const INVOICE = '/invoices/:reservationId';
-export const RESERVATIONS = '/reservations/:rentalId';
+export const RESERVATIONS = '/reservations/:rentalId/:date?';

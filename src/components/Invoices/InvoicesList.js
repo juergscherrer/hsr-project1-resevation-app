@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { auth } from '../../firebase';
-
-import { db } from '../../firebase/firebase';
 import InvoicesListItem from './InvoicesListItem';
 
 import { withStyles } from '@material-ui/core/styles/index';
@@ -11,6 +9,8 @@ import TableBody from '@material-ui/core/TableBody';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import { getUserRentalsWithUserAndManagerOnce } from '../../firebase/queries/userRentals';
+import { getReservationsOnce } from '../../firebase/queries/reservations';
 
 const INITIAL_STATE = {
   reservations: []
@@ -29,24 +29,31 @@ class InvoicesList extends Component {
   }
 
   componentDidMount() {
-    // Get current user
-    let currentUser = auth.currentUser().uid;
+    this.getUserRentals();
+  }
 
+  componentWillUnmount() {
+    this.setState({ ...INITIAL_STATE });
+  }
+
+  getUserRentals = () => {
     // Get all userRentals where userId is currentUser and manager is true
-    db.collection('userRentals')
-      .where('userId', '==', currentUser)
-      .where('manager', '==', true)
-      .get()
-      .then(querySnapshot => {
+    const userRentalsRef = getUserRentalsWithUserAndManagerOnce(
+      auth.currentUser().uid
+    );
+    userRentalsRef
+      .then(userRentals => {
         // Loop all userRentals and find the reservation
-        querySnapshot.forEach(doc => {
-          db.collection('reservations')
-            .where('rentalId', '==', doc.data().rentalId)
-            .get()
-            .then(querySnapshot => {
-              querySnapshot.forEach(doc => {
+        userRentals.forEach(userRental => {
+          const reservationsRef = getReservationsOnce(
+            userRental.data().rentalId
+          );
+
+          reservationsRef
+            .then(reservations => {
+              reservations.forEach(reservation => {
                 this.setState({
-                  reservations: [...this.state.reservations, doc]
+                  reservations: [...this.state.reservations, reservation]
                 });
               });
             })
@@ -58,11 +65,7 @@ class InvoicesList extends Component {
       .catch(function(error) {
         console.log('Error getting documents: ', error);
       });
-  }
-
-  componentWillUnmount() {
-    this.setState({ ...INITIAL_STATE });
-  }
+  };
 
   render() {
     const { classes } = this.props;

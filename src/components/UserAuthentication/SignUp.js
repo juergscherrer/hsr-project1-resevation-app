@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link, withRouter, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { auth, db } from '../../firebase/index';
+import { auth } from '../../firebase/index';
 import * as routes from '../../constants/routes';
 import Background from '../../img/loginscreen-jaunpassstrasse.jpg';
 import MessageBox from '../MessageBox';
@@ -17,6 +17,7 @@ import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
 import AssignmentInd from '@material-ui/icons/AssignmentInd';
 import Grid from '@material-ui/core/Grid';
+import { createUser } from '../../firebase/queries/users';
 
 const SignUpPage = ({ history }) => (
   <div>
@@ -102,22 +103,24 @@ class SignUpFormWithoutStyles extends Component {
 
     auth
       .doCreateUserWithEmailAndPassword(email, passwordOne)
-      .then(authUser => {
-        var doc = db.collection('users').doc(auth.currentUser().uid);
-        doc
-          .set({
-            admin: true,
-            email,
-            firstname,
-            lastname
-          })
-          .then(user => {
+      .then(() => {
+        const userData = {
+          admin: false,
+          email,
+          firstname,
+          lastname
+        };
+        createUser(auth.currentUser().uid, userData)
+          .then(() => {
             this.setState({
               redirect: true
             });
           })
           .catch(function(error) {
-            console.error('Error adding document: ', error);
+            console.error(
+              'Benutzer konnte nicht erstellt werden. Fehlermeldung: ',
+              error
+            );
           });
       })
 

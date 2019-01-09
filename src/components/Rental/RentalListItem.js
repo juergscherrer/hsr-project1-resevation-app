@@ -19,6 +19,8 @@ class RentalListItem extends React.Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
+
+    this.unsubscribeRental = null;
   }
 
   componentDidMount() {
@@ -31,6 +33,7 @@ class RentalListItem extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.rental.rentalId !== this.props.rental.rentalId) {
+      this.unsubscriber();
       this.getRental().catch(error => {
         this.props.setMessage(
           `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
@@ -40,14 +43,21 @@ class RentalListItem extends React.Component {
   }
 
   componentWillUnmount() {
+    this.unsubscriber();
     this.setState({ ...INITIAL_STATE });
   }
 
+  unsubscriber = () => {
+    this.unsubscribeRental && this.unsubscribeRental();
+  };
+
   getRental = async () => {
     const rentalRef = await getRental(this.props.rental.rentalId);
-    return rentalRef.onSnapshot(rental => {
+    const rentalSnap = rentalRef.onSnapshot(rental => {
       this.setState({ rental: rental.data() });
     });
+    this.unsubscribeRental = rentalSnap;
+    return rentalSnap;
   };
 
   openDetails = () => {

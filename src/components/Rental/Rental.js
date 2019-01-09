@@ -44,19 +44,13 @@ class Rental extends React.Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
-
-    this.openForm = this.openForm.bind(this);
-    this.openDetails = this.openDetails.bind(this);
-    this.closeDetails = this.closeDetails.bind(this);
-    this.setMessage = this.setMessage.bind(this);
-    this.deleteMessage = this.deleteMessage.bind(this);
   }
 
   componentWillUnmount() {
     this.setState({ ...INITIAL_STATE });
   }
 
-  openForm() {
+  openForm = () => {
     this.state.showRentalForm
       ? this.setState({ showRentalForm: false, rentalId: null })
       : this.setState({
@@ -65,23 +59,23 @@ class Rental extends React.Component {
           rentalId: null
         });
     this.setState({ clearActiveItem: true });
-  }
+  };
 
-  openDetails(rentalId) {
+  openDetails = rentalId => {
     this.setState({ showRentalDetails: true, rentalId: rentalId });
-  }
+  };
 
-  closeDetails() {
+  closeDetails = () => {
     this.setState({ showRentalDetails: false, rentalId: null });
-  }
+  };
 
-  setMessage(msg) {
+  setMessage = msg => {
     this.setState({ message: msg });
-  }
+  };
 
-  deleteMessage() {
+  deleteMessage = () => {
     this.setState({ message: null });
-  }
+  };
 
   render() {
     const { classes } = this.props;

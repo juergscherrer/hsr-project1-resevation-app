@@ -7,9 +7,6 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 
 import AuthUserContext from '../UserAuthentication/AuthUserContext';
-
-import NavigationMainMenu from './NavigationMainMenu';
-import NavigationUserMenu from './NavigationUserMenu';
 import NavigationDrawer from './NavigationDrawer';
 
 const styles = theme => ({
@@ -25,8 +22,6 @@ const styles = theme => ({
 class Navigation extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {};
   }
 
   render() {

@@ -24,6 +24,8 @@ class RentalList extends React.Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
+
+    this.unsubscribeUserRental = null;
   }
 
   componentDidMount() {
@@ -35,14 +37,21 @@ class RentalList extends React.Component {
   }
 
   componentWillUnmount() {
+    this.unsubscriber();
     this.setState({ ...INITIAL_STATE });
   }
 
+  unsubscriber = () => {
+    this.unsubscribeUserRental && this.unsubscribeUserRental();
+  };
+
   getUserRentals = async () => {
     const userRentalsRef = await getUserRentalsWithUser(auth.currentUser().uid);
-    return userRentalsRef.onSnapshot(userRentals => {
+    const userRentalsSnap = userRentalsRef.onSnapshot(userRentals => {
       this.setState({ rentals: userRentals.docs });
     });
+    this.unsubscribeUserRental = userRentalsSnap;
+    return userRentalsSnap;
   };
 
   setActiveItem = key => {

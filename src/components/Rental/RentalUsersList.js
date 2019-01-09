@@ -25,6 +25,8 @@ class RentalUsersList extends Component {
     super(props);
 
     this.state = { ...INITIAL_STATE };
+
+    this.unsubscribeUserRental = null;
   }
 
   componentDidMount() {
@@ -39,6 +41,7 @@ class RentalUsersList extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.rentalId !== prevProps.rentalId) {
+      this.unsubscriber();
       this.getUserRentals().catch(error => {
         this.props.setMessage(
           `Rental konnte nicht geladen werden. Fehlermeldung: ${error}`
@@ -47,16 +50,23 @@ class RentalUsersList extends Component {
     }
   }
 
-  getUserRentals = async () => {
-    const userRentalsRef = await getUserRentalsWithRental(this.props.rentalId);
-    return userRentalsRef.onSnapshot(userRentals => {
-      this.setState({ userRentals: userRentals.docs });
-    });
-  };
-
   componentWillUnmount() {
+    this.unsubscriber();
     this.setState({ ...INITIAL_STATE });
   }
+
+  unsubscriber = () => {
+    this.unsubscribeUserRental && this.unsubscribeUserRental();
+  };
+
+  getUserRentals = async () => {
+    const userRentalsRef = await getUserRentalsWithRental(this.props.rentalId);
+    const userRentalSnap = userRentalsRef.onSnapshot(userRentals => {
+      this.setState({ userRentals: userRentals.docs });
+    });
+    this.unsubscribeUserRental = userRentalSnap;
+    return userRentalSnap;
+  };
 
   render() {
     const { classes } = this.props;
