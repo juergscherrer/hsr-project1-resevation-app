@@ -10,7 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -95,19 +95,18 @@ class Rental extends React.Component {
               <div className={classes.content}>
                 <Grid container justify="space-between" alignItems="center">
                   <Grid item>
-                    <Typography variant="headline">Mietobjekte</Typography>
+                    <Typography variant="h5">Mietobjekte</Typography>
                   </Grid>
                   <Grid item>
-                    <Button
-                      variant="fab"
-                      mini
+                    <Fab
+                      size="medium"
                       color={
                         this.state.showRentalForm ? 'secondary' : 'primary'
                       }
                       onClick={this.openForm}
                     >
                       {this.state.showRentalForm ? <CloseIcon /> : <AddIcon />}
-                    </Button>
+                    </Fab>
                   </Grid>
                 </Grid>
               </div>
@@ -132,7 +131,7 @@ class Rental extends React.Component {
               <div className={classes.content}>
                 <Grid container justify="space-between" alignItems="center">
                   <Grid item>
-                    <Typography variant="headline">Details</Typography>
+                    <Typography variant="h5">Details</Typography>
                   </Grid>
                 </Grid>
               </div>

@@ -172,7 +172,7 @@ class SignUpFormWithoutStyles extends Component {
             <Avatar className={classes.avatar}>
               <AssignmentInd />
             </Avatar>
-            <Typography variant="headline">Registrierung</Typography>
+            <Typography variant="h5">Registrierung</Typography>
             <form className={classes.form} onSubmit={this.onSubmit}>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="firstname">Vorname</InputLabel>
@@ -263,7 +263,7 @@ class SignUpFormWithoutStyles extends Component {
                   Abbrechen
                 </Button>
                 <Button
-                  variant="raised"
+                  variant="contained"
                   color="primary"
                   className={classes.submit}
                   disabled={isInvalid}

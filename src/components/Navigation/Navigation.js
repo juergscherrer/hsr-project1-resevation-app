@@ -35,11 +35,7 @@ class Navigation extends React.Component {
         <AppBar position="static" className={classes.appBar}>
           <Toolbar disableGutters={true}>
             <NavigationDrawer />
-            <Typography
-              variant="title"
-              color="inherit"
-              className={classes.grow}
-            >
+            <Typography variant="h6" color="inherit" className={classes.grow}>
               Reservations - App
             </Typography>
           </Toolbar>

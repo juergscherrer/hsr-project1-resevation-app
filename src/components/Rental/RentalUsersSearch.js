@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import CheckIcon from '@material-ui/icons/CheckCircle';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import Fab from '@material-ui/core/Fab';
 import { getUserWithEmailOnce } from '../../firebase/queries/users';
 import {
   createUserRental,
@@ -148,16 +148,15 @@ class RentalUsersSearch extends React.Component {
             }}
             autoFocus
           />
-          <Button
-            variant="fab"
+          <Fab
             aria-label="Hinzufügen"
-            mini
+            size="medium"
             className={classes.button}
             type="submit"
             color={'primary'}
           >
             <AddIcon />
-          </Button>
+          </Fab>
         </form>
       </React.Fragment>
     );

@@ -123,7 +123,7 @@ class Reservations extends React.Component {
               <div className={classes.header}>
                 <Grid container justify="space-between" alignItems="center">
                   <Grid item>
-                    <Typography variant="headline">
+                    <Typography variant="h5">
                       {this.state.editReservationId
                         ? 'Reservation bearbeiten'
                         : 'Neue Reservation erstellen'}
@@ -149,7 +149,7 @@ class Reservations extends React.Component {
               <div className={classes.header}>
                 <Grid container justify="space-between" alignItems="center">
                   <Grid item>
-                    <Typography variant="headline">
+                    <Typography variant="h5">
                       {rental ? `Kalender ${rental.title}` : 'Kalender'}
                     </Typography>
                   </Grid>

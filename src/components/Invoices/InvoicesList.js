@@ -87,14 +87,14 @@ class InvoicesList extends Component {
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell numeric>Mieter</TableCell>
-            <TableCell numeric>Objekt</TableCell>
-            <TableCell numeric>Start Date</TableCell>
-            <TableCell numeric>End Datum</TableCell>
-            <TableCell numeric>Total [CHF]</TableCell>
-            <TableCell numeric>Bezahlt am</TableCell>
-            <TableCell numeric>Bezahlt?</TableCell>
-            <TableCell numeric>Details</TableCell>
+            <TableCell align="center">Mieter</TableCell>
+            <TableCell align="center">Objekt</TableCell>
+            <TableCell align="center">Start Date</TableCell>
+            <TableCell align="center">End Datum</TableCell>
+            <TableCell align="center">Total [CHF]</TableCell>
+            <TableCell align="center">Bezahlt am</TableCell>
+            <TableCell align="center">Bezahlt?</TableCell>
+            <TableCell align="center">Details</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>{output}</TableBody>

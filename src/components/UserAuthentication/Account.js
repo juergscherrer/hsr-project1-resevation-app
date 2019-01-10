@@ -63,15 +63,15 @@ class AccountPage extends React.Component {
               <AuthUserContext.Consumer>
                 {authUser => (
                   <div>
-                    <Typography variant="headline" gutterBottom={true}>
+                    <Typography variant="h5" gutterBottom={true}>
                       Mein Konto
                     </Typography>
                     <strong>{admin}</strong>
 
-                    <Typography variant="title">Persönliche Daten</Typography>
+                    <Typography variant="h6">Persönliche Daten</Typography>
                     <PersonalInformtionForm setMessage={this.setMessage} />
 
-                    <Typography variant="title">Passwort ändern</Typography>
+                    <Typography variant="h6">Passwort ändern</Typography>
                     <PasswordChangeForm setMessage={this.setMessage} />
 
                     <MessageBox

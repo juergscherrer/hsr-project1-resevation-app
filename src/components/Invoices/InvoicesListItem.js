@@ -166,23 +166,23 @@ class InvoicesListItem extends Component {
 
     return (
       <TableRow key={key}>
-        <TableCell numeric>
+        <TableCell align="center">
           {user.firstname || ''} {user.lastname || ''}
         </TableCell>
 
-        <TableCell numeric>{rental.title || ''}</TableCell>
+        <TableCell align="center">{rental.title || ''}</TableCell>
 
         <TableCell component="th" scope="row">
           <Moment format="DD.MM.YYYY">{reservation.startDate.toDate()}</Moment>
         </TableCell>
 
-        <TableCell numeric>
+        <TableCell align="center">
           <Moment format="DD.MM.YYYY">{reservation.endDate.toDate()}</Moment>
         </TableCell>
 
-        <TableCell numeric>{total || ''}</TableCell>
+        <TableCell align="center">{total || ''}</TableCell>
 
-        <TableCell numeric>
+        <TableCell align="center">
           {reservation.paid && reservation.paidAt && (
             <Moment format="DD.MM.YYYY HH:mm:ss">
               {reservation.paidAt.toDate()}
@@ -190,7 +190,7 @@ class InvoicesListItem extends Component {
           )}
         </TableCell>
 
-        <TableCell numeric>
+        <TableCell align="center">
           {reservation.paid ? 'Ja' : 'Nein'}
           <Checkbox
             checked={reservation.paid}
@@ -199,7 +199,7 @@ class InvoicesListItem extends Component {
           />
         </TableCell>
 
-        <TableCell numeric>
+        <TableCell align="center">
           <Link className={classes.link} to={`/invoices/${reservationId}`}>
             <Button variant="outlined" size="small" className={classes.button}>
               Details

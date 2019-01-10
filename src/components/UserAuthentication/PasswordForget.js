@@ -118,7 +118,7 @@ class PasswordForgetForm extends Component {
               Abbrechen
             </Button>
             <Button
-              variant="raised"
+              variant="contained"
               color="primary"
               className={classes.submit}
               disabled={isInvalid}

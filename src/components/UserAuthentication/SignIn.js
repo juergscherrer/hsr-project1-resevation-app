@@ -135,7 +135,7 @@ class SignInForm extends Component {
             <Avatar className={classes.avatar}>
               <LockIcon />
             </Avatar>
-            <Typography variant="headline">Login</Typography>
+            <Typography variant="h5">Login</Typography>
             <form className={classes.form} onSubmit={this.onSubmit}>
               <FormControl margin="normal" required fullWidth>
                 <InputLabel htmlFor="email">E-Mail</InputLabel>
@@ -186,7 +186,7 @@ class SignInForm extends Component {
               </FormControl>
               <Button
                 fullWidth
-                variant="raised"
+                variant="contained"
                 color="primary"
                 className={classes.submit}
                 disabled={isInvalid}

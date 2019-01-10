@@ -381,7 +381,7 @@ class ReservationForm extends Component {
             color="primary"
             disabled={isInvalid}
             type="submit"
-            variant="raised"
+            variant="contained"
           >
             {this.props.editReservationId ? (
               <RenewIcon
@@ -400,7 +400,7 @@ class ReservationForm extends Component {
                 className={classes.button}
                 color="secondary"
                 disabled={isInvalid}
-                variant="raised"
+                variant="contained"
                 onClick={this.deleteReservation}
               >
                 <DeleteIcon
@@ -411,7 +411,7 @@ class ReservationForm extends Component {
               <Button
                 className={classes.button}
                 disabled={isInvalid}
-                variant="raised"
+                variant="contained"
                 onClick={this.clearForm}
               >
                 Abbrechen

@@ -147,7 +147,7 @@ class PersonalInformationForm extends Component {
             required
           />
           <Button
-            variant="raised"
+            variant="contained"
             color="primary"
             className={classes.submit}
             disabled={isInvalid}

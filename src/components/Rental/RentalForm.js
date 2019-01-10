@@ -268,7 +268,7 @@ class RentalForm extends Component {
             disabled={isInvalid}
             type="submit"
             fullWidth
-            variant="raised"
+            variant="contained"
           >
             <SaveIcon
               className={classNames(classes.leftIcon, classes.iconSmall)}
