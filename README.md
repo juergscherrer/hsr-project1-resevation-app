@@ -6,7 +6,6 @@ Eine Projektarbeit im CAS Frontend Engineering an der HSR Hochschule für Techni
 - [Projektbeschreibung](#projektbeschreibung)
   - [Dashboard](#dashboard)
   - [Kalender](#kalender)
-  - [E-Mail Versand](#e-mail-versand)
   - [Rechnungen](#rechnungen)
   - [Admin Dashboard](#admin-dashboard)
   - [Mein Konto](#mein-konto)
@@ -76,11 +75,6 @@ In der Kalenderansicht können Reservationen für angelegte Mietobjekte getätig
 dass Anreise- und Abreisetag sich überschneiden. Doppelte Buchungen sind nicht möglich. Markiert man einen Bereich im
 Kalender wird Start- und Enddatum direkt im Formular übernommen. Wählt man eine bereits erstellte Buchtung aus, lässt
 sich diese bearbeiten oder löschen.
-
-### E-Mail Versand
-
-Bei einer Reservation wird automatisch eine E-Mail mit den genauen Daten der Reservation an alle Nutzer des jeweiligen
-Mietobjektes gesendet.
 
 ### Rechnungen
 

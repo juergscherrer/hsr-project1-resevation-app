@@ -190,7 +190,7 @@ class InvoicesListItem extends Component {
           )}
         </TableCell>
 
-        <TableCell align="center">
+        <TableCell align="right">
           {reservation.paid ? 'Ja' : 'Nein'}
           <Checkbox
             checked={reservation.paid}

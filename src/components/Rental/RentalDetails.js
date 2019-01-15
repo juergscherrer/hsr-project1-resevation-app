@@ -174,7 +174,7 @@ class RentalDetails extends React.Component {
               <CalendarIcon
                 className={classNames(classes.leftIcon, classes.iconSmall)}
               />
-              Kalender
+              Reservationen
             </Button>
           </Link>
 

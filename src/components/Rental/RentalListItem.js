@@ -84,7 +84,7 @@ class RentalListItem extends React.Component {
         />
         <ListItemSecondaryAction>
           <Link to={`/reservations/${rentalId}`}>
-            <IconButton>
+            <IconButton title={'Reservationen'}>
               <CalendarIcon />
             </IconButton>
           </Link>

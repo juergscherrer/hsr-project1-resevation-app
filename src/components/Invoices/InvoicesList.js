@@ -89,7 +89,7 @@ class InvoicesList extends Component {
           <TableRow>
             <TableCell align="center">Mieter</TableCell>
             <TableCell align="center">Objekt</TableCell>
-            <TableCell align="center">Start Date</TableCell>
+            <TableCell align="center">Start Datum</TableCell>
             <TableCell align="center">End Datum</TableCell>
             <TableCell align="center">Total [CHF]</TableCell>
             <TableCell align="center">Bezahlt am</TableCell>
