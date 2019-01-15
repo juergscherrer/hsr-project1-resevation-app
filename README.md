@@ -18,7 +18,6 @@ Eine Projektarbeit im CAS Frontend Engineering an der HSR Hochschule für Techni
   - [5. Wohnobjekt](#5-wohnobjekt)
 - [Besondere Leistungen](#besondere-leistungen)
 - [Usability Testing](#usability-testing)
-
   - [Test-Ziele](#test-ziele)
   - [Test-Aufgaben](#test-aufgaben)
   - [Test Erkenntnisse](#test-erkenntnisse)
