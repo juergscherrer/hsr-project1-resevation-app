@@ -2,6 +2,7 @@
 
 Eine Projektarbeit im CAS Frontend Engineering an der HSR Hochschule für Technik Rapperswil.
 
+- [Demo](#demo)
 - [Installationsanleitung](#installationsanleitung)
 - [Projektbeschreibung](#projektbeschreibung)
   - [Dashboard](#dashboard)
@@ -17,10 +18,21 @@ Eine Projektarbeit im CAS Frontend Engineering an der HSR Hochschule für Techni
   - [5. Wohnobjekt](#5-wohnobjekt)
 - [Besondere Leistungen](#besondere-leistungen)
 - [Usability Testing](#usability-testing)
+
   - [Test-Ziele](#test-ziele)
   - [Test-Aufgaben](#test-aufgaben)
   - [Test Erkenntnisse](#test-erkenntnisse)
   - [Beweis Fotos](#beweis-fotos)
+
+## Demo
+
+[beta.reservationapp.webmassiv.ch](https://beta.reservationapp.webmassiv.ch)  
+Mit folgendem Benutzer kann auf die Demoapplikation zugegriffen werden.
+
+```console
+Benutzername: jamesbond@example.net
+Passwort: Agent007
+```
 
 ## Installationsanleitung
 
